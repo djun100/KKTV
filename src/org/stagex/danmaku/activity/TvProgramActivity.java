@@ -177,8 +177,9 @@ public class TvProgramActivity extends Activity {
 			// nothing
 		} else {
 			/* 广告栏控件 */
-			LinearLayout container = (LinearLayout) findViewById(R.id.AdLinearLayout);
-			new AdView(this, container).DisplayAd();
+			// TODO 2013-09-06 暂时去掉广告
+//			LinearLayout container = (LinearLayout) findViewById(R.id.AdLinearLayout);
+//			new AdView(this, container).DisplayAd();
 		}
 	}
 
@@ -201,29 +202,29 @@ public class TvProgramActivity extends Activity {
 		}
 	};
 
-	// 利用webview来显示帮助的文本信息
-	private void readHtmlFormAssets() {
-		WebSettings webSettings = mWebView.getSettings();
-
-		// 充满全屏
-		webSettings.setLoadWithOverviewMode(true);
-		// WebView双击变大，再双击后变小，当手动放大后，双击可以恢复到原始大小
-		// webSettings.setUseWideViewPort(true);
-		// 设置WebView可触摸放大缩小：
-		webSettings.setBuiltInZoomControls(true);
-		// WebView 背景透明效果
-		mWebView.setBackgroundColor(Color.TRANSPARENT);
-
-		// webview中的新链接仍在当前browser中响应
-		mWebView.setWebViewClient(new WebViewClient() {
-			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				view.loadUrl(url);
-				return true;
-			}
-		});
-		mWebView.loadUrl("http://www.tvmao.com/ext/show_tv.jsp?p="
-				+ mProgramPath);
-	}
+//	// 利用webview来显示帮助的文本信息
+//	private void readHtmlFormAssets() {
+//		WebSettings webSettings = mWebView.getSettings();
+//
+//		// 充满全屏
+//		webSettings.setLoadWithOverviewMode(true);
+//		// WebView双击变大，再双击后变小，当手动放大后，双击可以恢复到原始大小
+//		// webSettings.setUseWideViewPort(true);
+//		// 设置WebView可触摸放大缩小：
+//		webSettings.setBuiltInZoomControls(true);
+//		// WebView 背景透明效果
+//		mWebView.setBackgroundColor(Color.TRANSPARENT);
+//
+//		// webview中的新链接仍在当前browser中响应
+//		mWebView.setWebViewClient(new WebViewClient() {
+//			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//				view.loadUrl(url);
+//				return true;
+//			}
+//		});
+//		mWebView.loadUrl("http://www.tvmao.com/ext/show_tv.jsp?p="
+//				+ mProgramPath);
+//	}
 
 	// 首先响应webview的返回事件
 	@Override

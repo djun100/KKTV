@@ -230,6 +230,20 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 			case 1:
 				startHelpMedia();
 				break;
+			case 2:
+				// 显示QQ交流群信息
+				new AlertDialog.Builder(SetupActivity.this)
+				.setIcon(R.drawable.ic_about)
+				.setTitle("可可电视交流群")
+				.setMessage("QQ群号：336809417\n欢迎加入交流群，可以分享更多的自定义地址，反馈您的建议和意见")
+				.setNegativeButton("关闭",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+							}
+						}).show();
+				break;	
 			case 3:
 				AppConnect.getInstance(SetupActivity.this).showFeedback();
 				break;
@@ -288,7 +302,8 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		tableView3.setClickListener(listener);
 
 		tableView3.addBasicItem(R.drawable.ic_decode, "解码模式", "选择软解码或者硬解码");
-		tableView3.addBasicItem(R.drawable.ic_noad, "秒杀广告", "达到积分要求可以去除广告");
+		// TODO 2013-09-06 暂时去掉秒杀广告的控件
+//		tableView3.addBasicItem(R.drawable.ic_noad, "秒杀广告", "达到积分要求可以去除广告");
 	}
 
 	/**
