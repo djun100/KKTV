@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class UserDefActivity extends Activity {
 	/** Called when the activity is first created. */
@@ -149,6 +150,9 @@ public class UserDefActivity extends Activity {
 					POinfo.date = DateFormat.format("MM月dd日",
 							System.currentTimeMillis()).toString();
 					mDbHelper.create(POinfo);
+					
+					// toast
+					Toast.makeText(UserDefActivity.this, "已添加到自定义收藏频道", Toast.LENGTH_LONG).show();
 				} else {
 					new AlertDialog.Builder(UserDefActivity.this)
 					.setIcon(R.drawable.ic_dialog_alert)
@@ -157,7 +161,7 @@ public class UserDefActivity extends Activity {
 					.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							
+							// nothing
 						}
 					}).show();
 				}

@@ -353,7 +353,7 @@ public class PlayerActivity extends Activity implements
 								.setTitle("播放失败【硬解码】")
 								.setMessage(
 										"很遗憾，该视频无法播放\n请尝试该节目【其他源】\n或切换至【软解码】模式再次尝试\n现在切换解码模式吗？")
-								.setPositiveButton("是",
+								.setPositiveButton("切换",
 										new DialogInterface.OnClickListener() {
 											@Override
 											public void onClick(
@@ -370,7 +370,7 @@ public class PlayerActivity extends Activity implements
 												finish();
 											}
 										})
-								.setNegativeButton("否",
+								.setNegativeButton("暂不",
 										new DialogInterface.OnClickListener() {
 											@Override
 											public void onClick(
@@ -379,7 +379,8 @@ public class PlayerActivity extends Activity implements
 												// do nothing - it will close on
 												// its own
 												// 关闭当前的PlayerActivity，退回listview的界面
-												finish();
+												// 2013-09-06 暂时去掉
+//												finish();
 											}
 										}).show();
 						// @}
@@ -412,7 +413,17 @@ public class PlayerActivity extends Activity implements
 								.setTitle("播放失败")
 								.setMessage(
 										"当前链接已失效\n请切换该频道【其他地址源】\n或观看【其他频道】")
-								.setNegativeButton("知道了",
+								.setPositiveButton("继续",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+												// do nothing - it will close on
+												
+											}
+										})
+								.setNegativeButton("退出",
 										new DialogInterface.OnClickListener() {
 											@Override
 											public void onClick(
