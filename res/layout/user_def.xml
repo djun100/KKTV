@@ -50,10 +50,18 @@
         android:textSize="15sp" />
 
     <EditText
-        android:id="@+id/test_uri"
+        android:id="@+id/test_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:hint="@string/user_def_name"
+        android:textColorHint="#238745" />
+
+    <EditText
+        android:id="@+id/test_uri"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:hint="@string/user_def_hint"
         android:textColorHint="#238745" />
 
@@ -78,6 +86,14 @@
             android:layout_gravity="center_horizontal"
             android:layout_toRightOf="@id/test_play"
             android:text="@string/user_def_clear" />
+
+        <Button
+            android:id="@+id/save_play"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_toRightOf="@id/clear_play"
+            android:text="@string/user_def_save" />
     </RelativeLayout>
 
     <TextView

@@ -699,7 +699,7 @@ public class PlayerActivity extends Activity implements
 		}
 
 		// TODO 2013-08-01 自定义频道暂时不支持在播放界面收藏
-		if (isSelfTV) {
+		if (isSelfTV || isSelfFavTV) {
 			mImageButtonStar.setVisibility(View.GONE);
 			mSelfdef.setVisibility(View.VISIBLE);
 		}

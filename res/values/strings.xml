@@ -41,5 +41,7 @@
     <string name="search_txt">频道搜索</string>
     <string name="search_hint">请输入搜索的频道名称</string>
     <string name="radio_titlle">电台(Radio)"</string>
+    <string name="user_def_save">收藏</string>
+    <string name="user_def_name">起个频道名称</string>
 
 </resources>
