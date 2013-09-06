@@ -1,7 +1,11 @@
 package org.stagex.danmaku.activity;
 
 import org.keke.player.R;
+import org.stagex.danmaku.util.SourceName;
 import org.stagex.danmaku.util.SystemUtility;
+
+import br.com.dina.ui.widget.UITableView;
+import br.com.dina.ui.widget.UITableView.ClickListener;
 
 import cn.waps.AppConnect;
 import cn.waps.UpdatePointsNotifier;
@@ -26,86 +30,83 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 	private static final String LOGTAG = "SetupActivity";
 
 	/* 顶部标题栏的控件 */
-//	private ImageView button_home;
+	// private ImageView button_home;
 	private TextView button_back;
-	/* 设置控件 */
-	private RelativeLayout codec_sel;
-	private ImageView button_codec;
-	private RelativeLayout about_sel;
-	private RelativeLayout help_sel;
-	private RelativeLayout feedback_sel;
-	private RelativeLayout update_sel;
-	private RelativeLayout appList_sel;
-	private RelativeLayout tuangou_sel;
-	private RelativeLayout noad_sel;
-	private ImageView button_ad;
+
 	/* 记录硬解码与软解码的状态 */
 	private SharedPreferences sharedPreferences;
 	private Editor editor;
 	private boolean isHardDec;
 	private boolean noAd;
 
-	private TextView pointsTextView;
+	// private TextView pointsTextView;
 	private String displayPointsText;
 	private String currencyName = "积分";
 	final Handler mHandler = new Handler();
 
+	UITableView tableView1;
+	UITableView tableView2;
+	UITableView tableView3;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.setup);
+		setContentView(R.layout.setup2);
 
 		/* 顶部标题栏的控件 */
-//		button_home = (ImageView) findViewById(R.id.home_btn);
 		button_back = (TextView) findViewById(R.id.back_btn);
-		/* 设置控件 */
-		codec_sel = (RelativeLayout) findViewById(R.id.codec_sel);
-		button_codec = (ImageView) findViewById(R.id.codec_mode);
-		noad_sel = (RelativeLayout) findViewById(R.id.noad_sel);
-		button_ad = (ImageView) findViewById(R.id.ad_mode);
-		about_sel = (RelativeLayout) findViewById(R.id.about_sel);
-		help_sel = (RelativeLayout) findViewById(R.id.help_sel);
-		feedback_sel = (RelativeLayout) findViewById(R.id.feedback_sel);
-		update_sel = (RelativeLayout) findViewById(R.id.update_sel);
-		appList_sel = (RelativeLayout) findViewById(R.id.appList_sel);
-		tuangou_sel = (RelativeLayout) findViewById(R.id.tuangou_sel);
 
-		pointsTextView = (TextView) findViewById(R.id.points_txt);
+		// =====================================================
+		tableView1 = (UITableView) findViewById(R.id.tableView1);
+		createList1();
+		Log.d(LOGTAG, "total items: " + tableView1.getCount());
+		tableView1.commit();
+
+		tableView2 = (UITableView) findViewById(R.id.tableView2);
+		createList2();
+		Log.d(LOGTAG, "total items: " + tableView2.getCount());
+		tableView2.commit();
+
+		tableView3 = (UITableView) findViewById(R.id.tableView3);
+		createList3();
+		Log.d(LOGTAG, "total items: " + tableView3.getCount());
+		tableView3.commit();
+		// =====================================================
 
 		/* 判断解码器状态 */
 		sharedPreferences = getSharedPreferences("keke_player", MODE_PRIVATE);
 		editor = sharedPreferences.edit();
 		isHardDec = sharedPreferences.getBoolean("isHardDec", false);
 		if (isHardDec) {
-			int resource = SystemUtility.getDrawableId("mini_operate_selected");
-			button_codec.setImageResource(resource);
+//			int resource = SystemUtility.getDrawableId("mini_operate_selected");
+			// button_codec.setImageResource(resource);
 			Log.d(LOGTAG, "检测到为硬解码模式");
 		} else {
-			int resource = SystemUtility
-					.getDrawableId("mini_operate_unselected");
-			button_codec.setImageResource(resource);
+//			int resource = SystemUtility
+//					.getDrawableId("mini_operate_unselected");
+			// button_codec.setImageResource(resource);
 			Log.d(LOGTAG, "检测到为软解码模式");
 		}
 
-		//========================================================
+		// ========================================================
 		// 2013-08-06
 		// 由于新版1.3.1之后加入了积分要求在线配置的功能，所以可能会有调节功能
 		// 如某段时间搞活动，要求的积分较少，过一段时间，可能要上调
 		// 主要根据收益情况调整（这部分工作放到HomeActivity中去做）
-		//========================================================
-		
+		// ========================================================
+
 		/* 检测是否需要显示广告 */
-		sharedPreferences = getSharedPreferences("keke_player", MODE_PRIVATE);
-		editor = sharedPreferences.edit();
+//		sharedPreferences = getSharedPreferences("keke_player", MODE_PRIVATE);
+//		editor = sharedPreferences.edit();
 		noAd = sharedPreferences.getBoolean("noAd", false);
 		if (noAd) {
-			int resource = SystemUtility.getDrawableId("mini_operate_selected");
-			button_ad.setImageResource(resource);
+//			int resource = SystemUtility.getDrawableId("mini_operate_selected");
+			// button_ad.setImageResource(resource);
 			Log.d(LOGTAG, "检测到无广告模式");
 		} else {
-			int resource = SystemUtility
-					.getDrawableId("mini_operate_unselected");
-			button_ad.setImageResource(resource);
+//			int resource = SystemUtility
+//					.getDrawableId("mini_operate_unselected");
+			// button_ad.setImageResource(resource);
 			Log.d(LOGTAG, "检测到有广告模式");
 		}
 
@@ -115,135 +116,16 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 
 	// Listen for button clicks
 	private void setListensers() {
-//		button_home.setOnClickListener(goListener);
 		button_back.setOnClickListener(goListener);
-		codec_sel.setOnClickListener(goListener);
-		about_sel.setOnClickListener(goListener);
-		help_sel.setOnClickListener(goListener);
-		feedback_sel.setOnClickListener(goListener);
-		update_sel.setOnClickListener(goListener);
-		appList_sel.setOnClickListener(goListener);
-		tuangou_sel.setOnClickListener(goListener);
-		noad_sel.setOnClickListener(goListener);
 	}
 
 	// 按键监听
 	private Button.OnClickListener goListener = new Button.OnClickListener() {
 		public void onClick(View v) {
 			switch (v.getId()) {
-//			case R.id.home_btn:
-//				// 退回主界面(homeActivity)
-//				finish();
-//				break;
 			case R.id.back_btn:
 				// 回到上一个界面(Activity)
 				finish();
-				break;
-			case R.id.codec_sel:
-				isHardDec = sharedPreferences.getBoolean("isHardDec", false);
-				if (isHardDec) {
-					int resource = SystemUtility
-							.getDrawableId("mini_operate_unselected");
-					button_codec.setImageResource(resource);
-					editor.putBoolean("isHardDec", false);
-					editor.commit();
-					Log.d(LOGTAG, "设置为软解码模式");
-				} else {
-					int resource = SystemUtility
-							.getDrawableId("mini_operate_selected");
-					button_codec.setImageResource(resource);
-					editor.putBoolean("isHardDec", true);
-					editor.commit();
-					Log.d(LOGTAG, "设置为硬解码模式");
-				}
-				break;
-			case R.id.noad_sel:
-				noAd = sharedPreferences.getBoolean("noAd", false);
-				if (noAd) {
-					int resource = SystemUtility
-							.getDrawableId("mini_operate_unselected");
-					button_ad.setImageResource(resource);
-					editor.putBoolean("noAd", false);
-					editor.commit();
-					Log.d(LOGTAG, "设置为有广告模式");
-				} else {
-					// 在线获取需要的积分参数，以便随时可以控制积分值
-					String noAdPoint=AppConnect.getInstance(SetupActivity.this).getConfig("noAdPoint", "88888");
-					if (noAdPoint.equals("88888")) {
-						// 如果因为首次运行网络原因，获取到的是88888，说明需要提醒用户联网操作
-						new AlertDialog.Builder(SetupActivity.this)
-						.setIcon(R.drawable.ic_dialog_alert)
-						.setTitle("温馨提示")
-						.setMessage("亲，该操作需要联网操作哦！\n同时，该操作需要打开网络后重新启动一次！")
-						.setPositiveButton("知道了",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int whichButton) {
-									}
-								}).show();
-						break;
-					}
-					if (sharedPreferences.getInt("pointTotal", 0) <=  Integer.parseInt(noAdPoint)) {
-					// 改为从万普的在线参数里获取这个积分值
-						new AlertDialog.Builder(SetupActivity.this)
-								.setIcon(R.drawable.ic_dialog_alert)
-								.setTitle("温馨提示")
-								.setMessage(
-										"您的积分不足" + noAdPoint + "分，暂时无法去除广告！\n您可以打开应用推荐赚取相应的积分，感谢您的支持！")
-								.setPositiveButton("赚积分",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-												AppConnect
-														.getInstance(
-																SetupActivity.this)
-														.showOffers(
-																SetupActivity.this);
-											}
-										})
-								.setNegativeButton("取消",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-												dialog.cancel();
-											}
-										}).show();
-						
-					} else {
-
-						int resource = SystemUtility
-								.getDrawableId("mini_operate_selected");
-						button_ad.setImageResource(resource);
-						editor.putBoolean("noAd", true);
-						editor.commit();
-						Log.d(LOGTAG, "设置为无广告模式");
-					}
-				}
-				break;
-			case R.id.about_sel:
-				startAboutMedia();
-				break;
-			case R.id.help_sel:
-				startHelpMedia();
-				break;
-			case R.id.feedback_sel:
-				AppConnect.getInstance(SetupActivity.this).showFeedback();
-				break;
-			case R.id.update_sel:
-				AppConnect.getInstance(SetupActivity.this).checkUpdate(
-						SetupActivity.this);
-				break;
-			case R.id.appList_sel:
-				AppConnect.getInstance(SetupActivity.this).showOffers(
-						SetupActivity.this);
-				break;
-			case R.id.tuangou_sel:
-				AppConnect.getInstance(SetupActivity.this).showTuanOffers(
-						SetupActivity.this);
 				break;
 			default:
 				Log.d(LOGTAG, "not supported btn id");
@@ -282,9 +164,9 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 	// 创建一个线程
 	final Runnable mUpdateResults = new Runnable() {
 		public void run() {
-			if (pointsTextView != null) {
-				pointsTextView.setText("(" + "当前" + displayPointsText + ")");
-			}
+			// if (pointsTextView != null) {
+			// pointsTextView.setText("(" + "当前" + displayPointsText + ")");
+			// }
 		}
 	};
 
@@ -315,4 +197,266 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		displayPointsText = error;
 		mHandler.post(mUpdateResults);
 	}
+
+	// ===========================================================================
+	/**
+	 * 采用圆角布局的ListView
+	 */
+	private void createList1() {
+		CustomClickListener1 listener = new CustomClickListener1();
+		tableView1.setClickListener(listener);
+
+		tableView1.addBasicItem(R.drawable.ic_about, "关于", "软件信息介绍");
+		tableView1.addBasicItem(R.drawable.ic_about, "帮助", "软件帮助信息");
+		tableView1.addBasicItem(R.drawable.ic_about, "QQ群", "可可电视交流群：336809417");
+		tableView1.addBasicItem(R.drawable.ic_feedback, "信息反馈", "反馈您的建议和意见");
+		tableView1.addBasicItem(R.drawable.ic_check_update, "检查更新", "检查软件最新版本");
+	}
+
+	/**
+	 * 设置监听事件
+	 * 
+	 * @author jgf
+	 * 
+	 */
+	private class CustomClickListener1 implements ClickListener {
+		@Override
+		public void onClick(int index) {
+
+			switch (index) {
+			case 0:
+				startAboutMedia();
+				break;
+			case 1:
+				startHelpMedia();
+				break;
+			case 3:
+				AppConnect.getInstance(SetupActivity.this).showFeedback();
+				break;
+			case 4:
+				AppConnect.getInstance(SetupActivity.this).checkUpdate(
+						SetupActivity.this);
+				break;
+			default:
+				Log.d(LOGTAG, "not supported btn id");
+			}
+
+		}
+	}
+
+	/**
+	 * 采用圆角布局的ListView
+	 */
+	private void createList2() {
+		CustomClickListener2 listener = new CustomClickListener2();
+		tableView2.setClickListener(listener);
+
+		tableView2.addBasicItem(R.drawable.ic_app, "应用商店", "当前热门软件和游戏");
+		tableView2.addBasicItem(R.drawable.ic_tuangou, "大众团购", "大众点评团购入口");
+	}
+
+	/**
+	 * 设置监听事件
+	 * 
+	 * @author jgf
+	 * 
+	 */
+	private class CustomClickListener2 implements ClickListener {
+		@Override
+		public void onClick(int index) {
+
+			switch (index) {
+			case 0:
+				AppConnect.getInstance(SetupActivity.this).showOffers(
+						SetupActivity.this);
+				break;
+			case 1:
+				AppConnect.getInstance(SetupActivity.this).showTuanOffers(
+						SetupActivity.this);
+				break;
+			default:
+				Log.d(LOGTAG, "not supported btn id");
+			}
+		}
+	}
+
+	/**
+	 * 采用圆角布局的ListView
+	 */
+	private void createList3() {
+		CustomClickListener3 listener = new CustomClickListener3();
+		tableView3.setClickListener(listener);
+
+		tableView3.addBasicItem(R.drawable.ic_decode, "解码模式", "选择软解码或者硬解码");
+		tableView3.addBasicItem(R.drawable.ic_noad, "秒杀广告", "达到积分要求可以去除广告");
+	}
+
+	/**
+	 * 设置监听事件
+	 * 
+	 * @author jgf
+	 * 
+	 */
+	private class CustomClickListener3 implements ClickListener {
+		@Override
+		public void onClick(int index) {
+
+			switch (index) {
+			case 0:
+
+				isHardDec = sharedPreferences.getBoolean("isHardDec", false);
+				if (isHardDec) {
+
+					new AlertDialog.Builder(SetupActivity.this)
+							.setIcon(R.drawable.ic_dialog_alert)
+							.setTitle("当前为硬解")
+							.setMessage("确定切换？")
+							.setPositiveButton("确定",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											editor.putBoolean("isHardDec",
+													false);
+											editor.commit();
+											Log.d(LOGTAG, "设置为软解码模式");
+										}
+
+									})
+							.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											dialog.cancel();
+										}
+									}).show();
+
+				} else {
+
+					new AlertDialog.Builder(SetupActivity.this)
+							.setIcon(R.drawable.ic_dialog_alert)
+							.setTitle("当前为软解")
+							.setMessage("确定切换？")
+							.setPositiveButton("确定",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											editor.putBoolean("isHardDec", true);
+											editor.commit();
+											Log.d(LOGTAG, "设置为硬解码模式");
+										}
+									})
+							.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											dialog.cancel();
+										}
+									}).show();
+				}
+				break;
+			case 1:				
+				
+				noAd = sharedPreferences.getBoolean("noAd", false);
+				if (noAd) {
+					new AlertDialog.Builder(SetupActivity.this)
+					.setIcon(R.drawable.ic_dialog_alert)
+					.setTitle("温馨提示")
+					.setMessage(
+							"广告已被秒杀\n" + "（当前积分" + sharedPreferences.getInt("pointTotal", 0) + "）")
+					.setPositiveButton("打开广告",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										DialogInterface dialog,
+										int whichButton) {
+									editor.putBoolean("noAd", false);
+									editor.commit();
+									Log.d(LOGTAG, "设置为有广告模式");
+								}
+							}).show();
+				} else {
+					// 在线获取需要的积分参数，以便随时可以控制积分值
+					String noAdPoint = AppConnect.getInstance(
+							SetupActivity.this).getConfig("noAdPoint", "88888");
+					if (noAdPoint.equals("88888")) {
+						// 如果因为首次运行网络原因，获取到的是88888，说明需要提醒用户联网操作
+						new AlertDialog.Builder(SetupActivity.this)
+								.setIcon(R.drawable.ic_dialog_alert)
+								.setTitle("温馨提示")
+								.setMessage(
+										"亲，该操作需要联网操作哦！\n同时，该操作需要打开网络后重新启动一次！")
+								.setPositiveButton("知道了",
+										new DialogInterface.OnClickListener() {
+											public void onClick(
+													DialogInterface dialog,
+													int whichButton) {
+											}
+										}).show();
+						break;
+					}
+					if (sharedPreferences.getInt("pointTotal", 0) < Integer
+							.parseInt(noAdPoint)) {
+						// 改为从万普的在线参数里获取这个积分值
+						new AlertDialog.Builder(SetupActivity.this)
+								.setIcon(R.drawable.ic_dialog_alert)
+								.setTitle("温馨提示")
+								.setMessage(
+										"您的积分不足"
+												+ noAdPoint
+												+ "分，暂时无法去除广告！\n您可以打开应用推荐赚取相应的积分，感谢您的支持！")
+								.setPositiveButton("赚积分",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+												AppConnect
+														.getInstance(
+																SetupActivity.this)
+														.showOffers(
+																SetupActivity.this);
+											}
+										})
+								.setNegativeButton("取消",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+												dialog.cancel();
+											}
+										}).show();
+
+					} else {
+						new AlertDialog.Builder(SetupActivity.this)
+						.setIcon(R.drawable.ic_dialog_alert)
+						.setTitle("温馨提示")
+						.setMessage(
+								"您可以秒杀广告了\n" + "（当前积分" + sharedPreferences.getInt("pointTotal", 0) + "）")
+						.setPositiveButton("去除广告",
+								new DialogInterface.OnClickListener() {
+									public void onClick(
+											DialogInterface dialog,
+											int whichButton) {
+										editor.putBoolean("noAd", true);
+										editor.commit();
+										Log.d(LOGTAG, "设置为无广告模式");
+									}
+								}).show();
+					}
+				}
+				break;
+			default:
+				Log.d(LOGTAG, "not supported btn id");
+			}
+		}
+	}
+	// ===========================================================================
 }

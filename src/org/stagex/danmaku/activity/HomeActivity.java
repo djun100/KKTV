@@ -179,7 +179,7 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 		// 主要根据收益情况调整（这部分工作放到HomeActivity中去做）
 		// 在线获取需要的积分参数，以便随时可以控制积分值
 		String noAdPoint=AppConnect.getInstance(HomeActivity.this).getConfig("noAdPoint", "88888");
-		if (sharedPreferences.getInt("pointTotal", 0) <=  Integer.parseInt(noAdPoint)) {
+		if (sharedPreferences.getInt("pointTotal", 0) < Integer.parseInt(noAdPoint)) {
 			editor.putBoolean("noAd", false);
 			editor.commit();
 			Log.d(LOGTAG, "===> reset Ad mode, has ad agatin");
