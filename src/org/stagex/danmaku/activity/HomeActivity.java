@@ -24,8 +24,7 @@ import android.widget.LinearLayout;
 
 import cn.waps.AppConnect;
 import cn.waps.UpdatePointsNotifier;
-
-import com.nmbb.oplayer.ui.MainActivity;
+import org.stagex.danmaku.util.QuitPopAd;
 
 public class HomeActivity extends Activity implements UpdatePointsNotifier {
 	private static final String LOGTAG = "HomeActivity";
@@ -171,6 +170,12 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 
 		// 启动广告
 		AppConnect.getInstance(this);
+		// TODO 2013-09-06
+		// 初始化自定义广告数据
+		AppConnect.getInstance(this).initAdInfo();
+		// 初始化插屏广告数据
+		AppConnect.getInstance(this).initPopAd(this);
+		// end
 
 		//========================================================
 		// 2013-08-06
@@ -295,24 +300,27 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// 按下键盘上返回按钮
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			new AlertDialog.Builder(this)
-					.setIcon(R.drawable.ic_lock_power_off)
-					.setTitle(R.string.prompt)
-					.setMessage(R.string.quit_desc)
-					.setNegativeButton(R.string.cancel,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-								}
-							})
-					.setPositiveButton(R.string.confirm,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									finish();
-								}
-							}).show();
+//			new AlertDialog.Builder(this)
+//					.setIcon(R.drawable.ic_lock_power_off)
+//					.setTitle(R.string.prompt)
+//					.setMessage(R.string.quit_desc)
+//					.setNegativeButton(R.string.cancel,
+//							new DialogInterface.OnClickListener() {
+//								@Override
+//								public void onClick(DialogInterface dialog,
+//										int which) {
+//								}
+//							})
+//					.setPositiveButton(R.string.confirm,
+//							new DialogInterface.OnClickListener() {
+//								public void onClick(DialogInterface dialog,
+//										int whichButton) {
+//									finish();
+//								}
+//							}).show();
+			// TODO 2013-09-06 调用退屏广告
+			QuitPopAd.getInstance().show(this);
+			
 			return true;
 		} else {
 			return super.onKeyDown(keyCode, event);
