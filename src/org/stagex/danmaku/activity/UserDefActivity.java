@@ -82,7 +82,7 @@ public class UserDefActivity extends Activity {
 		// 转换为小写
 		str = str.toLowerCase();
 
-		String regex = "^((https|http|ftp|rtsp|rtmp|mmsh|mms)?://)"
+		String regex = "^((https|http|ftp|rtsp|rtmp|mmsh|mms|mmst)?://)"
 				+ "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?"
 				+ "(([0-9]{1,3}\\.){3}[0-9]{1,3}" + "|"
 				+ "([0-9a-z_!~*'()-]+\\.)*"

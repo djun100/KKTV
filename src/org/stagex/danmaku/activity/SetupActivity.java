@@ -265,6 +265,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		CustomClickListener2 listener = new CustomClickListener2();
 		tableView2.setClickListener(listener);
 
+		tableView2.addBasicItem(R.drawable.ic_home, "帮助可可", "可可的发展需要您的支持");
 		tableView2.addBasicItem(R.drawable.ic_app, "应用商店", "当前热门软件和游戏");
 		tableView2.addBasicItem(R.drawable.ic_tuangou, "大众团购", "大众点评团购入口");
 	}
@@ -281,10 +282,15 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 
 			switch (index) {
 			case 0:
+				// 改为支持可可的控件入口
+				Intent intent = new Intent(SetupActivity.this, SupportKK.class);
+				startActivity(intent);
+				break;
+			case 1:
 				AppConnect.getInstance(SetupActivity.this).showOffers(
 						SetupActivity.this);
 				break;
-			case 1:
+			case 2:
 				AppConnect.getInstance(SetupActivity.this).showTuanOffers(
 						SetupActivity.this);
 				break;
