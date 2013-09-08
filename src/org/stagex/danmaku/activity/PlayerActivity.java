@@ -1039,8 +1039,9 @@ public class PlayerActivity extends Activity implements
 	public void onClick(View v) {
 		// FIXME 由于rtmp的视频没有 MEDIA_PLAYER_PREPARED message
 		// 所以点击不会出现播放控件界面
-		if (!mMediaPlayerLoaded)
-			return;
+		// TODO 2013-09-06 增加屏幕切台功能之后，不再限制控件的点击行为
+//		if (!mMediaPlayerLoaded)
+//			return;
 
 		// 如果有click事件，也阻止控件隐藏
 		mDoHandleAll = false;
@@ -1281,9 +1282,10 @@ public class PlayerActivity extends Activity implements
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		/* 首先处理touch事件（因为废弃了onTouch事件了） */
-		if (!mMediaPlayerLoaded) {
-			return true;
-		}
+		// TODO 2013-09-06 增加屏幕切台功能之后，不再限制控件的点击行为
+//		if (!mMediaPlayerLoaded) {
+//			return true;
+//		}
 
 		// ==================================
 		// 显示播放界面的帮助信息
