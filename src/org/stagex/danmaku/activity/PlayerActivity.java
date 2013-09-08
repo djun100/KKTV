@@ -181,6 +181,9 @@ public class PlayerActivity extends Activity implements
 	private int mSourceIndex = 0;
 	private int mChannelIndex = 0;
 	
+	private Boolean no_player_help1;
+	private Boolean no_player_help2;
+	
 	/**
 	 * 增加手势控制
 	 * 
@@ -265,6 +268,36 @@ public class PlayerActivity extends Activity implements
 
 					mPercentTxt.setVisibility(msg.arg1 < 100 ? View.VISIBLE
 							: View.GONE);
+					
+					// 显示播放界面的帮助信息
+					if (msg.arg1 == 100)
+						if (no_player_help1 == false) {
+							new AlertDialog.Builder(PlayerActivity.this)
+									.setIcon(R.drawable.ic_dialog_alert)
+									.setTitle("音量和亮度调节")
+									.setMessage(
+											"上下滑动右半屏幕可以调节音量\n\n上下滑动左半屏幕可以调节亮度")
+									.setPositiveButton("不再提醒",
+											new DialogInterface.OnClickListener() {
+												@Override
+												public void onClick(DialogInterface dialog,
+														int which) {
+													// 不再收藏
+													no_player_help1 = true;
+													editor.putBoolean("no_player_help1", true);
+													editor.commit();
+												}
+											})
+									.setNegativeButton("知道了",
+											new DialogInterface.OnClickListener() {
+												@Override
+												public void onClick(DialogInterface dialog,
+														int which) {
+													dialog.cancel();
+												}
+											}).show();
+						}
+					// ===================
 
 					mProgressBarPreparing
 							.setVisibility(msg.arg1 < 100 ? View.VISIBLE
@@ -974,6 +1007,9 @@ public class PlayerActivity extends Activity implements
 			// 强制选择VLC播放器
 			selectMediaPlayer(uri, true);
 		}
+		
+		no_player_help1 = sharedPreferences.getBoolean("no_player_help1", false);
+		no_player_help2 = sharedPreferences.getBoolean("no_player_help2", false);
 	}
 
 	@Override
@@ -1249,6 +1285,36 @@ public class PlayerActivity extends Activity implements
 			return true;
 		}
 
+		// ==================================
+		// 显示播放界面的帮助信息
+			if (no_player_help2 == false) {
+				new AlertDialog.Builder(PlayerActivity.this)
+						.setIcon(R.drawable.ic_dialog_alert)
+						.setTitle("频道和节目源切换")
+						.setMessage(
+								"点击右下角按钮可以切换频道\n\n点击左下角按钮可以切换节目源")
+						.setPositiveButton("不再提醒",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// 不再收藏
+										no_player_help2 = true;
+										editor.putBoolean("no_player_help2", true);
+										editor.commit();
+									}
+								})
+						.setNegativeButton("知道了",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										dialog.cancel();
+									}
+								}).show();
+			}
+		// ==================================
+		
 		// 2013-08-31 隐藏源切换和切台的控件
 		mLinearLayoutSourceList.setVisibility(View.GONE);
 		mLinearLayoutChannelList.setVisibility(View.GONE);
@@ -1516,14 +1582,15 @@ public class PlayerActivity extends Activity implements
 		Log.d(LOGTAG, "===>current fav_num = " + fav_num);
 
 		// 为提升用户点击广告的热情，特地将收藏频道数目超过3个的的积分额度为100积分
+		// TODO
 		if (fav_num >= 3) {
 			// FIXME 此处可以修改积分限制
-			if (sharedPreferences.getInt("pointTotal", 0) < 100) {
+			if (sharedPreferences.getInt("pointTotal", 0) < 50) {
 				new AlertDialog.Builder(PlayerActivity.this)
 						.setIcon(R.drawable.ic_dialog_alert)
 						.setTitle("温馨提示")
 						.setMessage(
-								"您的积分不足100分，暂时只能收藏3个频道！\n您可以到【设置】中打开应用推荐赚取相应的积分，感谢您的支持！")
+								"您的积分不足50分，暂时只能收藏3个频道！\n您可以到【设置】中打开应用推荐挑选一个喜欢的应用就可以无限收藏，感谢您的支持！")
 						.setNegativeButton("知道了",
 								new DialogInterface.OnClickListener() {
 									@Override

@@ -899,12 +899,12 @@ public class ChannelTabActivity extends TabActivity implements
 		// 为提升用户点击广告的热情，特地将收藏频道数目超过3个的的积分额度为100积分
 		if (fav_num >= 3) {
 			// FIXME 此处可以修改积分限制
-			if (sharedPreferences.getInt("pointTotal", 0) < 100) {
+			if (sharedPreferences.getInt("pointTotal", 0) < 50) {
 				new AlertDialog.Builder(ChannelTabActivity.this)
 						.setIcon(R.drawable.ic_dialog_alert)
 						.setTitle("温馨提示")
 						.setMessage(
-								"您的积分不足100分，暂时只能收藏3个频道！\n您可以到【设置】中打开应用推荐赚取相应的积分，感谢您的支持！")
+								"您的积分不足50分，暂时只能收藏3个频道！\n您可以到【设置】中打开应用推荐挑选一个喜欢的应用就可以无限收藏，感谢您的支持！")
 						.setPositiveButton("赚积分",
 								new DialogInterface.OnClickListener() {
 									@Override

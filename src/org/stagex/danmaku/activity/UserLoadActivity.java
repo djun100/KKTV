@@ -98,8 +98,7 @@ public class UserLoadActivity extends Activity {
 				.setIcon(R.drawable.ic_dialog_alert)
 				.setTitle("温馨提示")
 				.setMessage(
-						"【长按】自定义列表的频道名称即可以实现自定义收藏，并且点击工具栏的心型按钮可以跳转到自定义收藏的频道列表！\n" +
-						"【长按】收藏频道列表的频道名称可以实现取消收藏功能！\n")
+						"长按频道名称可以实现收藏或取消收藏")
 				.setPositiveButton("不再提醒",
 						new DialogInterface.OnClickListener() {
 							@Override

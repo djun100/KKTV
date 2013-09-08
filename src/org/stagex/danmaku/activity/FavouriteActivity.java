@@ -142,8 +142,7 @@ public class FavouriteActivity extends TabActivity implements
 					.setIcon(R.drawable.ic_dialog_alert)
 					.setTitle("温馨提示")
 					.setMessage(
-							"【长按】直播电视频道列表的频道名称即可以实现收藏，并且在这里可以看到收藏的频道！\n"
-									+ "在此的收藏频道【长按】可以实现取消收藏功能！\n同时，播放界面点击【心型】按钮也可以收藏")
+							"长按频道名称可以实现收藏或取消收藏")
 					.setPositiveButton("不再提醒",
 							new DialogInterface.OnClickListener() {
 								@Override
