@@ -24,7 +24,8 @@ public class VlcMediaPlayer extends AbsMediaPlayer {
 			} else {
 				armv7_neon = false;
 				/* armv7 NO neon */
-				System.loadLibrary("vlccore_armv7a");
+				// TODO 2013-09-08 不再支持非NEON类型的手机CPU
+//				System.loadLibrary("vlccore_armv7a");
 				Log.d(LOGTAG, "检测到ARMV7的CPU架构");
 			}
 		} else {

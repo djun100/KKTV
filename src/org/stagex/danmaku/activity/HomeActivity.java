@@ -66,7 +66,9 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 		}
 
 		// 判断CPU类型，如果低于ARMV6，则不让其运行
-		if (SystemUtility.getArmArchitecture() <= 6) {
+//		if (SystemUtility.getArmArchitecture() <= 6) {
+		// TODO 2013-09-08 不再支持非NEON类型的手机CPU
+		if (SystemUtility.getArmFeatures() < 0) {
 			// 如果已经是硬解码模式，则无需设置
 			boolean isHardDec = sharedPreferences
 					.getBoolean("isHardDec", false);
@@ -77,7 +79,7 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 						.setIcon(R.drawable.ic_dialog_alert)
 						.setTitle("警告")
 						.setMessage(
-								"抱歉！软件解码库暂时不支持您的CPU\n\n请到设置中选择【硬解码】模式，且只能使用硬解码")
+								"抱歉！您的手机CPU缺少NEON支持\n\n请到设置中选择【硬解码】模式，且只能使用硬解码")
 						// .setMessage("抱歉！软件解码库暂时不支持您的CPU")
 						.setPositiveButton("设置",
 								new DialogInterface.OnClickListener() {

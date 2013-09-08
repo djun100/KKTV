@@ -82,8 +82,9 @@ public class KKTV_HOME extends BaseActivity implements OnItemClickListener, Upda
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		init(R.layout.kktv_home, R.layout.kktv_drawmenu);
-		imageResId = new int[] { R.drawable.home_1, R.drawable.home_2,
-				R.drawable.home_3, R.drawable.home_4, R.drawable.home_5 };
+		// TODO 2013-09-08 ###暂时去掉了这些图片###
+//		imageResId = new int[] { R.drawable.home_1, R.drawable.home_2,
+//				R.drawable.home_3, R.drawable.home_4, R.drawable.home_5 };
 		titles = new String[imageResId.length];
 		titles[0] = "巩俐不低俗，我就不能低俗";
 		titles[1] = "扑树又回来啦！再唱经典老歌引万人大合唱";
