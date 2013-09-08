@@ -153,6 +153,12 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+        <activity
+            android:name="org.stagex.danmaku.util.AppWall"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />

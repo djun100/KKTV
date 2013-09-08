@@ -8,6 +8,7 @@ import java.util.Map;
 import org.keke.player.R;
 import org.stagex.danmaku.adapter.ChannelAdapter;
 import org.stagex.danmaku.adapter.ChannelInfo;
+import org.stagex.danmaku.util.AppWall;
 import org.stagex.danmaku.util.SourceName;
 
 import android.app.Activity;
@@ -21,6 +22,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -263,12 +266,12 @@ public class SearchActivity extends Activity {
 		// 为提升用户点击广告的热情，特地将收藏频道数目超过3个的的积分额度为100积分
 		if (fav_num >= 3) {
 			// FIXME 此处可以修改积分限制
-			if (sharedPreferences.getInt("pointTotal", 0) < 100) {
+			if (sharedPreferences.getInt("pointTotal", 0) < 50) {
 				new AlertDialog.Builder(SearchActivity.this)
 						.setIcon(R.drawable.ic_dialog_alert)
 						.setTitle("温馨提示")
 						.setMessage(
-								"您的积分不足100分，暂时只能收藏3个频道！\n您可以到【设置】中打开应用推荐赚取相应的积分，感谢您的支持！")
+								"您的积分不足50分，暂时只能收藏3个频道！\n您可以到【设置】中打开应用推荐赚取相应的积分，感谢您的支持！")
 						.setPositiveButton("赚积分",
 								new DialogInterface.OnClickListener() {
 									@Override
@@ -357,4 +360,45 @@ public class SearchActivity extends Activity {
 			}
 		}
 	};
+	
+	// =================================================
+	// 加上menu
+	private static final int SUPPORT_ID = Menu.FIRST + 1;
+	private static final int SETUP_ID = Menu.FIRST + 2;
+	private static final int APP_ID = Menu.FIRST + 3;
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		/*
+		 * 第一个参数是groupId，如果不需要可以设置为Menu.NONE
+		 * 第二个参数就是item的ID，我们可以通过menu.findItem(id)来获取具体的item
+		 * 第三个参数是item的顺序，一般可采用Menu.NONE，具体看本文最后MenuInflater的部分
+		 * 第四个参数是显示的内容，可以是String，或者是引用Strings.xml的ID
+		 */
+		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可");
+		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
+		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用");
+
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) { // 获取Id
+		case SUPPORT_ID:
+			Intent intent1 = new Intent(SearchActivity.this, SupportKK.class);
+			startActivity(intent1);
+			break;
+		case SETUP_ID:
+			Intent intent2 = new Intent(SearchActivity.this, SetupActivity.class);
+			startActivity(intent2);
+			break;
+		case APP_ID:	
+			//获取全部自定义广告数据
+			Intent appWallIntent = new Intent(this, AppWall.class);
+			this.startActivity(appWallIntent);
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	// =================================================
 }

@@ -10,6 +10,7 @@ import org.keke.player.R;
 import org.stagex.danmaku.adapter.ChannelAdapter;
 import org.stagex.danmaku.adapter.ChannelDefFavAdapter;
 import org.stagex.danmaku.adapter.ChannelInfo;
+import org.stagex.danmaku.util.AppWall;
 import org.stagex.danmaku.util.BackupData;
 import org.stagex.danmaku.util.SourceName;
 import org.stagex.danmaku.util.saveFavName;
@@ -26,6 +27,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -652,4 +655,45 @@ public class FavouriteActivity extends TabActivity implements
 		mWebView.setBackgroundColor(Color.TRANSPARENT);
 		mWebView.loadUrl("file:///android_asset/html/SelfFavTVList_help.html");
 	}
+	
+	// =================================================
+	// 加上menu
+	private static final int SUPPORT_ID = Menu.FIRST + 1;
+	private static final int SETUP_ID = Menu.FIRST + 2;
+	private static final int APP_ID = Menu.FIRST + 3;
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		/*
+		 * 第一个参数是groupId，如果不需要可以设置为Menu.NONE
+		 * 第二个参数就是item的ID，我们可以通过menu.findItem(id)来获取具体的item
+		 * 第三个参数是item的顺序，一般可采用Menu.NONE，具体看本文最后MenuInflater的部分
+		 * 第四个参数是显示的内容，可以是String，或者是引用Strings.xml的ID
+		 */
+		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可");
+		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
+		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用");
+
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) { // 获取Id
+		case SUPPORT_ID:
+			Intent intent1 = new Intent(FavouriteActivity.this, SupportKK.class);
+			startActivity(intent1);
+			break;
+		case SETUP_ID:
+			Intent intent2 = new Intent(FavouriteActivity.this, SetupActivity.class);
+			startActivity(intent2);
+			break;
+		case APP_ID:	
+			//获取全部自定义广告数据
+			Intent appWallIntent = new Intent(this, AppWall.class);
+			this.startActivity(appWallIntent);
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	// =================================================
 }

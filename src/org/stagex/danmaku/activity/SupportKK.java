@@ -91,7 +91,8 @@ public class SupportKK extends Activity {
 		CustomClickListener1 listener = new CustomClickListener1();
 		tableView1.setClickListener(listener);
 
-		tableView1.addBasicItem(R.drawable.ic_about, "点击横幅广告", "花几秒钟浏览广告或点击喜欢的应用");
+		tableView1.addBasicItem(R.drawable.ic_about, "横幅广告", "花几秒钟浏览广告");
+		tableView1.addBasicItem(R.drawable.ic_about, "插屏广告", "更炫的应用软件海报");
 	}
 
 	/**
@@ -110,6 +111,16 @@ public class SupportKK extends Activity {
 				/* 广告栏控件 */
 				LinearLayout container = (LinearLayout) findViewById(R.id.AdLinearLayout);
 				new AdView(SupportKK.this, container).DisplayAd();
+				break;
+			case 1:
+				//显示插屏广告
+				//判断插屏广告是否已初始化完成，用于确定是否能成功调用插屏广告
+				boolean hasPopAd = AppConnect.getInstance(SupportKK.this).hasPopAd(SupportKK.this);
+				if(hasPopAd){
+					AppConnect.getInstance(SupportKK.this).showPopAd(SupportKK.this);
+					//根据指定的theme样式展示插屏广告，theme主要为系统样式id
+					//AppConnect.getInstance(this).showPopAd(this, android.R.style.Theme_Translucent);
+				}
 				break;
 			default:
 				Log.d(LOGTAG, "not supported btn id");
