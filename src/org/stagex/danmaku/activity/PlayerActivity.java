@@ -383,7 +383,8 @@ public class PlayerActivity extends Activity implements
 						/* TODO 用在硬解解码模式，判断不支持的源 */
 						new AlertDialog.Builder(PlayerActivity.this)
 								.setIcon(R.drawable.ic_dialog_alert)
-								.setTitle("播放失败【硬解码】")
+//								.setTitle("播放失败【硬解码】")
+								.setTitle(mTitleName)
 								.setMessage(
 										"很遗憾，该视频无法播放\n请尝试该节目【其他源】\n或切换至【软解码】模式再次尝试\n现在切换解码模式吗？")
 								.setPositiveButton("切换",
@@ -443,7 +444,8 @@ public class PlayerActivity extends Activity implements
 						// 弹出播放失败的窗口@{
 						new AlertDialog.Builder(PlayerActivity.this)
 								.setIcon(R.drawable.ic_dialog_alert)
-								.setTitle("播放失败")
+//								.setTitle("播放失败")
+								.setTitle(mTitleName)
 								.setMessage(
 										"当前链接已失效\n请切换该频道【其他地址源】\n或观看【其他频道】")
 								.setPositiveButton("继续",

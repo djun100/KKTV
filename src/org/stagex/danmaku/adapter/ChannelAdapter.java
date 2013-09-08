@@ -78,7 +78,7 @@ public class ChannelAdapter extends BaseAdapter {
 				if (program_path == null) {
 					new AlertDialog.Builder(mContext)
 							.setIcon(R.drawable.ic_dialog_alert)
-							.setTitle("警告")
+							.setTitle("抱歉")
 							.setMessage("暂时没有该电视台的节目预告！")
 							.setPositiveButton("知道了",
 									new DialogInterface.OnClickListener() {
