@@ -62,6 +62,13 @@
                 android:textSize="15sp" />
 
             <LinearLayout
+                android:id="@+id/AdLinearLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" />
+
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
 
@@ -69,13 +76,6 @@
                     android:id="@+id/tableView1"
                     style="@style/UITableView" />
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/AdLinearLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
