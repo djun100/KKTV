@@ -30,6 +30,15 @@ import cn.waps.UpdatePointsNotifier;
 import org.stagex.danmaku.util.QuitPopAd;
 import org.stagex.danmaku.util.AppWall;
 
+import com.umeng.socialize.controller.RequestType;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.UMSsoHandler;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.sso.QZoneSsoHandler;
+import com.umeng.socialize.sso.SinaSsoHandler;
+import com.umeng.socialize.sso.TencentWBSsoHandler;
+
 public class HomeActivity extends Activity implements UpdatePointsNotifier {
 	private static final String LOGTAG = "HomeActivity";
 
@@ -53,7 +62,9 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 	private static final int SUPPORT_ID = Menu.FIRST + 1;
 	private static final int SETUP_ID = Menu.FIRST + 2;
 	private static final int APP_ID = Menu.FIRST + 3;
-
+	
+	private UMSocialService mController;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -219,6 +230,22 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 
 		findViews();
 		setListensers();
+		
+		//========================================================
+		// 友盟社会化组件
+		mController = UMServiceFactory.getUMSocialService("com.umeng.share",RequestType.SOCIAL);
+		// 设置分享内容
+		mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+		// 设置分享图片, 参数2为图片的地址
+		mController.setShareMedia(new UMImage(this, "http://www.umeng.com/images/pic/banner_module_social.png"));
+		// 参数1为当前Activity， 参数2为用户点击分享内容时跳转到的目标地址
+		mController.getConfig().supportQQPlatform(this, "http://www.umeng.com/social");
+		mController.getConfig().setSsoHandler(new QZoneSsoHandler(this));
+		//设置新浪SSO handler
+		mController.getConfig().setSsoHandler(new SinaSsoHandler());
+		//设置腾讯微博SSO handler
+		mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
+		//========================================================
 	}
 
 	private void findViews() {
@@ -398,7 +425,8 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 		 * 第四个参数是显示的内容，可以是String，或者是引用Strings.xml的ID
 		 */
 		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可");
-		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
+//		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
+		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "一键分享");
 		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用");
 
 		return super.onCreateOptionsMenu(menu);
@@ -411,8 +439,10 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 			startActivity(intent1);
 			break;
 		case SETUP_ID:
-			Intent intent2 = new Intent(HomeActivity.this, SetupActivity.class);
-			startActivity(intent2);
+//			Intent intent2 = new Intent(HomeActivity.this, SetupActivity.class);
+//			startActivity(intent2);
+			// 打开平台选择面板，参数2为打开分享面板时是否强制登录,false为不强制登录
+	        mController.openShare(HomeActivity.this, false);
 			break;
 		case APP_ID:	
 			//获取全部自定义广告数据
@@ -424,4 +454,14 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 		return super.onOptionsItemSelected(item);
 	}
 	// =================================================
+	
+	@Override 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
+	    /**使用SSO授权必须添加如下代码 */
+	    UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode) ;
+	    if(ssoHandler != null){
+	       ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+	    }
+	}
 }
