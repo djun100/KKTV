@@ -91,8 +91,8 @@ public class SupportKK extends Activity {
 		CustomClickListener1 listener = new CustomClickListener1();
 		tableView1.setClickListener(listener);
 
-		tableView1.addBasicItem(R.drawable.ic_about, "横幅广告", "花几秒钟浏览广告");
-		tableView1.addBasicItem(R.drawable.ic_about, "插屏广告", "更炫的应用软件海报");
+		tableView1.addBasicItem(R.drawable.ic_about, "点击横幅广告", "花几秒钟点击浏览广告");
+		tableView1.addBasicItem(R.drawable.ic_about, "点击插屏广告", "超炫的应用软件海报");
 	}
 
 	/**

@@ -53,6 +53,14 @@ import com.nmbb.oplayer.scanner.DbHelper;
 import com.nmbb.oplayer.scanner.POChannelList;
 import com.nmbb.oplayer.scanner.POUserDefChannel;
 import com.nmbb.oplayer.scanner.SQLiteHelperOrm;
+import com.umeng.socialize.controller.RequestType;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.UMSsoHandler;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.sso.QZoneSsoHandler;
+import com.umeng.socialize.sso.SinaSsoHandler;
+import com.umeng.socialize.sso.TencentWBSsoHandler;
 
 @SuppressLint("NewApi")
 public class FavouriteActivity extends TabActivity implements
@@ -86,6 +94,8 @@ public class FavouriteActivity extends TabActivity implements
 	private Boolean selfView = false;
 
 	private WebView mWebView;
+	
+	private UMSocialService mController;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +233,22 @@ public class FavouriteActivity extends TabActivity implements
 		
 		setFavView();
 //		setSelfFavView();
+		
+		//========================================================
+		// 友盟社会化组件
+		mController = UMServiceFactory.getUMSocialService("com.umeng.share",RequestType.SOCIAL);
+		// 设置分享内容
+		mController.setShareContent("可可电视收录全国500+电视台！可到安卓市场、小米商店等搜索“可可电视”，高清、流畅、便捷的手机电视直播体验等你来鉴定！");
+		// 设置分享图片, 参数2为图片的地址
+		mController.setShareMedia(new UMImage(this, "http://tv.togic.com:8080/ShowTimeService/images/182.png"));
+		// 参数1为当前Activity， 参数2为用户点击分享内容时跳转到的目标地址
+		mController.getConfig().supportQQPlatform(this, "http://app.xiaomi.com/detail/39492");
+		mController.getConfig().setSsoHandler(new QZoneSsoHandler(this));
+		//设置新浪SSO handler
+		mController.getConfig().setSsoHandler(new SinaSsoHandler());
+		//设置腾讯微博SSO handler
+		mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
+		//========================================================
 	}
 
 	@Override
@@ -661,6 +687,7 @@ public class FavouriteActivity extends TabActivity implements
 	private static final int SUPPORT_ID = Menu.FIRST + 1;
 	private static final int SETUP_ID = Menu.FIRST + 2;
 	private static final int APP_ID = Menu.FIRST + 3;
+	private static final int SHARE_ID = Menu.FIRST + 4;
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/*
@@ -672,6 +699,7 @@ public class FavouriteActivity extends TabActivity implements
 		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可");
 		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
 		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用");
+		menu.add(Menu.NONE, SHARE_ID, Menu.NONE, "一键分享");
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -690,10 +718,24 @@ public class FavouriteActivity extends TabActivity implements
 			//获取全部自定义广告数据
 			Intent appWallIntent = new Intent(this, AppWall.class);
 			this.startActivity(appWallIntent);
-		default:
 			break;
+		case SHARE_ID:	
+			// 打开平台选择面板，参数2为打开分享面板时是否强制登录,false为不强制登录
+	        mController.openShare(FavouriteActivity.this, false);
+			break;
+		default:
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	// =================================================
+	
+	@Override 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
+	    /**使用SSO授权必须添加如下代码 */
+	    UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode) ;
+	    if(ssoHandler != null){
+	       ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+	    }
+	}
 }

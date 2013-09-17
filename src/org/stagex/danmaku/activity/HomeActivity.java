@@ -235,11 +235,11 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 		// 友盟社会化组件
 		mController = UMServiceFactory.getUMSocialService("com.umeng.share",RequestType.SOCIAL);
 		// 设置分享内容
-		mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+		mController.setShareContent("可可电视收录全国500+电视台！可到安卓市场、小米商店等搜索“可可电视”，高清、流畅、便捷的手机电视直播体验等你来鉴定！");
 		// 设置分享图片, 参数2为图片的地址
-		mController.setShareMedia(new UMImage(this, "http://www.umeng.com/images/pic/banner_module_social.png"));
+		mController.setShareMedia(new UMImage(this, "http://tv.togic.com:8080/ShowTimeService/images/182.png"));
 		// 参数1为当前Activity， 参数2为用户点击分享内容时跳转到的目标地址
-		mController.getConfig().supportQQPlatform(this, "http://www.umeng.com/social");
+		mController.getConfig().supportQQPlatform(this, "http://app.xiaomi.com/detail/39492");
 		mController.getConfig().setSsoHandler(new QZoneSsoHandler(this));
 		//设置新浪SSO handler
 		mController.getConfig().setSsoHandler(new SinaSsoHandler());
@@ -448,8 +448,8 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 			//获取全部自定义广告数据
 			Intent appWallIntent = new Intent(this, AppWall.class);
 			this.startActivity(appWallIntent);
-		default:
 			break;
+		default:
 		}
 		return super.onOptionsItemSelected(item);
 	}
