@@ -3,9 +3,17 @@
     android:id="@+id/player_sourcelist"
     android:layout_width="200dp"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     android:background="@color/transparent_gray"
+    android:orientation="vertical"
     android:visibility="invisible" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:text="候选地址"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 
     <ListView
         android:id="@+id/source_list"

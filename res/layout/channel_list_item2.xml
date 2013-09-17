@@ -50,7 +50,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
-            android:src="@drawable/ic_hot"
+            android:src="@drawable/ic_new"
             android:visibility="gone" />
     </LinearLayout>
 

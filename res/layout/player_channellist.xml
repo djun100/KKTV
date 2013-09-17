@@ -24,7 +24,6 @@
         android:cacheColorHint="#ffffffff"
         android:divider="@drawable/list_bottom"
         android:dividerHeight="1.0px"
-        android:fastScrollEnabled="true"
         android:listSelector="#00000000" />
 
 </RelativeLayout>
