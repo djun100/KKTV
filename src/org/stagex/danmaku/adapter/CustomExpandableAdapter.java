@@ -1,9 +1,8 @@
 package org.stagex.danmaku.adapter;
 
 import java.util.List;
-
 import org.keke.player.R;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+@SuppressLint("ResourceAsColor")
 public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 
 	private List<String> groupArray;
@@ -79,6 +79,7 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 					.findViewById(R.id.expand_name);
 			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 			viewHolder.name.setPadding(60, 0, 0, 0);
+			viewHolder.name.getPaint().setFakeBoldText(true);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();

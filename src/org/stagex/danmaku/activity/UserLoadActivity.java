@@ -10,16 +10,13 @@ import java.util.List;
 
 import org.keke.player.R;
 import org.stagex.danmaku.adapter.ChannelInfo;
-import org.stagex.danmaku.adapter.ChannelLoadAdapter;
 import org.stagex.danmaku.adapter.CustomExpandableAdapter;
 import org.stagex.danmaku.util.AppWall;
 import org.stagex.danmaku.util.BackupData;
 import org.stagex.danmaku.util.ParseUtil;
 import org.stagex.danmaku.util.SourceName;
 
-import com.nmbb.oplayer.scanner.ChannelListBusiness;
 import com.nmbb.oplayer.scanner.DbHelper;
-import com.nmbb.oplayer.scanner.POChannelTmp;
 import com.nmbb.oplayer.scanner.POUserDefChannel;
 
 import android.annotation.SuppressLint;
@@ -34,28 +31,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class UserLoadActivity extends Activity {
@@ -68,9 +55,7 @@ public class UserLoadActivity extends Activity {
 	private ImageView button_edit;
 	// private ImageView button_defFav;
 	/* ListView */
-	private ListView mTvList;
-	private ChannelLoadAdapter mSourceAdapter;
-	private List<ChannelInfo> infos;
+//	private ListView mTvList;
 
 	private WebView mWebView;
 
@@ -107,9 +92,9 @@ public class UserLoadActivity extends Activity {
 		/* 设置监听 */
 		setListensers();
 
-		mTvList = (ListView) findViewById(R.id.tv_list);
+//		mTvList = (ListView) findViewById(R.id.tv_list);
 		// 防止滑动黑屏
-		mTvList.setCacheColorHint(Color.TRANSPARENT);
+//		mTvList.setCacheColorHint(Color.TRANSPARENT);
 
 		/* 频道收藏的数据库 */
 		mDbHelper = new DbHelper<POUserDefChannel>();
@@ -322,7 +307,8 @@ public class UserLoadActivity extends Activity {
 
 	// 利用webview来显示帮助的文本信息
 	private void readHtmlFormAssets() {
-		mTvList.setVisibility(View.GONE);
+//		mTvList.setVisibility(View.GONE);
+		listView.setVisibility(View.GONE);
 		mWebView.setVisibility(View.VISIBLE);
 		WebSettings webSettings = mWebView.getSettings();
 
