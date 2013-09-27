@@ -2,10 +2,15 @@ package org.stagex.danmaku.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.stagex.danmaku.adapter.ChannelInfo;
 import org.stagex.danmaku.adapter.ProvinceInfo;
+
+import com.nmbb.oplayer.scanner.ChannelListBusiness;
+import com.nmbb.oplayer.scanner.POUserDefChannel;
 
 import android.content.Context;
 import android.os.Environment;
@@ -109,14 +117,24 @@ public class ParseUtil {
 		return list;
 	}
 
+	//=============================================================
 	// 解析本地自定义的列表
+	// TODO 2013-09-24
+	// 为了加强自定义的分类功能，采用数据库暂存所有的自定义
+	// 的数据，每次加载时，重新入数据库？或者查看自定义文件
+	// 是否作出了修改，若修改了，则清除数据库数据，重新装载
 	public static List<ChannelInfo> parseDef(String tvList) {
 		List<ChannelInfo> list = new ArrayList<ChannelInfo>();
 		int nums = 0;
 		String code = "GBK";
 		String privName = null;
+		String sortName = null;
+		String privSort = null;
+		String tvName = null;
 		String first_url = null;
 		ArrayList<String> list_url = new ArrayList<String>();
+		
+//		ArrayList<String> sortNames = new ArrayList<String>();
 
 		// FIXBUG 2013-07-28
 		Boolean dropLast = true;
@@ -163,7 +181,7 @@ public class ParseUtil {
 						continue;
 					}
 					nums++;
-					String name = pair[0].trim();
+					String scName = pair[0].trim();
 					String url = null;
 					if (strLen == 2) {
 						url = pair[1].trim();
@@ -176,8 +194,33 @@ public class ParseUtil {
 						}
 						url = urlBuf.toString();
 					}
+					
+					// 2013-09-24 提取出自定义的分类名称
+					String[] pair2 = scName.split("_");
+					if (pair2.length != 2) {
+						// 如果没有分类名称，则统一为"其他"
+						sortName = "other";
+						tvName = scName;
+					} else {
+						tvName = pair2[1].trim();
+						sortName = pair2[0].trim();
+						// TODO 暂时按照顺序来比较，提取分类
+						if (privSort == null) {
+							// 第一次出现，直接存储，后续以文件存储？
+							privSort = sortName;
+//							sortNames.add(privSort + '\n');
+						} else {
+							// 将新的分类存储起来
+							if (sortName.equals(privSort) == false) {
+								privSort = sortName;
+//								sortNames.add(privSort + '\n');
+							}
+						}
+					}
+					// end
+					
 					// TODO 合并相同节目名称的源
-					if (name.equals(privName))
+					if (tvName.equals(privName))
 						list_url.add(url);
 					else {
 						if (privName != null) {
@@ -185,13 +228,13 @@ public class ParseUtil {
 							String[] second_url = new String[list_url.size()];
 							list_url.toArray(second_url);
 							ChannelInfo info = new ChannelInfo(0, privName,
-									null, null, null, first_url, second_url,
+									null, sortName, null, first_url, second_url,
 									null, null);
 							list.add(info);
 						}
 						list_url.clear();
 						first_url = url;
-						privName = name;
+						privName = tvName;
 					}
 					// end
 				}
@@ -206,10 +249,93 @@ public class ParseUtil {
 		}
 
 		Log.d("ParseUtil", "user define tvlist nums = " + nums);
+		
+		// DEBUG
+//		Log.d("UserDefSort", "all userdef sortName = " + sortNames.toString());
+		// write to file
+//		saveFile(sortNames);
 
 		return list;
 	}
-
+	
+//	/*
+//	 * 暂存自定义分类名称
+//	 */
+//	private static void saveFile(ArrayList<String> sortNames) {
+//		File backupFile = new File(Environment.getExternalStorageDirectory(),
+//				"/kekePlayer/.selfDefineSort.txt");
+//		try {
+//			FileOutputStream fos = new FileOutputStream(backupFile);
+//			OutputStreamWriter ow = new OutputStreamWriter(fos, "GBK");
+//			BufferedWriter bw = new BufferedWriter(ow);
+//			try {
+//				for (String sort : sortNames) {
+//						bw.append(sort);
+//				}
+//				bw.flush();
+//			} finally {
+//				bw.close();
+//				ow.close();
+//				fos.close();
+//				Log.d("sortName", "===>backup selfdefine sort name success");
+//			}
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
+	//=============================================================
+	/*
+	 * 读取自定义分类名称
+	 */
+//	public static List<String> readFile(String sortPath) {
+//		int nums = 0;
+//		String code = "GBK";
+//		
+//		List<String> sortNames = new ArrayList<String>();
+//
+//		try {
+//			// 探测txt文件的编码格式
+//			code = codeString(sortPath);
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//
+//		try {
+//			InputStream is = new FileInputStream(sortPath);
+//			InputStreamReader ir = new InputStreamReader(is, code);
+//			BufferedReader br = new BufferedReader(ir);
+//			try {
+//				while (true) {
+//					String line = br.readLine();
+//					if (line == null) {
+//						break;
+//					}
+//					nums++;
+//					sortNames.add(line);
+//				}
+//			} finally {
+//				br.close();
+//				ir.close();
+//				is.close();
+//			}
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		Log.d("ParseUtil", "user define sort nums = " + nums);
+//
+//		return sortNames;
+//	}
+	
+	//=============================================================
+	
 	/**
 	 * 判断文件的编码格式
 	 * 
@@ -218,7 +344,7 @@ public class ParseUtil {
 	 * @return 文件编码格式
 	 * @throws Exception
 	 */
-	private static String codeString(String fileName) throws Exception {
+	public static String codeString(String fileName) throws Exception {
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 				fileName));
 		int p = (bin.read() << 8) + bin.read();

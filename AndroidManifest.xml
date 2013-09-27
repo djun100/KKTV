@@ -7,7 +7,7 @@
     <application
         android:name="org.stagex.danmaku.OPlayerApplication"
         android:debuggable="true"
-        android:icon="@drawable/television"
+        android:icon="@drawable/television_dskp"
         android:label="@string/app_name" >
         <activity
             android:name="org.stagex.danmaku.activity.UserDefActivity"
@@ -98,7 +98,7 @@
         <!-- 以下属性为分发渠道ID,编码表参见本文档末附表 -->
         <meta-data
             android:name="WAPS_PID"
-            android:value="WAPS" />
+            android:value="xiaomi" />
 
         <activity
             android:name="org.stagex.danmaku.activity.SetupActivity"
