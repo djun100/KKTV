@@ -96,6 +96,8 @@ public class UserLoadActivity extends Activity {
 		// 防止滑动黑屏
 //		mTvList.setCacheColorHint(Color.TRANSPARENT);
 
+        listView = (ExpandableListView) findViewById(R.id.sort_list);
+		
 		/* 频道收藏的数据库 */
 		mDbHelper = new DbHelper<POUserDefChannel>();
 
@@ -177,7 +179,6 @@ public class UserLoadActivity extends Activity {
 	        
 			parseDef(path);
 	        
-	        listView = (ExpandableListView) findViewById(R.id.sort_list);
 	        adapter = new CustomExpandableAdapter(this, groupArray, childArray);
 	        listView.setAdapter(adapter);
 	        listView.setVisibility(View.VISIBLE);

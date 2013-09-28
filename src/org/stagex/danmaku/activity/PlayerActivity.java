@@ -228,7 +228,7 @@ public class PlayerActivity extends Activity implements
 	private DbHelper<POUserDefChannel> mSelfDbHelper;
 	private Boolean channelStar = false;
 	List<POChannelList> channelList = null;
-	private int fav_num = 0;
+
 	// TODO 目前只按照节目源的类别来切台
 	private String channelSort = null;
 
@@ -1638,32 +1638,6 @@ public class PlayerActivity extends Activity implements
 	private void updateFavDatabase(String name) {
 		int resource = -1;
 
-		fav_num = sharedPreferences.getInt("fav_num", 0);
-		Log.d(LOGTAG, "===>current fav_num = " + fav_num);
-
-		// 为提升用户点击广告的热情，特地将收藏频道数目超过3个的的积分额度为100积分
-		// TODO
-		if (fav_num >= 3) {
-			// FIXME 此处可以修改积分限制
-			if (sharedPreferences.getInt("pointTotal", 0) < 50) {
-				new AlertDialog.Builder(PlayerActivity.this)
-						.setIcon(R.drawable.ic_dialog_alert)
-						.setTitle("温馨提示")
-						.setMessage(
-								"您的积分不足50分，暂时只能收藏3个频道！\n您可以到【设置】中打开应用推荐挑选一个喜欢的应用就可以无限收藏，感谢您的支持！")
-						.setNegativeButton("知道了",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										dialog.cancel();
-									}
-								}).show();
-
-				return;
-			}
-		}
-
 		List<POChannelList> channelList = mDbHelper.queryForEq(
 				POChannelList.class, "name", name);
 		for (POChannelList channel : channelList) {
@@ -1672,20 +1646,12 @@ public class PlayerActivity extends Activity implements
 				resource = SystemUtility.getDrawableId("ic_fav");
 				mImageButtonStar.setBackgroundResource(resource);
 
-				// 收藏频道数加1
-				editor.putInt("fav_num", fav_num - 1);
-				editor.commit();
-
 				Toast.makeText(getApplicationContext(), "取消收藏",
 						Toast.LENGTH_SHORT).show();
 			} else {
 				channel.save = true;
 				resource = SystemUtility.getDrawableId("ic_fav_pressed");
 				mImageButtonStar.setBackgroundResource(resource);
-
-				// 收藏频道数加1
-				editor.putInt("fav_num", fav_num + 1);
-				editor.commit();
 
 				Toast.makeText(getApplicationContext(), "添加收藏",
 						Toast.LENGTH_SHORT).show();
