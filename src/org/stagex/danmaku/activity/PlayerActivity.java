@@ -23,6 +23,7 @@ import com.togic.mediacenter.player.AbsMediaPlayer;
 import com.togic.mediacenter.player.DefMediaPlayer;
 import com.togic.mediacenter.player.VlcMediaPlayer;
 
+import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -169,6 +170,7 @@ public class PlayerActivity extends Activity implements
 	private Boolean isFavSort = false;
 	private ListView source_list;
 	private ListView channel_list;
+	private TextView list_load;
 	// 官方频道数据结构
 	private List<POChannelList> channel_infos = null;
 	// 自定义收藏频道数据结构
@@ -183,6 +185,7 @@ public class PlayerActivity extends Activity implements
 	
 	private Boolean no_player_help1;
 	private Boolean no_player_help2;
+	private int no_player_help2_num = 0;
 	
 	/**
 	 * 增加手势控制
@@ -234,6 +237,12 @@ public class PlayerActivity extends Activity implements
 	// 标识是自定义的收藏频道
 	private Boolean isSelfFavTV = false;
 
+	// 播放界面的频道分类切换
+	private String[] chSorts= {"[1].央视", "[2].卫视", "[3].地方", "[4].体育", "[5].港澳台", "[6].其他"};
+	private int chSortNum = chSorts.length;
+	private int curChSortIndex = 0;
+	private Boolean isListLoading = false;
+	
 	/**
 	 * 判断使用的解码接口
 	 * 
@@ -660,7 +669,9 @@ public class PlayerActivity extends Activity implements
 		
 		mLinearLayoutChannelList= (RelativeLayout) findViewById(R.id.player_channellist);
 		mSortName = (TextView) findViewById(R.id.sort_name);
+		mSortName.setOnClickListener(this);
 		channel_list = (ListView) findViewById(R.id.channel_list);
+		list_load = (TextView) findViewById(R.id.load_name);
 		// 防止滑动黑屏
 		channel_list.setCacheColorHint(Color.TRANSPARENT);
 		mImageButtonChannel = (ImageButton) findViewById(R.id.player_button_channel);
@@ -704,6 +715,13 @@ public class PlayerActivity extends Activity implements
 			isSelfFavTV = intent.getBooleanExtra("isSelfFavTV", false);
 			// 需要按照频道的分类来传入相应的值，0表示不支持切台
 			channelSort = intent.getStringExtra("channelSort");
+			
+			// 确认当前切换分类数组的序号
+			if (isFavSort || isSelfTV ||isSelfFavTV ) {
+				// nothing
+			} else {
+				curChSortIndex = Integer.parseInt(channelSort) - 1;
+			}
 		}
 		if (mPlayListArray == null || mPlayListArray.size() == 0) {
 			Log.e(LOGTAG, "initializeData(): empty");
@@ -978,6 +996,7 @@ public class PlayerActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		// 播放事件初始化
 		initializeEvents();
+		initializeEvents2();
 		// 加载布局
 		setContentView(R.layout.player);
 		// 播放控件初始化
@@ -1120,25 +1139,60 @@ public class PlayerActivity extends Activity implements
 			break;
 		}
 		case R.id.player_button_channel: {
-			mSortName.setText(sortString);
+			if (isFavSort || isSelfTV ||isSelfFavTV )
+				mSortName.setText(sortString);
+			else
+				mSortName.setText(chSorts[curChSortIndex]);
 			// TODO 增加播放界面切源和切台
 			mLinearLayoutChannelList.setVisibility(View.VISIBLE);
 			// 同时隐藏播放的控件
 			mLinearLayoutControlBar.setVisibility(View.GONE);
 
-			// 判断是自定义频道、收藏频道、官方频道等
-			if (isSelfTV) {
-				// 自定义加载频道
-				createUserloadChannelList();
-			} else if (isSelfFavTV) {
-				// 如果是自定义频道，数据结构变了
-				/* 获取所有的自定义收藏频道 */
-				createUserdefChannelList();
-			} else {
-				// 官方频道
-				createChannelList(channelSort);
+			// 先显示加载提示语
+			channel_list.setVisibility(View.GONE);
+			list_load.setVisibility(View.VISIBLE);
+			
+			Log.d(LOGTAG, "=============");
+			
+			// TODO 采用线程的方式加载切换的分类节目
+			startRefreshList();
+			
+			break;
+		}
+		case R.id.sort_name: {
+			// 控制切换的速度
+			if (isListLoading)
+				Toast.makeText(PlayerActivity.this, "请等待加载完毕",
+	                    Toast.LENGTH_SHORT).show();
+			else {
+				isListLoading = true;
+				// 目前支持六大分类的切台操作
+				// TODO 暂时去掉对自定义和自定义收藏频道的分类切换
+				if (isFavSort || isSelfTV ||isSelfFavTV )
+					break;
+				
+				// 先显示加载提示语
+				channel_list.setVisibility(View.GONE);
+				list_load.setVisibility(View.VISIBLE);
+				
+				Log.d(LOGTAG, "=============");
+				
+				curChSortIndex++;
+				if ((curChSortIndex + 1) > chSortNum) {
+					curChSortIndex = 0;
+				}
+				
+				// 暂时先清除之前的数据
+				if (channel_infos != null) {
+					channel_infos.clear();
+					channel_infos = null;
+				}
+				
+				// TODO 采用线程的方式加载切换的分类节目
+				startRefreshList();
+	
+				mSortName.setText(chSorts[curChSortIndex]);
 			}
-
 			break;
 		}
 		default:
@@ -1292,30 +1346,32 @@ public class PlayerActivity extends Activity implements
 		// ==================================
 		// 显示播放界面的帮助信息
 			if (no_player_help2 == false) {
-				new AlertDialog.Builder(PlayerActivity.this)
-						.setIcon(R.drawable.ic_dialog_alert)
-						.setTitle("频道和节目源切换")
-						.setMessage(
-								"点击右下角按钮可以切换频道\n\n点击左下角按钮可以切换节目源")
-						.setPositiveButton("不再提醒",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// 不再收藏
-										no_player_help2 = true;
-										editor.putBoolean("no_player_help2", true);
-										editor.commit();
-									}
-								})
-						.setNegativeButton("知道了",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										dialog.cancel();
-									}
-								}).show();
+				no_player_help2_num++;
+				if (no_player_help2_num <= 1)
+					new AlertDialog.Builder(PlayerActivity.this)
+							.setIcon(R.drawable.ic_dialog_alert)
+							.setTitle("频道和节目源切换")
+							.setMessage(
+									"点击右下角按钮可以切换频道\n\n点击左下角按钮可以切换节目源")
+							.setPositiveButton("不再提醒",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											// 不再收藏
+											no_player_help2 = true;
+											editor.putBoolean("no_player_help2", true);
+											editor.commit();
+										}
+									})
+							.setNegativeButton("知道了",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											dialog.cancel();
+										}
+									}).show();
 			}
 		// ==================================
 		
@@ -1728,13 +1784,6 @@ public class PlayerActivity extends Activity implements
 	 * @param sort
 	 */
 	private void createUserloadChannelList() {
-
-		if (userload_infos == null) {
-			// 解析本地的自定义列表
-			String path = Environment.getExternalStorageDirectory().getPath()
-					+ "/kekePlayer/tvlist.txt";
-			userload_infos = ParseUtil.parseDef(path);
-		}
 		
 		ChannelLoadAdapter mSourceAdapter = new ChannelLoadAdapter(this, userload_infos, true);
 		channel_list.setAdapter(mSourceAdapter);
@@ -1779,14 +1828,6 @@ public class PlayerActivity extends Activity implements
 	 * @param sort
 	 */
 	private void createUserdefChannelList() {
-
-//		if (isFavSort)
-//			userdef_infos = ChannelListBusiness.getAllDefFavChannels();
-		// TODO 清除数据（是否可以只查询一次）
-//		else
-		if (userdef_infos == null) {
-			userdef_infos = ChannelListBusiness.getAllDefFavChannels();
-		}
 		
 		ChannelDefFavAdapter adapter = new ChannelDefFavAdapter(this, userdef_infos, true);
 		channel_list.setAdapter(adapter);
@@ -1832,21 +1873,10 @@ public class PlayerActivity extends Activity implements
 	}
 	
 	/**
-	 * 官方频道的数据，切台
+	 * 官方(收藏)频道的数据，切台
 	 * @param sort
 	 */
-	private void createChannelList(String sort) {
-
-		if (isFavSort)
-			channel_infos = ChannelListBusiness.getAllFavChannels();
-		// TODO 清除数据（是否可以只查询一次）
-		else if (channel_infos == null) {
-			if (sort != null)
-				// 根据JSON里面的types来区分直播频道分类
-				channel_infos = ChannelListBusiness.getAllSearchChannels("types", sort);
-			else
-				return;
-		}
+	private void createChannelList() {
 		
 		ChannelListAdapter adapter = new ChannelListAdapter(this, channel_infos);
 		channel_list.setAdapter(adapter);
@@ -2004,4 +2034,103 @@ public class PlayerActivity extends Activity implements
 						}
 					}).show();
 		}
+		
+	//======================================================
+	/**
+	 * 2013-09-28 在线程中操作数据库，更安全
+	 * 查询数据库的频道分类数据
+	 */
+	private void startRefreshList() {
+		// 发送开始刷新的消息
+//		onRefreshStart();
+
+		Log.d(LOGTAG, "===> start refresh playlist");
+
+		// 这里创建一个脱离UI主线程的线程负责网络下载
+		new Thread() {
+			public void run() {
+				// 判断是自定义频道、收藏频道、官方频道等
+				if (isSelfTV) {
+					// 自定义加载频道
+					if (userload_infos == null) {
+						// 解析本地的自定义列表
+						String path = Environment.getExternalStorageDirectory().getPath()
+								+ "/kekePlayer/tvlist.txt";
+						userload_infos = ParseUtil.parseDef(path);
+					}
+				} else if (isSelfFavTV) {
+					// 如果是自定义频道，数据结构变了
+					if (userdef_infos == null) {
+						userdef_infos = ChannelListBusiness.getAllDefFavChannels();
+					}
+				} else {
+					if (isFavSort)
+						channel_infos = ChannelListBusiness.getAllFavChannels();
+					// TODO 清除数据（是否可以只查询一次）
+					else if (channel_infos == null) {
+						// 根据JSON里面的types来区分直播频道分类
+						channel_infos = ChannelListBusiness.getAllSearchChannels("types", String.valueOf(curChSortIndex + 1));
+					}
+				}
+				onRefreshEnd();
+			}
+		}.start();
+	}
+		
+	private Handler mEventHandler2;
+	private static final int TV_LIST_REFRESH_START = 0x0001;
+	private static final int TV_LIST_REFRESH_END = 0x0002;
+
+	/**
+	 * 地址刷新过程中的事件响应的核心处理方法
+	 */
+	private void initializeEvents2() {
+		mEventHandler2 = new Handler() {
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case TV_LIST_REFRESH_START:
+					break;
+				case TV_LIST_REFRESH_END:
+					// 先显示加载提示语
+					channel_list.setVisibility(View.VISIBLE);
+					list_load.setVisibility(View.GONE);
+					
+					// 判断是自定义频道、收藏频道、官方频道等
+					if (isSelfTV) {
+						// 自定义加载频道
+						createUserloadChannelList();
+					} else if (isSelfFavTV) {
+						/* 获取所有的自定义收藏频道 */
+						createUserdefChannelList();
+					} else {
+						createChannelList();
+					}
+					
+					isListLoading = false;
+					
+					break;
+				default:
+					break;
+				}
+			}
+		};
+	}
+	
+	/**
+	 * 以下：接收事件，做中间处理，再调用handleMessage方法处理之
+	 * 
+	 * @{
+	 */
+	private void onRefreshStart() {
+		Message msg = new Message();
+		msg.what = TV_LIST_REFRESH_START;
+		mEventHandler2.sendMessage(msg);
+	}
+
+	private void onRefreshEnd() {
+		Message msg = new Message();
+		msg.what = TV_LIST_REFRESH_END;
+		mEventHandler2.sendMessage(msg);
+	}
+	//======================================================
 }
