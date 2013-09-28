@@ -179,7 +179,7 @@ public class UserLoadActivity extends Activity {
 	        
 			parseDef(path);
 	        
-	        adapter = new CustomExpandableAdapter(this, groupArray, childArray);
+	        adapter = new CustomExpandableAdapter(this, groupArray, childArray, false);
 	        listView.setAdapter(adapter);
 	        listView.setVisibility(View.VISIBLE);
 	        

@@ -19,12 +19,14 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 	private List<List<ChannelInfo>> childArray;
 	private LayoutInflater mLayoutInflater;
 	Activity activity;
+	private Boolean fromPlaying;
 
 	public CustomExpandableAdapter(Activity activity, List<String> groupArray,
-			List<List<ChannelInfo>> childArray) {
+			List<List<ChannelInfo>> childArray, Boolean fromPlaying) {
 		this.activity = activity;
 		this.groupArray = groupArray;
 		this.childArray = childArray;
+		this.fromPlaying = fromPlaying;
 		mLayoutInflater = LayoutInflater.from(activity);
 	}
 
@@ -72,14 +74,19 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 			View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
 		if (convertView == null) {
-			convertView = mLayoutInflater.inflate(R.layout.custom_expanditem,
+			if (fromPlaying)
+				convertView = mLayoutInflater.inflate(R.layout.custom_expanditem2,
+						null);
+			else
+				convertView = mLayoutInflater.inflate(R.layout.custom_expanditem,
 					null);
 			viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) convertView
 					.findViewById(R.id.expand_name);
 			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 			viewHolder.name.setPadding(60, 0, 0, 0);
-			viewHolder.name.getPaint().setFakeBoldText(true);
+			if (fromPlaying == false)
+				viewHolder.name.getPaint().setFakeBoldText(true);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
@@ -93,8 +100,12 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 			boolean isLastChild, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
 		if (convertView == null) {
-			convertView = mLayoutInflater.inflate(R.layout.custom_expanditem,
-					null);
+			if (fromPlaying)
+				convertView = mLayoutInflater.inflate(R.layout.custom_expanditem2,
+						null);
+			else
+				convertView = mLayoutInflater.inflate(R.layout.custom_expanditem,
+						null);
 			viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) convertView
 					.findViewById(R.id.expand_name);

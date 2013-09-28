@@ -1,5 +1,10 @@
 package org.stagex.danmaku.activity;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -11,6 +16,7 @@ import org.stagex.danmaku.adapter.ChannelInfo;
 import org.stagex.danmaku.adapter.ChannelListAdapter;
 import org.stagex.danmaku.adapter.ChannelLoadAdapter;
 import org.stagex.danmaku.adapter.ChannelSourceAdapter;
+import org.stagex.danmaku.adapter.CustomExpandableAdapter;
 import org.stagex.danmaku.util.ParseUtil;
 import org.stagex.danmaku.util.SourceName;
 import org.stagex.danmaku.util.SystemUtility;
@@ -56,6 +62,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -66,6 +73,7 @@ import android.widget.SeekBar;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -176,7 +184,7 @@ public class PlayerActivity extends Activity implements
 	// 自定义收藏频道数据结构
 	private List<POUserDefChannel> userdef_infos = null;
 	// 自定义频道数据结构
-	private List<ChannelInfo> userload_infos = null;
+//	private List<ChannelInfo> userload_infos = null;
 	private ImageButton mImageButtonList;
 	private ImageButton mImageButtonChannel;
 	private int mSourceNum = 0;
@@ -680,6 +688,9 @@ public class PlayerActivity extends Activity implements
 		mImageButtonChannel.setOnClickListener(this);
 		// =====================================================
 
+		// =====================================================
+		epdListView = (ExpandableListView) findViewById(R.id.sort_list);
+		// =====================================================
 		// 初始化手势
 		initGesture();
 
@@ -1168,9 +1179,32 @@ public class PlayerActivity extends Activity implements
 
 			// 先显示加载提示语
 			channel_list.setVisibility(View.GONE);
+			epdListView.setVisibility(View.GONE);
 			list_load.setVisibility(View.VISIBLE);
 			
 			Log.d(LOGTAG, "=============");
+			
+			// 暂时先清除之前的数据
+			if (userdef_infos != null) {
+				userdef_infos.clear();
+				userdef_infos = null;
+			}
+			
+			// 清除之前的数据
+			if (groupArray == null)
+				groupArray = new ArrayList<String>();
+			else
+				groupArray.clear();
+			if (childArray == null)
+				childArray = new ArrayList<List<ChannelInfo>>();
+			else
+				childArray.clear();
+			
+			// 清除之前的数据
+			if (channel_infos != null) {
+				channel_infos.clear();
+				channel_infos = null;
+			}
 			
 			// TODO 采用线程的方式加载切换的分类节目
 			startRefreshList();
@@ -1191,6 +1225,7 @@ public class PlayerActivity extends Activity implements
 				
 				// 先显示加载提示语
 				channel_list.setVisibility(View.GONE);
+				epdListView.setVisibility(View.GONE);
 				list_load.setVisibility(View.VISIBLE);
 				
 				Log.d(LOGTAG, "=============");
@@ -1224,10 +1259,21 @@ public class PlayerActivity extends Activity implements
 					userdef_infos.clear();
 					userdef_infos = null;
 				}
-				if (userload_infos != null) {
-					userload_infos.clear();
-					userload_infos = null;
-				}
+//				if (userload_infos != null) {
+//					userload_infos.clear();
+//					userload_infos = null;
+//				}
+				// 清除之前的数据
+				if (groupArray == null)
+					groupArray = new ArrayList<String>();
+				else
+					groupArray.clear();
+				if (childArray == null)
+					childArray = new ArrayList<List<ChannelInfo>>();
+				else
+					childArray.clear();
+				
+				// 清除之前的数据
 				if (channel_infos != null) {
 					channel_infos.clear();
 					channel_infos = null;
@@ -1795,45 +1841,68 @@ public class PlayerActivity extends Activity implements
 	 * @param sort
 	 */
 	private void createUserloadChannelList() {
-		
-		ChannelLoadAdapter mSourceAdapter = new ChannelLoadAdapter(this, userload_infos, true);
-		channel_list.setAdapter(mSourceAdapter);
-		// 突出显示当前频道
-		channel_list.setSelection(mChannelIndex);
-		// TODO 用一个全局的变量来记录当前是哪一个频道
-		
-		// 设置监听事件
-		channel_list.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				
+//		
+//		ChannelLoadAdapter mSourceAdapter = new ChannelLoadAdapter(this, userload_infos, true);
+//		channel_list.setAdapter(mSourceAdapter);
+//		// 突出显示当前频道
+//		channel_list.setSelection(mChannelIndex);
+//		// TODO 用一个全局的变量来记录当前是哪一个频道
+//		
+//		// 设置监听事件
+//		channel_list.setOnItemClickListener(new OnItemClickListener() {
+//			@Override
+//			public void onItemClick(AdapterView<?> arg0, View arg1,
+//					int arg2, long arg3) {
+//				
+//				curPlaySort = 0;	// 当前播放的是自定义频道
+//				
+//				mChannelIndex = arg2;
+//				
+//				// TODO Auto-generated method stub
+//				ChannelInfo info = (ChannelInfo) channel_list
+//						.getItemAtPosition(arg2);
+//
+//				mTitleName = info.getName();
+//				reSetUserdefChannelData(info);
+//			}
+//		});
+//		// 增加长按频道收藏功能
+//		channel_list.setOnItemLongClickListener(new OnItemLongClickListener() {
+//
+//			@Override
+//			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+//					int arg2, long arg3) {
+//				ChannelInfo info = (ChannelInfo) channel_list
+//						.getItemAtPosition(arg2);
+//				// 转换为数据库数据结构
+//				POUserDefChannel POinfo = new POUserDefChannel(info, true);
+//				showFavMsg(arg1, POinfo);
+//				return true;
+//			}
+//		});
+		// 实现自定义节目的分类
+        
+	    final CustomExpandableAdapter adapter = new CustomExpandableAdapter(this, groupArray, childArray, true);
+	    epdListView.setAdapter(adapter);
+        
+        //设置item点击的监听器
+	    epdListView.setOnChildClickListener(new OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                    int groupPosition, int childPosition, long id) {
+
 				curPlaySort = 0;	// 当前播放的是自定义频道
 				
-				mChannelIndex = arg2;
-				
-				// TODO Auto-generated method stub
-				ChannelInfo info = (ChannelInfo) channel_list
-						.getItemAtPosition(arg2);
-
-				mTitleName = info.getName();
-				reSetUserdefChannelData(info);
-			}
-		});
-		// 增加长按频道收藏功能
-		channel_list.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				ChannelInfo info = (ChannelInfo) channel_list
-						.getItemAtPosition(arg2);
-				// 转换为数据库数据结构
-				POUserDefChannel POinfo = new POUserDefChannel(info, true);
-				showFavMsg(arg1, POinfo);
-				return true;
-			}
-		});
+				mChannelIndex = 0;		// TODO 暂时复位
+            	
+                ChannelInfo info = (ChannelInfo)adapter.getChild(groupPosition, childPosition);
+                
+                mTitleName = info.getName();
+                reSetUserdefChannelData(info);
+                return false;
+            }
+        });
 	}
 	
 	/**
@@ -2069,11 +2138,17 @@ public class PlayerActivity extends Activity implements
 				// 判断是自定义频道、收藏频道、官方频道等
 				if (isSelfTV) {
 					// 自定义加载频道
-					if (userload_infos == null) {
-						// 解析本地的自定义列表
-						String path = Environment.getExternalStorageDirectory().getPath()
-								+ "/kekePlayer/tvlist.txt";
-						userload_infos = ParseUtil.parseDef(path);
+//					if (userload_infos == null) {
+//						// 解析本地的自定义列表
+//						String path = Environment.getExternalStorageDirectory().getPath()
+//								+ "/kekePlayer/tvlist.txt";
+//						userload_infos = ParseUtil.parseDef(path);
+//					}
+			        String path = Environment.getExternalStorageDirectory().getPath()
+							+ "/kekePlayer/tvlist.txt";
+					File listFile = new File(path);
+					if (listFile.exists()) {
+						parseDef(path);
 					}
 				} else if (isSelfFavTV) {
 					// 如果是自定义频道，数据结构变了
@@ -2081,7 +2156,7 @@ public class PlayerActivity extends Activity implements
 						userdef_infos = ChannelListBusiness.getAllDefFavChannels();
 					}
 				} else {
-					if (isFavSort)
+					if (isFavSort)		// FIXME 2013-09-28 如果当前定位在收藏界面，取消了收藏频道，那么需要重新加载
 						channel_infos = ChannelListBusiness.getAllFavChannels();
 					// TODO 清除数据（是否可以只查询一次）
 					else if (channel_infos == null) {
@@ -2115,6 +2190,9 @@ public class PlayerActivity extends Activity implements
 					// 判断是自定义频道、收藏频道、官方频道等
 					if (isSelfTV) {
 						// 自定义加载频道
+					    epdListView.setVisibility(View.VISIBLE);
+					    channel_list.setVisibility(View.GONE);
+					    
 						createUserloadChannelList();
 					} else if (isSelfFavTV) {
 						/* 获取所有的自定义收藏频道 */
@@ -2150,4 +2228,182 @@ public class PlayerActivity extends Activity implements
 		mEventHandler2.sendMessage(msg);
 	}
 	//======================================================
+	
+	// 重写自定义列表的屏幕切台，便于分类
+	// ===============================
+    private List<String> groupArray;
+    private List<List<ChannelInfo>> childArray;
+    
+    ExpandableListView epdListView;  
+	
+ 	// 解析本地自定义的列表
+ 		// TODO 2013-09-26
+ 		// 为了加强自定义的分类功能，采用数据库暂存所有的自定义
+ 		// 的数据，每次加载时，重新入数据库？或者查看自定义文件
+ 		// 是否作出了修改，若修改了，则清除数据库数据，重新装载
+ 		private void parseDef(String tvList) {
+ 			List<ChannelInfo> list = new ArrayList<ChannelInfo>();
+ 			
+ 			int nums = 0;
+ 			int groupIndex = -1;
+ 			
+ 			String code = "GBK";
+ 			String privName = null;
+ 			String sortName = null;
+ 			String privSort = null;
+ 			String tvName = null;
+ 			String first_url = null;
+ 			List<String> list_url = new ArrayList<String>();
+
+ 			// FIXBUG 2013-07-28
+ 			Boolean dropLast = true;
+
+ 			Boolean canSort = false;
+ 			
+ 			try {
+ 				// 探测txt文件的编码格式
+ 				code = ParseUtil.codeString(tvList);
+ 			} catch (Exception e1) {
+ 				// TODO Auto-generated catch block
+ 				e1.printStackTrace();
+ 			}
+ 			
+ 			try {
+ 				InputStream is = new FileInputStream(tvList);
+ 				InputStreamReader ir = new InputStreamReader(is, code);
+ 				BufferedReader br = new BufferedReader(ir);
+ 				try {
+ 					while (true) {
+ 						String line = br.readLine();
+ 						if (line == null) {
+ 							// FIXBUG 2013-07-28
+ 							if (dropLast != true) {
+ 								// 最后一组节目源
+ 								String[] second_url = new String[list_url.size()];
+ 								list_url.toArray(second_url);
+ 								ChannelInfo info = new ChannelInfo(0, privName,
+ 										null, null, null, first_url, second_url,
+ 										null, null);
+ 								list.add(info);
+ 							}
+ 							
+ 							childArray.add(groupIndex, list);
+ 							
+ 							Log.d("sort", "===>last size = " + list.size());
+ 							
+ 							break;
+ 						}
+
+ 						// FIXBUG 2013-07-28
+ 						dropLast = false;
+
+ 						// 如果不符合要求（节目名和节目地址以英文逗号隔开）直接忽略该行
+ 						// FIXME bug#0019
+ 						String[] pair = line.split(",");
+ 						int strLen = pair.length;
+ 						if (strLen < 2) {
+ 							// FIXBUG 2013-07-28
+ 							dropLast = true;
+ 							continue;
+ 						}
+ 						nums++;
+ 						String scName = pair[0].trim();
+ 						String url = null;
+ 						if (strLen == 2) {
+ 							url = pair[1].trim();
+ 						} else {
+ 							StringBuffer urlBuf = new StringBuffer();
+ 							for (int i = 1; i < strLen; i++) {
+ 								if (i >= 2)
+ 									urlBuf.append(",");
+ 								urlBuf.append(pair[i].trim());
+ 							}
+ 							url = urlBuf.toString();
+ 						}
+ 						
+ 						// 2013-09-24 提取出自定义的分类名称
+ 						String[] pair2 = scName.split("_");
+ 						if (pair2.length != 2) {
+ 							// 如果没有分类名称，则统一为"其他"
+ 							sortName = "未分类";
+ 							tvName = scName;
+ 							// TODO 2013-09-27
+ 							// 需要对没有分类的自定义作出区别？？？
+ 							//end
+ 						} else {
+ 							tvName = pair2[1].trim();
+ 							sortName = pair2[0].trim();
+ 						}
+ 						// TODO 暂时按照顺序来比较，提取分类
+ 						if (privSort == null) {
+ 							// 第一次出现，直接存储，后续以文件存储？
+ 							privSort = sortName;
+ 							groupIndex++;
+ 							groupArray.add(privSort);
+ 							
+ 							list.clear();
+ 						} else {
+ 							// 将新的分类存储起来
+ 							if (sortName.equals(privSort) == false) {
+ 								Log.i("sort", "===> sort name $$$ " + privSort);
+ 								privSort = sortName;
+ 								
+ 								Log.i("sort", "===> sort name = " + privSort);
+ 								
+ 								groupArray.add(privSort);
+
+ 								canSort = true;
+
+ 							}
+ 						}
+ 						// end
+ 						
+ 						// TODO 合并相同节目名称的源
+ 						if (tvName.equals(privName) && !canSort)
+ 							list_url.add(url);
+ 						else {
+ 							if (privName != null) {
+ 								// 保存节目源
+ 								String[] second_url = new String[list_url.size()];
+ 								list_url.toArray(second_url);
+ 								ChannelInfo info = new ChannelInfo(0, privName,
+ 										null, sortName, null, first_url, second_url,
+ 										null, null);
+ 								list.add(info);
+ 							}
+ 							
+ 							list_url.clear();
+ 							first_url = url;
+ 							privName = tvName;
+ 						}
+ 						// end
+ 						
+ 						// 保存某一分类数据
+ 						if (canSort) {
+ 							childArray.add(groupIndex, list);
+ 							
+ 							groupIndex++;
+ 							
+ 							Log.d("sort", "===>sort size = " + list.size());
+ 							
+ 							list = new ArrayList<ChannelInfo>();
+ 							canSort = false;
+ 						}
+ 						// end
+ 						
+ 					}
+ 				} finally {
+ 					br.close();
+ 					ir.close();
+ 					is.close();
+ 				}
+ 			} catch (Exception e) {
+ 				// TODO Auto-generated catch block
+ 				e.printStackTrace();
+ 			}
+
+ 			Log.d("ParseUtil", "user define tvlist nums = " + nums);
+ 		}
+ // ===============================
+	
 }
