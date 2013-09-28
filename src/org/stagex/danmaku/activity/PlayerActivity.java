@@ -238,9 +238,11 @@ public class PlayerActivity extends Activity implements
 	private Boolean isSelfFavTV = false;
 
 	// 播放界面的频道分类切换
-	private String[] chSorts= {"[1].央视", "[2].卫视", "[3].地方", "[4].体育", "[5].港澳台", "[6].其他"};
+	private String[] chSorts= {"[1].央视", "[2].卫视", "[3].地方", "[4].体育", "[5].港澳台", "[6].其他", "[7].官方收藏", "[8].自定义", "[9].自定义收藏"};
 	private int chSortNum = chSorts.length;
 	private int curChSortIndex = 0;
+	// 当前播放的分类，与当前切换的分类是不同的
+	private int curPlaySort = 0;		// 主要是区分是否是自定义, 0是自定义，1是官方频道
 	private Boolean isListLoading = false;
 	
 	/**
@@ -717,11 +719,18 @@ public class PlayerActivity extends Activity implements
 			channelSort = intent.getStringExtra("channelSort");
 			
 			// 确认当前切换分类数组的序号
-			if (isFavSort || isSelfTV ||isSelfFavTV ) {
-				// nothing
+			// FIXME 2013-09-28 需要自定义频道传入相应的序列号
+
+			if (channelSort == null)
+				channelSort = "8";		//主要针对输入的网址行为，跳转到自定义频道
+			curChSortIndex = Integer.parseInt(channelSort) - 1;
+			
+			if (isSelfTV || isSelfFavTV ) {
+				curPlaySort = 0;
 			} else {
-				curChSortIndex = Integer.parseInt(channelSort) - 1;
+				curPlaySort = 1;
 			}
+			
 		}
 		if (mPlayListArray == null || mPlayListArray.size() == 0) {
 			Log.e(LOGTAG, "initializeData(): empty");
@@ -763,9 +772,15 @@ public class PlayerActivity extends Activity implements
 		}
 
 		// TODO 2013-08-01 自定义频道暂时不支持在播放界面收藏
-		if (isSelfTV || isSelfFavTV) {
+		// TODO 2013-09-28 增加了播放界面频道切换功能之后，需要
+		// 修改该逻辑，根据专门的标志位切换图标
+//		if (isSelfTV || isSelfFavTV) {
+		if (curPlaySort == 0) {
 			mImageButtonStar.setVisibility(View.GONE);
 			mSelfdef.setVisibility(View.VISIBLE);
+		} else {
+			mImageButtonStar.setVisibility(View.VISIBLE);
+			mSelfdef.setVisibility(View.GONE);
 		}
 
 		mImageButtonTogglePlay.setVisibility(View.VISIBLE);
@@ -1073,8 +1088,11 @@ public class PlayerActivity extends Activity implements
 		int id = v.getId();
 		switch (id) {
 		case R.id.player_button_star: {
+			// TODO 2013-09-28 加上了播放界面的分类切台之后，收藏的
+			// 逻辑需要修改
+			if (curPlaySort == 0) {
 			// TODO 决定是否收藏该频道
-			if (isSelfTV || isSelfFavTV) {
+//			if (isSelfTV || isSelfFavTV) {
 				// 用户自定义的频道
 				// TODO 2013-08-01 暂时不支持自定义的频道在播放界面收藏
 				// updateSelfFavDatabase(mTitleName);
@@ -1139,9 +1157,9 @@ public class PlayerActivity extends Activity implements
 			break;
 		}
 		case R.id.player_button_channel: {
-			if (isFavSort || isSelfTV ||isSelfFavTV )
-				mSortName.setText(sortString);
-			else
+//			if (isFavSort || isSelfTV ||isSelfFavTV )
+//				mSortName.setText(sortString);
+//			else
 				mSortName.setText(chSorts[curChSortIndex]);
 			// TODO 增加播放界面切源和切台
 			mLinearLayoutChannelList.setVisibility(View.VISIBLE);
@@ -1168,8 +1186,8 @@ public class PlayerActivity extends Activity implements
 				isListLoading = true;
 				// 目前支持六大分类的切台操作
 				// TODO 暂时去掉对自定义和自定义收藏频道的分类切换
-				if (isFavSort || isSelfTV ||isSelfFavTV )
-					break;
+//				if (isFavSort || isSelfTV ||isSelfFavTV )
+//					break;
 				
 				// 先显示加载提示语
 				channel_list.setVisibility(View.GONE);
@@ -1182,7 +1200,34 @@ public class PlayerActivity extends Activity implements
 					curChSortIndex = 0;
 				}
 				
+				// 根据curChSortIndex大小，判断后面三个分类
+				if (curChSortIndex == 6) {
+					isFavSort = true;
+					isSelfTV = false;
+					isSelfFavTV = false;
+				} else if  (curChSortIndex == 7) {
+					isSelfTV = true;
+					isFavSort = false;
+					isSelfFavTV = false;
+				} else if (curChSortIndex == 8) {
+					isSelfFavTV = true;
+					isFavSort = false;
+					isSelfTV = false;
+				} else {
+					isFavSort = false;
+					isSelfTV = false;
+					isSelfFavTV = false;
+				}
+				
 				// 暂时先清除之前的数据
+				if (userdef_infos != null) {
+					userdef_infos.clear();
+					userdef_infos = null;
+				}
+				if (userload_infos != null) {
+					userload_infos.clear();
+					userload_infos = null;
+				}
 				if (channel_infos != null) {
 					channel_infos.clear();
 					channel_infos = null;
@@ -1763,6 +1808,8 @@ public class PlayerActivity extends Activity implements
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				
+				curPlaySort = 0;	// 当前播放的是自定义频道
+				
 				mChannelIndex = arg2;
 				
 				// TODO Auto-generated method stub
@@ -1807,6 +1854,8 @@ public class PlayerActivity extends Activity implements
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				
+				curPlaySort = 0;	// 当前播放的是自定义频道
 				
 				mChannelIndex = arg2;
 				
@@ -1856,6 +1905,8 @@ public class PlayerActivity extends Activity implements
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				
+				curPlaySort = 1;	// 当前播放的是官方频道
 				
 				mChannelIndex = arg2;
 				

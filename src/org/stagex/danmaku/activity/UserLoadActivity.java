@@ -228,6 +228,8 @@ public class UserLoadActivity extends Activity {
 		intent.putExtra("channelStar", channel_star);
 		intent.putExtra("sortString", sortName);
 		intent.putExtra("isSelfTV", true);
+		// FIXME 2013-09-28 增加了播放界面的分类切台，需要分类序号
+		intent.putExtra("channelSort", "8");
 		intent.putExtra(
 				"source",
 				"地址" + Integer.toString(1) + "："
