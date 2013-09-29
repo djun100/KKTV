@@ -228,9 +228,4 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="MenuDrawerStyle" parent="Widget.MenuDrawer">
-        <item name="mdActiveIndicator">@drawable/menu_arrow</item>
-        <item name="mdMenuSize">250dp</item>
-    </style>
-
 </resources>
