@@ -17,6 +17,8 @@ import org.stagex.danmaku.adapter.ChannelListAdapter;
 import org.stagex.danmaku.adapter.ChannelLoadAdapter;
 import org.stagex.danmaku.adapter.ChannelSourceAdapter;
 import org.stagex.danmaku.adapter.CustomExpandableAdapter;
+import org.stagex.danmaku.adapter.CustomExpandableAdapterDF;
+import org.stagex.danmaku.adapter.ProvinceInfo;
 import org.stagex.danmaku.util.ParseUtil;
 import org.stagex.danmaku.util.SourceName;
 import org.stagex.danmaku.util.SystemUtility;
@@ -246,7 +248,7 @@ public class PlayerActivity extends Activity implements
 	private Boolean isSelfFavTV = false;
 
 	// 播放界面的频道分类切换
-	private String[] chSorts= {"[1].央视", "[2].卫视", "[3].地方", "[4].体育", "[5].港澳台", "[6].其他", "[7].官方收藏", "[8].自定义", "[9].自定义收藏"};
+	private String[] chSorts= {"[1].央视", "[2].卫视", "[3].地方", "[4].体育", "[5].港澳台", "[6].其他", "[7].收藏", "[8].自定义", "[9].自定义收藏"};
 	private int chSortNum = chSorts.length;
 	private int curChSortIndex = 0;
 	// 当前播放的分类，与当前切换的分类是不同的
@@ -1190,7 +1192,7 @@ public class PlayerActivity extends Activity implements
 				userdef_infos = null;
 			}
 			
-			// 清除之前的数据
+			// TODO 清除之前的数据（自定义的分类）
 			if (groupArray == null)
 				groupArray = new ArrayList<String>();
 			else
@@ -1199,6 +1201,17 @@ public class PlayerActivity extends Activity implements
 				childArray = new ArrayList<List<ChannelInfo>>();
 			else
 				childArray.clear();
+			
+			// TODO 清除之前的数据（官方地方台的分类）
+			// FIXME 为提高之后的加载速度，就暂时不清除数据了
+			if (groupArrayDF == null)
+				groupArrayDF = new ArrayList<ProvinceInfo>();
+//			else
+//				groupArrayDF.clear();
+			if (childArrayDF == null)
+				childArrayDF = new ArrayList<List<POChannelList>>();
+//			else
+//				childArrayDF.clear();
 			
 			// 清除之前的数据
 			if (channel_infos != null) {
@@ -1272,6 +1285,17 @@ public class PlayerActivity extends Activity implements
 					childArray = new ArrayList<List<ChannelInfo>>();
 				else
 					childArray.clear();
+				
+				// TODO 清除之前的数据（官方地方台的分类）
+				// FIXME 为提高之后的加载速度，就暂时不清除数据了
+				if (groupArrayDF == null)
+					groupArrayDF = new ArrayList<ProvinceInfo>();
+//				else
+//					groupArrayDF.clear();
+				if (childArrayDF == null)
+					childArrayDF = new ArrayList<List<POChannelList>>();
+//				else
+//					childArrayDF.clear();
 				
 				// 清除之前的数据
 				if (channel_infos != null) {
@@ -1957,6 +1981,36 @@ public class PlayerActivity extends Activity implements
 	}
 	
 	/**
+	 * 官方频道的地方台分类数据，切台
+	 * @param sort
+	 */
+	private void createChannelListDF() {
+        
+	    final CustomExpandableAdapterDF adapter = new CustomExpandableAdapterDF(this, groupArrayDF, childArrayDF);
+	    epdListView.setAdapter(adapter);
+        
+        //设置item点击的监听器
+	    epdListView.setOnChildClickListener(new OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                    int groupPosition, int childPosition, long id) {
+
+				curPlaySort = 1;	// 当前播放的是官方频道
+				
+				mChannelIndex = 0;		// TODO 暂时复位
+            	
+				POChannelList info = (POChannelList)adapter.getChild(groupPosition, childPosition);
+                
+                mTitleName = info.name;
+                reSetChannelData(info);
+                
+                return false;
+            }
+        });
+	}
+	
+	/**
 	 * 官方(收藏)频道的数据，切台
 	 * @param sort
 	 */
@@ -2161,7 +2215,21 @@ public class PlayerActivity extends Activity implements
 					// TODO 清除数据（是否可以只查询一次）
 					else if (channel_infos == null) {
 						// 根据JSON里面的types来区分直播频道分类
-						channel_infos = ChannelListBusiness.getAllSearchChannels("types", String.valueOf(curChSortIndex + 1));
+						
+						// TODO 2013-09-29
+						// 进一步区分官方的地方频道，也要进行分类
+						if (curChSortIndex == 2) {
+							// 先解析出所有的地方台的分类名称
+							// FIXME 为提高之后的加载速度，就暂时不清除数据了
+							if (isDFhasLoad == false) {
+								groupArrayDF = ParseUtil.getProvinceNames(PlayerActivity.this);
+								// 循环查找出所有的地方台分类
+								parseDF();
+							}
+						} else {
+						// end
+							channel_infos = ChannelListBusiness.getAllSearchChannels("types", String.valueOf(curChSortIndex + 1));
+						}
 					}
 				}
 				onRefreshEnd();
@@ -2198,7 +2266,14 @@ public class PlayerActivity extends Activity implements
 						/* 获取所有的自定义收藏频道 */
 						createUserdefChannelList();
 					} else {
-						createChannelList();
+						// TODO 2013-09-29 需要区分官方频道的地方台分类
+						if (curChSortIndex == 2) {
+						    epdListView.setVisibility(View.VISIBLE);
+						    channel_list.setVisibility(View.GONE);
+							createChannelListDF();
+						} else {
+							createChannelList();
+						}
 					}
 					
 					isListLoading = false;
@@ -2231,8 +2306,8 @@ public class PlayerActivity extends Activity implements
 	
 	// 重写自定义列表的屏幕切台，便于分类
 	// ===============================
-    private List<String> groupArray;
-    private List<List<ChannelInfo>> childArray;
+    private List<String> groupArray = null;
+    private List<List<ChannelInfo>> childArray = null;
     
     ExpandableListView epdListView;  
 	
@@ -2404,6 +2479,37 @@ public class PlayerActivity extends Activity implements
 
  			Log.d("ParseUtil", "user define tvlist nums = " + nums);
  		}
+ // ===============================
+ 		
+ 	// 重写自定义列表的屏幕切台，便于分类
+	// ===============================
+    private List<ProvinceInfo> groupArrayDF = null;
+    private List<List<POChannelList>> childArrayDF = null;
+    private Boolean isDFhasLoad = false;
+    
+    //ExpandableListView epdListView;  
+	
+ 	// 解析官方频道数据库中的地方台分类的列表
+	// TODO 2013-09-29
+	// 为了加强地方频道的分类功能，采用数据库暂存所有的自定义
+	// 的数据，每次加载时，重新入数据库？或者查看自定义文件
+	// 是否作出了修改，若修改了，则清除数据库数据，重新装载
+	private void parseDF() {
+		int sortNum = groupArrayDF.size();
+		int index = 0;
+		String sortName = null;
+		for (index = 0; index < sortNum; index++) {
+			sortName = groupArrayDF.get(index).getProvinceName();
+			List<POChannelList> listChannel = new ArrayList<POChannelList>();
+			
+			listChannel = ChannelListBusiness.getAllSearchChannels(
+					"province_name", sortName);
+			
+			childArrayDF.add(index, listChannel);
+			
+		}
+		isDFhasLoad = true;
+	}
  // ===============================
 	
 }
