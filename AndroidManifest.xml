@@ -86,7 +86,7 @@
         <!-- 以下属性为分发渠道ID,编码表参见本文档末附表 -->
         <meta-data
             android:name="WAPS_PID"
-            android:value="xiaomi" />
+            android:value="WAPS" />
 
         <activity
             android:name="org.stagex.danmaku.activity.SetupActivity"

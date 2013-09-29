@@ -2364,7 +2364,7 @@ public class PlayerActivity extends Activity implements
  							
  							childArray.add(groupIndex, list);
  							
- 							Log.d("sort", "===>last size = " + list.size());
+// 							Log.d("sort", "===>last size = " + list.size());
  							
  							break;
  						}
@@ -2420,10 +2420,10 @@ public class PlayerActivity extends Activity implements
  						} else {
  							// 将新的分类存储起来
  							if (sortName.equals(privSort) == false) {
- 								Log.i("sort", "===> sort name $$$ " + privSort);
+// 								Log.i("sort", "===> sort name $$$ " + privSort);
  								privSort = sortName;
  								
- 								Log.i("sort", "===> sort name = " + privSort);
+// 								Log.i("sort", "===> sort name = " + privSort);
  								
  								groupArray.add(privSort);
 
@@ -2459,7 +2459,7 @@ public class PlayerActivity extends Activity implements
  							
  							groupIndex++;
  							
- 							Log.d("sort", "===>sort size = " + list.size());
+// 							Log.d("sort", "===>sort size = " + list.size());
  							
  							list = new ArrayList<ChannelInfo>();
  							canSort = false;
