@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.keke.player"
     android:versionCode="10"
-    android:versionName="1.4.1" >
+    android:versionName="1.4.2-beta" >
 
     <application
         android:name="org.stagex.danmaku.OPlayerApplication"
