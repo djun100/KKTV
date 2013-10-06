@@ -79,7 +79,7 @@
             android:layout_marginLeft="30dip"
             android:layout_marginRight="30dip"
             android:layout_marginTop="4dip"
-            android:background="@drawable/sel_list"
+            android:background="@drawable/sel_prgam"
             android:gravity="center_vertical" />
 
         <TextView
@@ -92,7 +92,7 @@
             android:layout_marginTop="4dip"
             android:gravity="center_vertical"
             android:text="自定义"
-            android:textColor="@color/blue"
+            android:textColor="@color/white"
             android:textSize="15dp"
             android:visibility="gone" />
 
@@ -182,7 +182,7 @@
             android:layout_marginLeft="30dip"
             android:layout_marginRight="30dip"
             android:layout_marginTop="4dip"
-            android:background="@drawable/ic_screen_pressed"
+            android:background="@drawable/sel_screen"
             android:gravity="center_vertical" />
 
         <ImageButton

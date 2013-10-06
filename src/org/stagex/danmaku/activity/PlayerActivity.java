@@ -812,8 +812,9 @@ public class PlayerActivity extends Activity implements
 		mImageButtonNext.setVisibility(View.GONE);
 		// end
 		mImageButtonSwitchAspectRatio.setVisibility(View.VISIBLE);
-		resource = SystemUtility.getDrawableId("btn_aspect_ratio_0");
-		mImageButtonSwitchAspectRatio.setBackgroundResource(resource);
+		// TODO 2013-10-06 暂时去掉这部分代码，改为信息提醒
+//		resource = SystemUtility.getDrawableId("btn_aspect_ratio_0");
+//		mImageButtonSwitchAspectRatio.setBackgroundResource(resource);
 		/* */
 		mLinearLayoutControlBar.setVisibility(View.GONE);
 	}
@@ -1162,7 +1163,8 @@ public class PlayerActivity extends Activity implements
 								: mSurfaceViewVlc, mAspectRatio);
 			String name = String.format("btn_aspect_ratio_%d", mAspectRatio);
 			int resource = SystemUtility.getDrawableId(name);
-			mImageButtonSwitchAspectRatio.setBackgroundResource(resource);
+			// TODO 2013-10-06 暂时去掉这部分代码，改为信息提醒
+//			mImageButtonSwitchAspectRatio.setBackgroundResource(resource);
 			break;
 		}
 		case R.id.player_button_list: {
