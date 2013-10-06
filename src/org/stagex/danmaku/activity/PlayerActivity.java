@@ -176,6 +176,8 @@ public class PlayerActivity extends Activity implements
 	private LinearLayout mLinearLayoutSourceList;
 	private RelativeLayout mLinearLayoutChannelList;
 	private TextView mSortName;
+	private ImageView mSortLeft;
+	private ImageView mSortRight;
 	private String sortString;
 	private Boolean isFavSort = false;
 	private ListView source_list;
@@ -248,7 +250,7 @@ public class PlayerActivity extends Activity implements
 	private Boolean isSelfFavTV = false;
 
 	// 播放界面的频道分类切换
-	private String[] chSorts= {"[1].央视", "[2].卫视", "[3].地方", "[4].体育", "[5].港澳台", "[6].其他", "[7].收藏", "[8].自定义", "[9].自定义收藏"};
+	private String[] chSorts= {"1.央视", "2.卫视", "3.地方", "4.体育", "5.港澳台", "6.其他", "7.收藏", "8.自定义", "9.自定义收藏"};
 	private int chSortNum = chSorts.length;
 	private int curChSortIndex = 0;
 	// 当前播放的分类，与当前切换的分类是不同的
@@ -684,6 +686,11 @@ public class PlayerActivity extends Activity implements
 		mSortName.setOnClickListener(this);
 		channel_list = (ListView) findViewById(R.id.channel_list);
 		list_load = (TextView) findViewById(R.id.load_name);
+		// 左右滑动，替换之前的mSortName的右滑动
+		mSortLeft = (ImageView) findViewById(R.id.sort_left);
+		mSortLeft.setOnClickListener(this);
+		mSortRight = (ImageView) findViewById(R.id.sort_right);
+		mSortRight.setOnClickListener(this);
 		// 防止滑动黑屏
 		channel_list.setCacheColorHint(Color.TRANSPARENT);
 		mImageButtonChannel = (ImageButton) findViewById(R.id.player_button_channel);
@@ -1225,88 +1232,35 @@ public class PlayerActivity extends Activity implements
 			break;
 		}
 		case R.id.sort_name: {
+			// 提醒用户点击左右两边的箭头
+			Toast.makeText(PlayerActivity.this, "请点击两边的左右箭头切换分类", Toast.LENGTH_SHORT).show();
+			break;
+		}
+		case R.id.sort_right: {
 			// 控制切换的速度
 			if (isListLoading)
 				Toast.makeText(PlayerActivity.this, "请等待加载完毕",
 	                    Toast.LENGTH_SHORT).show();
 			else {
-				isListLoading = true;
-				// 目前支持六大分类的切台操作
-				// TODO 暂时去掉对自定义和自定义收藏频道的分类切换
-//				if (isFavSort || isSelfTV ||isSelfFavTV )
-//					break;
-				
-				// 先显示加载提示语
-				channel_list.setVisibility(View.GONE);
-				epdListView.setVisibility(View.GONE);
-				list_load.setVisibility(View.VISIBLE);
-				
-				Log.d(LOGTAG, "=============");
-				
 				curChSortIndex++;
 				if ((curChSortIndex + 1) > chSortNum) {
 					curChSortIndex = 0;
 				}
-				
-				// 根据curChSortIndex大小，判断后面三个分类
-				if (curChSortIndex == 6) {
-					isFavSort = true;
-					isSelfTV = false;
-					isSelfFavTV = false;
-				} else if  (curChSortIndex == 7) {
-					isSelfTV = true;
-					isFavSort = false;
-					isSelfFavTV = false;
-				} else if (curChSortIndex == 8) {
-					isSelfFavTV = true;
-					isFavSort = false;
-					isSelfTV = false;
-				} else {
-					isFavSort = false;
-					isSelfTV = false;
-					isSelfFavTV = false;
+				sortNameChange();
+			}
+			break;
+		}
+		case R.id.sort_left: {
+			// 控制切换的速度
+			if (isListLoading)
+				Toast.makeText(PlayerActivity.this, "请等待加载完毕",
+	                    Toast.LENGTH_SHORT).show();
+			else {
+				curChSortIndex--;
+				if (curChSortIndex < 0) {
+					curChSortIndex = chSortNum - 1;
 				}
-				
-				// 暂时先清除之前的数据
-				if (userdef_infos != null) {
-					userdef_infos.clear();
-					userdef_infos = null;
-				}
-//				if (userload_infos != null) {
-//					userload_infos.clear();
-//					userload_infos = null;
-//				}
-				// 清除之前的数据
-				if (groupArray == null)
-					groupArray = new ArrayList<String>();
-				else
-					groupArray.clear();
-				if (childArray == null)
-					childArray = new ArrayList<List<ChannelInfo>>();
-				else
-					childArray.clear();
-				
-				// TODO 清除之前的数据（官方地方台的分类）
-				// FIXME 为提高之后的加载速度，就暂时不清除数据了
-				if (groupArrayDF == null)
-					groupArrayDF = new ArrayList<ProvinceInfo>();
-//				else
-//					groupArrayDF.clear();
-				if (childArrayDF == null)
-					childArrayDF = new ArrayList<List<POChannelList>>();
-//				else
-//					childArrayDF.clear();
-				
-				// 清除之前的数据
-				if (channel_infos != null) {
-					channel_infos.clear();
-					channel_infos = null;
-				}
-				
-				// TODO 采用线程的方式加载切换的分类节目
-				startRefreshList();
-	
-				mSortName.setText(chSorts[curChSortIndex]);
+				sortNameChange();
 			}
 			break;
 		}
@@ -1315,6 +1269,80 @@ public class PlayerActivity extends Activity implements
 		}
 	}
 
+	/**
+	 * 播放界面的分类切换的公共代码
+	 */
+	private void sortNameChange() {
+		isListLoading = true;
+		
+		// 先显示加载提示语
+		channel_list.setVisibility(View.GONE);
+		epdListView.setVisibility(View.GONE);
+		list_load.setVisibility(View.VISIBLE);
+		
+		Log.d(LOGTAG, "=============");
+		
+		// 根据curChSortIndex大小，判断后面三个分类
+		if (curChSortIndex == 6) {
+			isFavSort = true;
+			isSelfTV = false;
+			isSelfFavTV = false;
+		} else if  (curChSortIndex == 7) {
+			isSelfTV = true;
+			isFavSort = false;
+			isSelfFavTV = false;
+		} else if (curChSortIndex == 8) {
+			isSelfFavTV = true;
+			isFavSort = false;
+			isSelfTV = false;
+		} else {
+			isFavSort = false;
+			isSelfTV = false;
+			isSelfFavTV = false;
+		}
+		
+		// 暂时先清除之前的数据
+		if (userdef_infos != null) {
+			userdef_infos.clear();
+			userdef_infos = null;
+		}
+//		if (userload_infos != null) {
+//			userload_infos.clear();
+//			userload_infos = null;
+//		}
+		// 清除之前的数据
+		if (groupArray == null)
+			groupArray = new ArrayList<String>();
+		else
+			groupArray.clear();
+		if (childArray == null)
+			childArray = new ArrayList<List<ChannelInfo>>();
+		else
+			childArray.clear();
+		
+		// TODO 清除之前的数据（官方地方台的分类）
+		// FIXME 为提高之后的加载速度，就暂时不清除数据了
+		if (groupArrayDF == null)
+			groupArrayDF = new ArrayList<ProvinceInfo>();
+//		else
+//			groupArrayDF.clear();
+		if (childArrayDF == null)
+			childArrayDF = new ArrayList<List<POChannelList>>();
+//		else
+//			childArrayDF.clear();
+		
+		// 清除之前的数据
+		if (channel_infos != null) {
+			channel_infos.clear();
+			channel_infos = null;
+		}
+		
+		// TODO 采用线程的方式加载切换的分类节目
+		startRefreshList();
+
+		mSortName.setText(chSorts[curChSortIndex]);
+	}
+	
 	/**
 	 * seekbar的响应方法
 	 * 
