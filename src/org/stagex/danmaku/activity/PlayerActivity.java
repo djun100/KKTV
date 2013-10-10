@@ -53,7 +53,9 @@ import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -90,13 +92,13 @@ public class PlayerActivity extends Activity implements
 
 	static final String LOGTAG = "PlayerActivity";
 
-	private static final int SURFACE_NONE = 0;
-	private static final int SURFACE_FILL = 1;
-	private static final int SURFACE_ORIG = 2;
-	private static final int SURFACE_4_3 = 3;
-	private static final int SURFACE_16_9 = 4;
-	private static final int SURFACE_16_10 = 5;
-	private static final int SURFACE_MAX = 6;
+//	private static final int SURFACE_NONE = 0;
+	private static final int SURFACE_FILL = 0;
+	private static final int SURFACE_ORIG = 1;
+	private static final int SURFACE_4_3 = 2;
+	private static final int SURFACE_16_9 = 3;
+	private static final int SURFACE_16_10 = 4;
+	private static final int SURFACE_MAX = 5;
 
 	private static final int MEDIA_PLAYER_BUFFERING_UPDATE = 0x4001;
 	private static final int MEDIA_PLAYER_COMPLETION = 0x4002;
@@ -161,7 +163,7 @@ public class PlayerActivity extends Activity implements
 	private int mTime = -1;
 	private int mLength = -1;
 	private boolean mCanSeek = true;
-	private int mAspectRatio = 1; // 直接全屏
+	private int mAspectRatio = 0; // 直接全屏
 
 	/* title name */
 	private String mTitleName;
@@ -256,6 +258,45 @@ public class PlayerActivity extends Activity implements
 	// 当前播放的分类，与当前切换的分类是不同的
 	private int curPlaySort = 0;		// 主要是区分是否是自定义, 0是自定义，1是官方频道
 	private Boolean isListLoading = false;
+	
+	// 自定义的toast界面
+	private TextView customToastText;
+	private View customToastLayout;
+	private String ratioView[] = {"全屏", "原始", "4：3", "16：9", "16：10"};
+	private Toast customToast;
+	//================================================
+	/**
+	 * 初始化自定义的Toast界面
+	 */
+	public void initCustomToast() {
+		//获取LayoutInflater对象，该对象能把XML文件转换为与之一直的View对象
+        LayoutInflater inflater = getLayoutInflater();
+        //根据指定的布局文件创建一个具有层级关系的View对象
+        //第二个参数为View对象的根节点，即LinearLayout的ID
+        customToastLayout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+          
+        //查找控件
+        //注意是在layout中查找
+        customToastText = (TextView) customToastLayout.findViewById(R.id.text);
+        
+        customToast = new Toast(getApplicationContext());
+        //设置Toast的位置  
+        customToast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        customToast.setDuration(Toast.LENGTH_SHORT);
+		 
+        //让Toast显示为我们自定义的样子  
+		customToast.setView(customToastLayout);
+	}
+	
+	/**
+	 * 显示自定义Toast界面
+	 */
+	public void showCustomToast(String value) {
+		customToastText.setText(value);
+
+		customToast.show();
+	}
+	//================================================
 	
 	/**
 	 * 判断使用的解码接口
@@ -770,7 +811,7 @@ public class PlayerActivity extends Activity implements
 		mTime = -1;
 		mLength = -1;
 		mCanSeek = true;
-		mAspectRatio = 1; // 直接全屏
+		mAspectRatio = 0; // 直接全屏
 		/* */
 		mImageButtonToggleMessage.setVisibility(View.GONE);
 		mImageButtonSwitchAudio.setVisibility(View.GONE);
@@ -977,11 +1018,11 @@ public class PlayerActivity extends Activity implements
 		int targetWidth = -1;
 		int targetHeight = -1;
 		switch (ar) {
-		case SURFACE_NONE: {
-			targetWidth = videoWidth;
-			targetHeight = videoHeight;
-			break;
-		}
+//		case SURFACE_NONE: {
+//			targetWidth = videoWidth;
+//			targetHeight = videoHeight;
+//			break;
+//		}
 		case SURFACE_FILL: {
 			break;
 		}
@@ -1033,6 +1074,7 @@ public class PlayerActivity extends Activity implements
 		// 播放事件初始化
 		initializeEvents();
 		initializeEvents2();
+		initCustomToast();
 		// 加载布局
 		setContentView(R.layout.player);
 		// 播放控件初始化
@@ -1161,10 +1203,12 @@ public class PlayerActivity extends Activity implements
 				changeSurfaceSize(mMediaPlayer,
 						isDefMediaPlayer(mMediaPlayer) ? mSurfaceViewDef
 								: mSurfaceViewVlc, mAspectRatio);
-			String name = String.format("btn_aspect_ratio_%d", mAspectRatio);
-			int resource = SystemUtility.getDrawableId(name);
 			// TODO 2013-10-06 暂时去掉这部分代码，改为信息提醒
+//			String name = String.format("btn_aspect_ratio_%d", mAspectRatio);
+//			int resource = SystemUtility.getDrawableId(name);
 //			mImageButtonSwitchAspectRatio.setBackgroundResource(resource);
+			
+			showCustomToast(ratioView[mAspectRatio]);
 			break;
 		}
 		case R.id.player_button_list: {
