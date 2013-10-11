@@ -2020,7 +2020,7 @@ public class PlayerActivity extends Activity implements
 		ChannelDefFavAdapter adapter = new ChannelDefFavAdapter(this, userdef_infos, true);
 		channel_list.setAdapter(adapter);
 		// 突出显示当前频道
-		channel_list.setSelection(mChannelIndex);
+//		channel_list.setSelection(mChannelIndex);
 		// TODO 用一个全局的变量来记录当前是哪一个频道
 		
 		
@@ -2101,7 +2101,7 @@ public class PlayerActivity extends Activity implements
 		ChannelListAdapter adapter = new ChannelListAdapter(this, channel_infos);
 		channel_list.setAdapter(adapter);
 		// 突出显示当前频道
-		channel_list.setSelection(mChannelIndex);
+//		channel_list.setSelection(mChannelIndex);
 		// TODO 用一个全局的变量来记录当前是哪一个频道
 		
 		

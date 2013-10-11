@@ -93,7 +93,7 @@ public class SupportKK extends Activity {
 
 		tableView1.addBasicItem(R.drawable.ic_about, "点击横幅广告", "花几秒钟点击浏览广告");
 		tableView1.addBasicItem(R.drawable.ic_about, "点击插屏广告", "超炫的应用软件海报");
-		tableView1.addBasicItem(R.drawable.ic_star, "亲，给个好评呗", "到小米、安卓等市场给个好评");
+		tableView1.addBasicItem(R.drawable.ic_star, "亲，给个好评呗", "到小米、360、安卓等市场给个好评");
 	}
 
 	/**
