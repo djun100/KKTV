@@ -163,7 +163,7 @@ public class PlayerActivity extends Activity implements
 	private int mTime = -1;
 	private int mLength = -1;
 	private boolean mCanSeek = true;
-	private int mAspectRatio = 0; // 直接全屏
+	private int mAspectRatio = 0; // TODO根据设置里面的值提取
 
 	/* title name */
 	private String mTitleName;
@@ -263,7 +263,7 @@ public class PlayerActivity extends Activity implements
 	// 自定义的toast界面
 	private TextView customToastText;
 	private View customToastLayout;
-	private String ratioView[] = {"全屏", "原始", "4：3", "16：9", "16：10"};
+	private String ratioView[] = {"全 屏", "原 始", "4：3", "16：9", "16：10"};
 	private Toast customToast;
 	//================================================
 	/**
@@ -814,7 +814,7 @@ public class PlayerActivity extends Activity implements
 		mTime = -1;
 		mLength = -1;
 		mCanSeek = true;
-		mAspectRatio = 0; // 直接全屏
+//		mAspectRatio = 0; // 直接全屏 2013-10-11 保持之前设置的比例
 		/* */
 		mImageButtonToggleMessage.setVisibility(View.GONE);
 		mImageButtonSwitchAudio.setVisibility(View.GONE);
@@ -1095,9 +1095,13 @@ public class PlayerActivity extends Activity implements
 		mSelfDbHelper = new DbHelper<POUserDefChannel>();
 
 		// 选择播放器
-		/* 判断解码器状态 */
 		sharedPreferences = getSharedPreferences("keke_player", MODE_PRIVATE);
 		editor = sharedPreferences.edit();
+		
+		// 获取设置的画面默认比例
+		mAspectRatio = sharedPreferences.getInt("viewTaion", 0);
+		
+		/* 判断解码器状态 */
 		isHardDec = sharedPreferences.getBoolean("isHardDec", false);
 		if (isHardDec) {
 			// 选择系统硬解码

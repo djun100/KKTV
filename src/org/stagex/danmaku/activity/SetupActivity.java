@@ -6,13 +6,14 @@ import org.stagex.danmaku.util.SystemUtility;
 
 import br.com.dina.ui.widget.UITableView;
 import br.com.dina.ui.widget.UITableView.ClickListener;
-
 import cn.waps.AppConnect;
 import cn.waps.UpdatePointsNotifier;
-
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -24,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SetupActivity extends Activity implements UpdatePointsNotifier {
 	/** Called when the activity is first created. */
@@ -78,12 +80,13 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		editor = sharedPreferences.edit();
 		isHardDec = sharedPreferences.getBoolean("isHardDec", false);
 		if (isHardDec) {
-//			int resource = SystemUtility.getDrawableId("mini_operate_selected");
+			// int resource =
+			// SystemUtility.getDrawableId("mini_operate_selected");
 			// button_codec.setImageResource(resource);
 			Log.d(LOGTAG, "检测到为硬解码模式");
 		} else {
-//			int resource = SystemUtility
-//					.getDrawableId("mini_operate_unselected");
+			// int resource = SystemUtility
+			// .getDrawableId("mini_operate_unselected");
 			// button_codec.setImageResource(resource);
 			Log.d(LOGTAG, "检测到为软解码模式");
 		}
@@ -96,16 +99,18 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		// ========================================================
 
 		/* 检测是否需要显示广告 */
-//		sharedPreferences = getSharedPreferences("keke_player", MODE_PRIVATE);
-//		editor = sharedPreferences.edit();
+		// sharedPreferences = getSharedPreferences("keke_player",
+		// MODE_PRIVATE);
+		// editor = sharedPreferences.edit();
 		noAd = sharedPreferences.getBoolean("noAd", false);
 		if (noAd) {
-//			int resource = SystemUtility.getDrawableId("mini_operate_selected");
+			// int resource =
+			// SystemUtility.getDrawableId("mini_operate_selected");
 			// button_ad.setImageResource(resource);
 			Log.d(LOGTAG, "检测到无广告模式");
 		} else {
-//			int resource = SystemUtility
-//					.getDrawableId("mini_operate_unselected");
+			// int resource = SystemUtility
+			// .getDrawableId("mini_operate_unselected");
 			// button_ad.setImageResource(resource);
 			Log.d(LOGTAG, "检测到有广告模式");
 		}
@@ -208,7 +213,8 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 
 		tableView1.addBasicItem(R.drawable.ic_about, "关于(v1.4.2)", "软件信息介绍");
 		tableView1.addBasicItem(R.drawable.ic_about, "帮助", "软件帮助信息");
-		tableView1.addBasicItem(R.drawable.ic_about, "QQ群", "可可电视交流群：336809417");
+		tableView1
+				.addBasicItem(R.drawable.ic_about, "QQ群", "可可电视交流群：336809417");
 		tableView1.addBasicItem(R.drawable.ic_feedback, "信息反馈", "反馈您的建议和意见");
 		tableView1.addBasicItem(R.drawable.ic_check_update, "检查更新", "检查软件最新版本");
 	}
@@ -233,17 +239,18 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 			case 2:
 				// 显示QQ交流群信息
 				new AlertDialog.Builder(SetupActivity.this)
-				.setIcon(R.drawable.ic_about)
-				.setTitle("可可电视交流群")
-				.setMessage("QQ群号：336809417\n欢迎加入交流群，可以分享更多的自定义地址，反馈您的建议和意见")
-				.setNegativeButton("关闭",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-							}
-						}).show();
-				break;	
+						.setIcon(R.drawable.ic_about)
+						.setTitle("可可电视交流群")
+						.setMessage(
+								"QQ群号：336809417\n欢迎加入交流群，可以分享更多的自定义地址，反馈您的建议和意见")
+						.setNegativeButton("关闭",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								}).show();
+				break;
 			case 3:
 				AppConnect.getInstance(SetupActivity.this).showFeedback();
 				break;
@@ -309,7 +316,8 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 
 		tableView3.addBasicItem(R.drawable.ic_decode, "解码模式", "选择软解码或者硬解码");
 		// TODO 2013-09-06 暂时去掉秒杀广告的控件
-//		tableView3.addBasicItem(R.drawable.ic_noad, "秒杀广告", "达到积分要求可以去除广告");
+		// tableView3.addBasicItem(R.drawable.ic_noad, "秒杀广告", "达到积分要求可以去除广告");
+		tableView3.addBasicItem(R.drawable.ic_decode, "画面比例", "选择视频播放界面的默认比列");
 	}
 
 	/**
@@ -325,159 +333,228 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 			switch (index) {
 			case 0:
 
-				isHardDec = sharedPreferences.getBoolean("isHardDec", false);
-				if (isHardDec) {
-
-					new AlertDialog.Builder(SetupActivity.this)
-							.setIcon(R.drawable.ic_dialog_alert)
-							.setTitle("当前为硬解")
-							.setMessage("确定切换？")
-							.setPositiveButton("确定",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											editor.putBoolean("isHardDec",
-													false);
-											editor.commit();
-											Log.d(LOGTAG, "设置为软解码模式");
-										}
-
-									})
-							.setNegativeButton("取消",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											dialog.cancel();
-										}
-									}).show();
-
-				} else {
-
-					new AlertDialog.Builder(SetupActivity.this)
-							.setIcon(R.drawable.ic_dialog_alert)
-							.setTitle("当前为软解")
-							.setMessage("确定切换？")
-							.setPositiveButton("确定",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											editor.putBoolean("isHardDec", true);
-											editor.commit();
-											Log.d(LOGTAG, "设置为硬解码模式");
-										}
-									})
-							.setNegativeButton("取消",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											dialog.cancel();
-										}
-									}).show();
-				}
-				break;
-			case 1:				
+//				isHardDec = sharedPreferences.getBoolean("isHardDec", false);
+//				if (isHardDec) {
+//
+//					new AlertDialog.Builder(SetupActivity.this)
+//							.setIcon(R.drawable.ic_dialog_alert)
+//							.setTitle("当前为硬解")
+//							.setMessage("确定切换？")
+//							.setPositiveButton("确定",
+//									new DialogInterface.OnClickListener() {
+//										@Override
+//										public void onClick(
+//												DialogInterface dialog,
+//												int which) {
+//											editor.putBoolean("isHardDec",
+//													false);
+//											editor.commit();
+//											Log.d(LOGTAG, "设置为软解码模式");
+//										}
+//
+//									})
+//							.setNegativeButton("取消",
+//									new DialogInterface.OnClickListener() {
+//										@Override
+//										public void onClick(
+//												DialogInterface dialog,
+//												int which) {
+//											dialog.cancel();
+//										}
+//									}).show();
+//
+//				} else {
+//
+//					new AlertDialog.Builder(SetupActivity.this)
+//							.setIcon(R.drawable.ic_dialog_alert)
+//							.setTitle("当前为软解")
+//							.setMessage("确定切换？")
+//							.setPositiveButton("确定",
+//									new DialogInterface.OnClickListener() {
+//										@Override
+//										public void onClick(
+//												DialogInterface dialog,
+//												int which) {
+//											editor.putBoolean("isHardDec", true);
+//											editor.commit();
+//											Log.d(LOGTAG, "设置为硬解码模式");
+//										}
+//									})
+//							.setNegativeButton("取消",
+//									new DialogInterface.OnClickListener() {
+//										@Override
+//										public void onClick(
+//												DialogInterface dialog,
+//												int which) {
+//											dialog.cancel();
+//										}
+//									}).show();
+//				}
+				// 显示对话框
+				currentDialog = DECODE_DIALOG;
+				showDialog(DECODE_DIALOG);
 				
-				noAd = sharedPreferences.getBoolean("noAd", false);
-				if (noAd) {
-					new AlertDialog.Builder(SetupActivity.this)
-					.setIcon(R.drawable.ic_dialog_alert)
-					.setTitle("温馨提示")
-					.setMessage(
-							"广告已被秒杀\n" + "（当前积分" + sharedPreferences.getInt("pointTotal", 0) + "）")
-					.setPositiveButton("打开广告",
-							new DialogInterface.OnClickListener() {
-								public void onClick(
-										DialogInterface dialog,
-										int whichButton) {
-									editor.putBoolean("noAd", false);
-									editor.commit();
-									Log.d(LOGTAG, "设置为有广告模式");
-								}
-							}).show();
-				} else {
-					// 在线获取需要的积分参数，以便随时可以控制积分值
-					String noAdPoint = AppConnect.getInstance(
-							SetupActivity.this).getConfig("noAdPoint", "88888");
-					if (noAdPoint.equals("88888")) {
-						// 如果因为首次运行网络原因，获取到的是88888，说明需要提醒用户联网操作
-						new AlertDialog.Builder(SetupActivity.this)
-								.setIcon(R.drawable.ic_dialog_alert)
-								.setTitle("温馨提示")
-								.setMessage(
-										"亲，该操作需要联网操作哦！\n同时，该操作需要打开网络后重新启动一次！")
-								.setPositiveButton("知道了",
-										new DialogInterface.OnClickListener() {
-											public void onClick(
-													DialogInterface dialog,
-													int whichButton) {
-											}
-										}).show();
-						break;
-					}
-					if (sharedPreferences.getInt("pointTotal", 0) < Integer
-							.parseInt(noAdPoint)) {
-						// 改为从万普的在线参数里获取这个积分值
-						new AlertDialog.Builder(SetupActivity.this)
-								.setIcon(R.drawable.ic_dialog_alert)
-								.setTitle("温馨提示")
-								.setMessage(
-										"您的积分不足"
-												+ noAdPoint
-												+ "分，暂时无法去除广告！\n您可以打开应用推荐赚取相应的积分，感谢您的支持！")
-								.setPositiveButton("赚积分",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-												AppConnect
-														.getInstance(
-																SetupActivity.this)
-														.showOffers(
-																SetupActivity.this);
-											}
-										})
-								.setNegativeButton("取消",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-												dialog.cancel();
-											}
-										}).show();
+				break;
+			// case 1:
+			//
+			// noAd = sharedPreferences.getBoolean("noAd", false);
+			// if (noAd) {
+			// new AlertDialog.Builder(SetupActivity.this)
+			// .setIcon(R.drawable.ic_dialog_alert)
+			// .setTitle("温馨提示")
+			// .setMessage(
+			// "广告已被秒杀\n" + "（当前积分" + sharedPreferences.getInt("pointTotal", 0)
+			// + "）")
+			// .setPositiveButton("打开广告",
+			// new DialogInterface.OnClickListener() {
+			// public void onClick(
+			// DialogInterface dialog,
+			// int whichButton) {
+			// editor.putBoolean("noAd", false);
+			// editor.commit();
+			// Log.d(LOGTAG, "设置为有广告模式");
+			// }
+			// }).show();
+			// } else {
+			// // 在线获取需要的积分参数，以便随时可以控制积分值
+			// String noAdPoint = AppConnect.getInstance(
+			// SetupActivity.this).getConfig("noAdPoint", "88888");
+			// if (noAdPoint.equals("88888")) {
+			// // 如果因为首次运行网络原因，获取到的是88888，说明需要提醒用户联网操作
+			// new AlertDialog.Builder(SetupActivity.this)
+			// .setIcon(R.drawable.ic_dialog_alert)
+			// .setTitle("温馨提示")
+			// .setMessage(
+			// "亲，该操作需要联网操作哦！\n同时，该操作需要打开网络后重新启动一次！")
+			// .setPositiveButton("知道了",
+			// new DialogInterface.OnClickListener() {
+			// public void onClick(
+			// DialogInterface dialog,
+			// int whichButton) {
+			// }
+			// }).show();
+			// break;
+			// }
+			// if (sharedPreferences.getInt("pointTotal", 0) < Integer
+			// .parseInt(noAdPoint)) {
+			// // 改为从万普的在线参数里获取这个积分值
+			// new AlertDialog.Builder(SetupActivity.this)
+			// .setIcon(R.drawable.ic_dialog_alert)
+			// .setTitle("温馨提示")
+			// .setMessage(
+			// "您的积分不足"
+			// + noAdPoint
+			// + "分，暂时无法去除广告！\n您可以打开应用推荐赚取相应的积分，感谢您的支持！")
+			// .setPositiveButton("赚积分",
+			// new DialogInterface.OnClickListener() {
+			// @Override
+			// public void onClick(
+			// DialogInterface dialog,
+			// int which) {
+			// AppConnect
+			// .getInstance(
+			// SetupActivity.this)
+			// .showOffers(
+			// SetupActivity.this);
+			// }
+			// })
+			// .setNegativeButton("取消",
+			// new DialogInterface.OnClickListener() {
+			// @Override
+			// public void onClick(
+			// DialogInterface dialog,
+			// int which) {
+			// dialog.cancel();
+			// }
+			// }).show();
+			//
+			// } else {
+			// new AlertDialog.Builder(SetupActivity.this)
+			// .setIcon(R.drawable.ic_dialog_alert)
+			// .setTitle("温馨提示")
+			// .setMessage(
+			// "您可以秒杀广告了\n" + "（当前积分" + sharedPreferences.getInt("pointTotal",
+			// 0) + "）")
+			// .setPositiveButton("去除广告",
+			// new DialogInterface.OnClickListener() {
+			// public void onClick(
+			// DialogInterface dialog,
+			// int whichButton) {
+			// editor.putBoolean("noAd", true);
+			// editor.commit();
+			// Log.d(LOGTAG, "设置为无广告模式");
+			// }
+			// }).show();
+			// }
+			// }
+			// break;
+			case 1:
+				// 显示对话框
+				currentDialog = RATION_DIALOG;
+				showDialog(RATION_DIALOG);
 
-					} else {
-						new AlertDialog.Builder(SetupActivity.this)
-						.setIcon(R.drawable.ic_dialog_alert)
-						.setTitle("温馨提示")
-						.setMessage(
-								"您可以秒杀广告了\n" + "（当前积分" + sharedPreferences.getInt("pointTotal", 0) + "）")
-						.setPositiveButton("去除广告",
-								new DialogInterface.OnClickListener() {
-									public void onClick(
-											DialogInterface dialog,
-											int whichButton) {
-										editor.putBoolean("noAd", true);
-										editor.commit();
-										Log.d(LOGTAG, "设置为无广告模式");
-									}
-								}).show();
-					}
-				}
 				break;
 			default:
 				Log.d(LOGTAG, "not supported btn id");
 			}
 		}
 	}
+
 	// ===========================================================================
+
+	private final static int RATION_DIALOG = 1;
+	private final static int DECODE_DIALOG = 2;
+	private int currentDialog = 0;
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
+		switch (id) {
+		case RATION_DIALOG:
+			Builder builder = new AlertDialog.Builder(this);
+			// builder.setIcon(R.drawable.basketball);
+			builder.setTitle("默认画面比列");
+			final ChoiceOnClickListener choiceListener = new ChoiceOnClickListener();
+
+			int viewRation = sharedPreferences.getInt("viewTaion", 0);
+
+			builder.setSingleChoiceItems(R.array.ratio, viewRation,
+					choiceListener);
+
+			dialog = builder.create();
+			break;
+		case DECODE_DIALOG:
+			Builder builderDecode = new AlertDialog.Builder(this);
+			// builder.setIcon(R.drawable.basketball);
+			builderDecode.setTitle("默认解码模式");
+			final ChoiceOnClickListener choiceListenerDecode = new ChoiceOnClickListener();
+
+			isHardDec = sharedPreferences.getBoolean("isHardDec", false);
+
+			builderDecode.setSingleChoiceItems(R.array.decode, isHardDec ? 1 : 0,
+					choiceListenerDecode);
+
+			dialog = builderDecode.create();
+			break;
+		}
+		return dialog;
+	}
+
+	private class ChoiceOnClickListener implements
+			DialogInterface.OnClickListener {
+
+		@Override
+		public void onClick(DialogInterface dialogInterface, int which) {
+			switch (currentDialog) {
+			case RATION_DIALOG:
+				editor.putInt("viewTaion", which);
+				editor.commit();
+				break;
+			case DECODE_DIALOG:
+				editor.putBoolean("isHardDec", (which == 1));
+				editor.commit();
+				break;
+		}
+		}
+	}
 }
