@@ -178,6 +178,7 @@ public class PlayerActivity extends Activity implements
 	private LinearLayout mLinearLayoutSourceList;
 	private RelativeLayout mLinearLayoutChannelList;
 	private TextView mSortName;
+	private TextView mSourcePath;
 	private ImageView mSortLeft;
 	private ImageView mSortRight;
 	private String sortString;
@@ -440,8 +441,8 @@ public class PlayerActivity extends Activity implements
 						
 						if (changeFlag) {
 							reConnectSource(mPlayListArray.get(mSourceIndex));
-							mSourceName = "地址" + Integer.toString(mSourceIndex + 1) + "：" + SourceName.whichName(mPlayListArray.get(mSourceIndex));
-							Toast.makeText(PlayerActivity.this, "地址" + mSourceIndex + "已失效，尝试地址" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
+							mSourceName = "线路" + Integer.toString(mSourceIndex + 1) + "：" + SourceName.whichName(mPlayListArray.get(mSourceIndex));
+							Toast.makeText(PlayerActivity.this, "线路" + mSourceIndex + "已失效，尝试线路" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
 						} else
 						
 						/* TODO 用在硬解解码模式，判断不支持的源 */
@@ -501,8 +502,8 @@ public class PlayerActivity extends Activity implements
 						
 						if (changeFlag) {
 							reConnectSource(mPlayListArray.get(mSourceIndex));
-							mSourceName = "地址" + Integer.toString(mSourceIndex + 1) + "：" + SourceName.whichName(mPlayListArray.get(mSourceIndex));
-							Toast.makeText(PlayerActivity.this, "地址" + mSourceIndex + "已失效，尝试地址" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
+							mSourceName = "线路" + Integer.toString(mSourceIndex + 1) + "：" + SourceName.whichName(mPlayListArray.get(mSourceIndex));
+							Toast.makeText(PlayerActivity.this, "线路" + mSourceIndex + "已失效，尝试线路" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
 						} else
 						
 						// 弹出播放失败的窗口@{
@@ -717,6 +718,8 @@ public class PlayerActivity extends Activity implements
 		// 播放界面切源以及选台功能
 		mLinearLayoutSourceList= (LinearLayout) findViewById(R.id.player_sourcelist);
 		source_list = (ListView) findViewById(R.id.source_list);
+		mSourcePath = (TextView) findViewById(R.id.source_path);
+		mSourcePath.setOnClickListener(this);
 		// 防止滑动黑屏
 		source_list.setCacheColorHint(Color.TRANSPARENT);
 		mImageButtonList = (ImageButton) findViewById(R.id.player_button_list);
@@ -1910,12 +1913,13 @@ public class PlayerActivity extends Activity implements
 				// TODO Auto-generated method stub
 				String url = (String) source_list
 						.getItemAtPosition(arg2);
-				mSourceName = "地址" + Integer.toString(arg2 + 1) + "：" + SourceName.whichName(url);
+				mSourceName = "线路" + Integer.toString(arg2 + 1) + "：" + SourceName.whichName(url);
 				reSetSourceData(url, mSourceName);
 				Log.i(LOGTAG, "===>>>" + mSourceName);
 				
 				// 2013-08-31 隐藏源切换和切台的控件
-				mLinearLayoutSourceList.setVisibility(View.GONE);
+				// 2013-10-10 不再隐藏
+//				mLinearLayoutSourceList.setVisibility(View.GONE);
 			}
 		});
 
@@ -2183,7 +2187,7 @@ public class PlayerActivity extends Activity implements
 		channelStar = info.save;
 		
 		String url = mPlayListArray.get(mPlayListSelected);
-		mSourceName = "地址" + Integer.toString(1) + "：" + SourceName.whichName(url);
+		mSourceName = "线路" + Integer.toString(1) + "：" + SourceName.whichName(url);
 		reConnectSource(url);
 	}
 	
@@ -2200,7 +2204,7 @@ public class PlayerActivity extends Activity implements
 		mPlayListSelected = 0;
 		
 		String url = mPlayListArray.get(mPlayListSelected);
-		mSourceName = "地址" + Integer.toString(1) + "：" + SourceName.whichName(url);
+		mSourceName = "线路" + Integer.toString(1) + "：" + SourceName.whichName(url);
 		reConnectSource(url);
 	}
 	
@@ -2217,7 +2221,7 @@ public class PlayerActivity extends Activity implements
 		mPlayListSelected = 0;
 		
 		String url = mPlayListArray.get(mPlayListSelected);
-		mSourceName = "地址" + Integer.toString(1) + "：" + SourceName.whichName(url);
+		mSourceName = "线路" + Integer.toString(1) + "：" + SourceName.whichName(url);
 		reConnectSource(url);
 	}
 	

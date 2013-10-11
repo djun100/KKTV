@@ -387,7 +387,7 @@ public class FavouriteActivity extends TabActivity implements
 		intent.putExtra("sortString", sortName);
 		// FIXME 2013-09-28 增加了播放界面的分类切台，需要分类序号
 		intent.putExtra("channelSort", "7");
-		intent.putExtra("source", "地址" + Integer.toString(1) + "："
+		intent.putExtra("source", "线路" + Integer.toString(1) + "："
 				+ SourceName.whichName(liveUrls.get(0)));
 
 		startActivity(intent);
@@ -448,7 +448,7 @@ public class FavouriteActivity extends TabActivity implements
 			intent.putExtra("sortString", "自定义收藏");
 			// FIXME 2013-09-28 增加了播放界面的分类切台，需要分类序号
 			intent.putExtra("channelSort", "9");
-			intent.putExtra("source", "地址" + Integer.toString(1) + "："
+			intent.putExtra("source", "线路" + Integer.toString(1) + "："
 					+ SourceName.whichName(all_url.get(0)));
 			
 			startActivity(intent);

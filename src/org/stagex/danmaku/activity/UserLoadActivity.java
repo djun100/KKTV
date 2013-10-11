@@ -232,7 +232,7 @@ public class UserLoadActivity extends Activity {
 		intent.putExtra("channelSort", "8");
 		intent.putExtra(
 				"source",
-				"地址" + Integer.toString(1) + "："
+				"线路" + Integer.toString(1) + "："
 						+ SourceName.whichName(liveUrls.get(0)));
 
 		startActivity(intent);

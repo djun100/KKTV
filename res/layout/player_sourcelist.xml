@@ -8,11 +8,12 @@
     android:visibility="invisible" >
 
     <TextView
+        android:id="@+id/source_path"
         android:layout_width="200dp"
         android:layout_height="40dp"
         android:background="@drawable/sel_sort"
         android:gravity="center_horizontal|center_vertical"
-        android:text="候选地址"
+        android:text="频道线路"
         android:textColor="@color/black"
         android:textSize="20sp" />
 

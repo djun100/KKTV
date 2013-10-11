@@ -166,7 +166,7 @@ public class ProvinceActivity extends Activity {
 		intent.putExtra("title", name);
 		intent.putExtra("channelStar", channel_star);
 		intent.putExtra("sortString", sortName);
-		intent.putExtra("source", "地址" + Integer.toString(1) + "："
+		intent.putExtra("source", "线路" + Integer.toString(1) + "："
 				+ SourceName.whichName(liveUrls.get(0)));
 
 		startActivity(intent);
