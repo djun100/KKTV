@@ -56,17 +56,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:text="首先，感谢您下载和使用可可电视，可可一直致力于提供高清、流畅、便捷的互联网电视直播服务。\n\n为进一步维持和提高可可电视的用户体验，可可的发展也需要广大用户的顶力支持，您可以通过以下的3种方式支持我们："
                 android:textColor="#ff4b4949"
                 android:textSize="15sp" />
-
-            <LinearLayout
-                android:id="@+id/AdLinearLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -76,7 +69,14 @@
                     android:id="@+id/tableView1"
                     style="@style/UITableView" />
             </LinearLayout>
-
+            
+            <LinearLayout
+                android:id="@+id/AdLinearLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" />
+            
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >

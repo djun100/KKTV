@@ -6,13 +6,13 @@ import br.com.dina.ui.widget.UITableView;
 import br.com.dina.ui.widget.UITableView.ClickListener;
 import cn.waps.AdView;
 import cn.waps.AppConnect;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -93,7 +93,7 @@ public class SupportKK extends Activity {
 
 		tableView1.addBasicItem(R.drawable.ic_about, "点击横幅广告", "花几秒钟点击浏览广告");
 		tableView1.addBasicItem(R.drawable.ic_about, "点击插屏广告", "超炫的应用软件海报");
-		tableView1.addBasicItem(R.drawable.ic_decode, "亲，给个好评呗", "到小米、安卓等市场给个好评");
+		tableView1.addBasicItem(R.drawable.ic_star, "亲，给个好评呗", "到小米、安卓等市场给个好评");
 	}
 
 	/**
@@ -125,17 +125,23 @@ public class SupportKK extends Activity {
 				break;
 			case 2:
 				// 显示QQ交流群信息
-				new AlertDialog.Builder(SupportKK.this)
-				.setIcon(R.drawable.ic_about)
-				.setTitle("亲，给个好评")
-				.setMessage("请帮助可可到您所在的应用市场给个好评，让更多的用户知道可可电视，谢谢您的支持！")
-				.setNegativeButton("关闭",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-							}
-						}).show();
+//				new AlertDialog.Builder(SupportKK.this)
+//				.setIcon(R.drawable.ic_about)
+//				.setTitle("亲，给个好评")
+//				.setMessage("请帮助可可到您所在的应用市场给个好评，让更多的用户知道可可电视，谢谢您的支持！")
+//				.setNegativeButton("关闭",
+//						new DialogInterface.OnClickListener() {
+//							@Override
+//							public void onClick(DialogInterface dialog,
+//									int which) {
+//							}
+//						}).show();
+				
+				String str = "market://details?id=org.keke.player";
+			    Intent localIntent = new Intent("android.intent.action.VIEW");
+			    localIntent.setData(Uri.parse(str));
+			    startActivity(localIntent);
+			    
 				break;
 			default:
 				Log.d(LOGTAG, "not supported btn id");

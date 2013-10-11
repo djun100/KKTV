@@ -17,6 +17,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -274,6 +275,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 
 		tableView2.addBasicItem(R.drawable.ic_home, "帮助可可", "可可的发展需要您的支持");
 		tableView2.addBasicItem(R.drawable.ic_app, "应用商店", "当前热门软件和游戏");
+		tableView2.addBasicItem(R.drawable.ic_star, "亲，给个好评呗", "到小米、安卓等市场给个好评");
 		tableView2.addBasicItem(R.drawable.ic_tuangou, "大众团购", "大众点评团购入口");
 	}
 
@@ -298,6 +300,25 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 						SetupActivity.this);
 				break;
 			case 2:
+//				new AlertDialog.Builder(SetupActivity.this)
+//				.setIcon(R.drawable.ic_about)
+//				.setTitle("亲，给个好评")
+//				.setMessage("请帮助可可到您所在的应用市场给个好评，让更多的用户知道可可电视，谢谢您的支持！")
+//				.setNegativeButton("关闭",
+//						new DialogInterface.OnClickListener() {
+//							@Override
+//							public void onClick(DialogInterface dialog,
+//									int which) {
+//							}
+//						}).show();
+				
+				String str = "market://details?id=org.keke.player";
+			    Intent localIntent = new Intent("android.intent.action.VIEW");
+			    localIntent.setData(Uri.parse(str));
+			    startActivity(localIntent);
+
+				break;
+			case 3:
 				AppConnect.getInstance(SetupActivity.this).showTuanOffers(
 						SetupActivity.this);
 				break;
@@ -317,7 +338,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		tableView3.addBasicItem(R.drawable.ic_decode, "解码模式", "选择软解码或者硬解码");
 		// TODO 2013-09-06 暂时去掉秒杀广告的控件
 		// tableView3.addBasicItem(R.drawable.ic_noad, "秒杀广告", "达到积分要求可以去除广告");
-		tableView3.addBasicItem(R.drawable.ic_decode, "画面比例", "选择视频播放界面的默认比列");
+		tableView3.addBasicItem(R.drawable.ic_star, "画面比例", "选择视频播放界面的默认比列");
 	}
 
 	/**

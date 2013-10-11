@@ -342,15 +342,15 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 					.setIcon(R.drawable.ic_lock_power_off)
 					.setTitle(R.string.prompt)
 					.setMessage(R.string.quit_desc)
-					.setNegativeButton("帮助可可",
+					.setNegativeButton("取消",
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
 									// TODO 2013-09-08
 									// 改为支持可可的控件入口
-									Intent intent = new Intent(HomeActivity.this, SupportKK.class);
-									startActivity(intent);
+//									Intent intent = new Intent(HomeActivity.this, SupportKK.class);
+//									startActivity(intent);
 								}
 							})
 					.setPositiveButton(R.string.confirm,
