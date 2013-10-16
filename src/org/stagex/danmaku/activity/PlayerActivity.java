@@ -20,6 +20,7 @@ import org.stagex.danmaku.adapter.CustomExpandableAdapter;
 import org.stagex.danmaku.adapter.CustomExpandableAdapterDF;
 import org.stagex.danmaku.adapter.ProvinceInfo;
 import org.stagex.danmaku.util.ParseUtil;
+import org.stagex.danmaku.util.ProgramTask;
 import org.stagex.danmaku.util.SourceName;
 import org.stagex.danmaku.util.SystemUtility;
 
@@ -81,6 +82,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.AsyncTask;
 
 public class PlayerActivity extends Activity implements
 		AbsMediaPlayer.OnBufferingUpdateListener,
@@ -265,6 +267,11 @@ public class PlayerActivity extends Activity implements
 	private View customToastLayout;
 	private String ratioView[] = {"全 屏", "原 始", "4：3", "16：9", "16：10"};
 	private Toast customToast;
+	//================================================
+	// 节目预告相关的代码
+	private TextView programText;
+	private ProgramTask mProgramtask = null;
+	private String mPrograPath = null;
 	//================================================
 	/**
 	 * 初始化自定义的Toast界面
@@ -752,6 +759,13 @@ public class PlayerActivity extends Activity implements
 		filter.addAction(Intent.ACTION_BATTERY_CHANGED);
 		// filter.addAction(VLCApplication.SLEEP_INTENT);
 		registerReceiver(mReceiver, filter);
+		
+		// 2013-10-14 节目预告相关
+		programText = (TextView)findViewById(R.id.program_txt);
+		
+//		mProgramtask = new ProgramTask(programText);
+//        mProgramtask.execute(mprogramPath);
+        
 	}
 
 	/**
@@ -2045,6 +2059,8 @@ public class PlayerActivity extends Activity implements
 				// 2013-08-31 隐藏源切换和切台的控件
 				// 为防止重复搜索数据库分类，此处暂时不隐藏
 //				mLinearLayoutChannelList.setVisibility(View.GONE);
+				// 2013-10-15 自定义节目没有节目预告
+				programText.setText("");
 			}
 		});
 
@@ -2087,6 +2103,14 @@ public class PlayerActivity extends Activity implements
                 mTitleName = info.name;
                 reSetChannelData(info);
                 
+                // 2013-10-15 显示节目预告
+                if (mProgramtask != null && mProgramtask.getStatus() != AsyncTask.Status.FINISHED) {
+                	// TODO 可能不是很严谨
+                	mProgramtask.cancel(true);
+                }
+                mProgramtask = new ProgramTask(programText);
+				mProgramtask.execute(info.program_path);
+                
                 return false;
             }
         });
@@ -2123,6 +2147,14 @@ public class PlayerActivity extends Activity implements
 				reSetChannelData(info);
 				Log.i(LOGTAG, "===>>>" + mSourceName);
 
+				// 2013-10-15 显示节目预告
+				if (mProgramtask != null && mProgramtask.getStatus() != AsyncTask.Status.FINISHED) {
+                	// TODO 可能不是很严谨
+                	mProgramtask.cancel(true);
+                }
+				mProgramtask = new ProgramTask(programText);
+				mProgramtask.execute(info.program_path);
+				
 				// 2013-08-31 隐藏源切换和切台的控件
 				// 为防止重复搜索数据库分类，此处暂时不隐藏
 //				mLinearLayoutChannelList.setVisibility(View.GONE);

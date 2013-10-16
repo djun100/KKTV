@@ -63,6 +63,25 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/program_overlay"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_above="@+id/interface_overlay"
+        android:background="@color/transparent_gray"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/program_txt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="20dip"
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/interface_overlay"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
