@@ -196,6 +196,8 @@ public class PlayerActivity extends Activity implements
 //	private List<ChannelInfo> userload_infos = null;
 	private ImageButton mImageButtonList;
 	private ImageButton mImageButtonChannel;
+	// 2013-10-16 标记第一次打开频道切换
+	private Boolean mFirstLoad = true;
 	private int mSourceNum = 0;
 	private int mSourceIndex = 0;
 	private int mChannelIndex = 0;
@@ -1244,58 +1246,65 @@ public class PlayerActivity extends Activity implements
 			break;
 		}
 		case R.id.player_button_channel: {
-//			if (isFavSort || isSelfTV ||isSelfFavTV )
-//				mSortName.setText(sortString);
-//			else
-				mSortName.setText(chSorts[curChSortIndex]);
-			// TODO 增加播放界面切源和切台
-			mLinearLayoutChannelList.setVisibility(View.VISIBLE);
-			// 同时隐藏播放的控件
-			mLinearLayoutControlBar.setVisibility(View.GONE);
-
-			// 先显示加载提示语
-			channel_list.setVisibility(View.GONE);
-			epdListView.setVisibility(View.GONE);
-			list_load.setVisibility(View.VISIBLE);
-			
-			Log.d(LOGTAG, "=============");
-			
-			// 暂时先清除之前的数据
-			if (userdef_infos != null) {
-				userdef_infos.clear();
-				userdef_infos = null;
+			if (mFirstLoad) {
+				mFirstLoad = false;
+	//			if (isFavSort || isSelfTV ||isSelfFavTV )
+	//				mSortName.setText(sortString);
+	//			else
+					mSortName.setText(chSorts[curChSortIndex]);
+				// TODO 增加播放界面切源和切台
+				mLinearLayoutChannelList.setVisibility(View.VISIBLE);
+				// 同时隐藏播放的控件
+				mLinearLayoutControlBar.setVisibility(View.GONE);
+	
+				// 先显示加载提示语
+				channel_list.setVisibility(View.GONE);
+				epdListView.setVisibility(View.GONE);
+				list_load.setVisibility(View.VISIBLE);
+				
+				Log.d(LOGTAG, "=============");
+				
+				// 暂时先清除之前的数据
+				if (userdef_infos != null) {
+					userdef_infos.clear();
+					userdef_infos = null;
+				}
+				
+				// TODO 清除之前的数据（自定义的分类）
+				if (groupArray == null)
+					groupArray = new ArrayList<String>();
+				else
+					groupArray.clear();
+				if (childArray == null)
+					childArray = new ArrayList<List<ChannelInfo>>();
+				else
+					childArray.clear();
+				
+				// TODO 清除之前的数据（官方地方台的分类）
+				// FIXME 为提高之后的加载速度，就暂时不清除数据了
+				if (groupArrayDF == null)
+					groupArrayDF = new ArrayList<ProvinceInfo>();
+	//			else
+	//				groupArrayDF.clear();
+				if (childArrayDF == null)
+					childArrayDF = new ArrayList<List<POChannelList>>();
+	//			else
+	//				childArrayDF.clear();
+				
+				// 清除之前的数据
+				if (channel_infos != null) {
+					channel_infos.clear();
+					channel_infos = null;
+				}
+				
+				// TODO 采用线程的方式加载切换的分类节目
+				startRefreshList();
+			} else {
+				// TODO 增加播放界面切源和切台
+				mLinearLayoutChannelList.setVisibility(View.VISIBLE);
+				// 同时隐藏播放的控件
+				mLinearLayoutControlBar.setVisibility(View.GONE);
 			}
-			
-			// TODO 清除之前的数据（自定义的分类）
-			if (groupArray == null)
-				groupArray = new ArrayList<String>();
-			else
-				groupArray.clear();
-			if (childArray == null)
-				childArray = new ArrayList<List<ChannelInfo>>();
-			else
-				childArray.clear();
-			
-			// TODO 清除之前的数据（官方地方台的分类）
-			// FIXME 为提高之后的加载速度，就暂时不清除数据了
-			if (groupArrayDF == null)
-				groupArrayDF = new ArrayList<ProvinceInfo>();
-//			else
-//				groupArrayDF.clear();
-			if (childArrayDF == null)
-				childArrayDF = new ArrayList<List<POChannelList>>();
-//			else
-//				childArrayDF.clear();
-			
-			// 清除之前的数据
-			if (channel_infos != null) {
-				channel_infos.clear();
-				channel_infos = null;
-			}
-			
-			// TODO 采用线程的方式加载切换的分类节目
-			startRefreshList();
-			
 			break;
 		}
 		case R.id.sort_name: {
