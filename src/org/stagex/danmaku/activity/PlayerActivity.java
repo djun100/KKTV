@@ -2617,6 +2617,9 @@ public class PlayerActivity extends Activity implements
 	// 为了加强地方频道的分类功能，采用数据库暂存所有的自定义
 	// 的数据，每次加载时，重新入数据库？或者查看自定义文件
 	// 是否作出了修改，若修改了，则清除数据库数据，重新装载
+    // #########
+    // TODO 2013-10-16
+    // 修改查找策略，提升地方台的加载速度
 	private void parseDF() {
 		int sortNum = groupArrayDF.size();
 		int index = 0;

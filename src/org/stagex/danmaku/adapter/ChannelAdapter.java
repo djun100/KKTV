@@ -6,6 +6,7 @@ import org.keke.player.R;
 import org.stagex.danmaku.activity.TvProgramActivity;
 
 import com.fedorvlasov.lazylist.ImageLoader;
+import com.fedorvlasov.lazylist2.ProgramLoader;
 import com.nmbb.oplayer.scanner.POChannelList;
 
 import android.app.AlertDialog;
@@ -25,12 +26,15 @@ public class ChannelAdapter extends BaseAdapter {
 
 	// 自定义的img加载类，提升加载性能，防止OOM
 	public ImageLoader imageLoader;
-
+	public ProgramLoader programLoader;
+	
 	public ChannelAdapter(Context context, List<POChannelList> infos) {
 		this.infos = infos;
 		this.mContext = context;
 
 		imageLoader = new ImageLoader(context);
+		
+		programLoader = new ProgramLoader(context);
 	}
 
 	@Override
@@ -56,6 +60,7 @@ public class ChannelAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 		View view = View.inflate(mContext, R.layout.channel_list_item, null);
 		TextView text = (TextView) view.findViewById(R.id.channel_name);
+		TextView pgmtext = (TextView) view.findViewById(R.id.program_name);
 		ImageView imageView = (ImageView) view.findViewById(R.id.channel_icon);
 		ImageView hotView = (ImageView) view.findViewById(R.id.hot_icon);
 		ImageView newView = (ImageView) view.findViewById(R.id.new_icon);
@@ -124,6 +129,11 @@ public class ChannelAdapter extends BaseAdapter {
 			imageLoader.DisplayImage(iconUrl, null, imageView);
 		}
 
+		// TODO 2013-10-17 实现节目预告功能
+		if (infos.get(position).program_path != null) {
+			programLoader.DisplayText(infos.get(position).program_path, null, pgmtext);
+		}
+		
 		return view;
 	}
 }
