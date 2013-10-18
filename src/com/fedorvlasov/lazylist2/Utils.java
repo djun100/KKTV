@@ -2,19 +2,21 @@ package com.fedorvlasov.lazylist2;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Utils {
-	public static void CopyStream(InputStream is, OutputStream os) {
-		final int buffer_size = 1024;
-		try {
-			byte[] bytes = new byte[buffer_size];
-			for (;;) {
-				int count = is.read(bytes, 0, buffer_size);
-				if (count == -1)
-					break;
-				os.write(bytes, 0, count);
-			}
-		} catch (Exception ex) {
-		}
+	/**
+	 * 获取星期值
+	 */
+	public static String getWeekOfDate() {
+		String[] weekDays = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
+		Calendar cal = Calendar.getInstance();
+		Date curDate = new Date(System.currentTimeMillis());
+		cal.setTime(curDate);
+		int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+		if (w < 0)
+			w = 0;
+		return weekDays[w];
 	}
 }
