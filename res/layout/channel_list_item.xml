@@ -7,8 +7,9 @@
 
     <LinearLayout
         android:id="@+id/p1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="60dp"
+        android:layout_toLeftOf="@+id/p2"
         android:orientation="horizontal" >
 
         <ImageView
@@ -37,8 +38,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
                     android:ellipsize="end"
+                    android:gravity="center_vertical"
                     android:singleLine="true"
                     android:textColor="#ff4b4949"
                     android:textSize="16sp" />
@@ -69,6 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:ellipsize="end"
+                android:singleLine="true"
                 android:textColor="@color/gray"
                 android:textSize="12sp" />
         </LinearLayout>
