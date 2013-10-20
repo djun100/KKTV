@@ -16,12 +16,13 @@
         android:textColor="#ff4b4949"
         android:textSize="15sp" />
 
-    <TextView
+    <org.stagex.danmaku.util.MarqueeTextView
         android:id="@+id/program"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="15dp"
+        android:ellipsize="marquee"
         android:gravity="center_vertical"
         android:singleLine="true"
         android:textColor="#ff4b4949"

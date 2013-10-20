@@ -22,7 +22,7 @@
 
         <LinearLayout
             android:id="@+id/text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
             android:orientation="vertical" >
@@ -33,12 +33,12 @@
                 android:layout_height="40dp"
                 android:orientation="horizontal" >
 
-                <TextView
+                <org.stagex.danmaku.util.MarqueeTextView
                     android:id="@+id/channel_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:ellipsize="end"
+                    android:ellipsize="marquee"
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:textColor="#ff4b4949"
@@ -65,11 +65,11 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <TextView
+            <org.stagex.danmaku.util.MarqueeTextView
                 android:id="@+id/program_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:ellipsize="end"
+                android:ellipsize="marquee"
                 android:singleLine="true"
                 android:textColor="@color/gray"
                 android:textSize="12sp" />
