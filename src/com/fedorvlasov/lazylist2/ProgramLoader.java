@@ -45,12 +45,12 @@ public class ProgramLoader {
 		// 该url作为Hash Memory的键值
 		ArrayList<ProgramInfo> programInfo = memoryCache.get(url + Utils.getWeekOfDate());
 		if (programInfo != null) {
-			Log.d("===", "find exist============\n");
+//			Log.d("===", "find exist============\n");
 			String program =  getCurrentProgram(programInfo);
 			textView.setText(program);
 		} else {
 			queueProgram(url, activity, textView);
-			textView.setText("loading...");
+			textView.setText("......");
 		}
 	}
 
@@ -153,14 +153,14 @@ public class ProgramLoader {
 			} else {
 				// FIXME bug#0022 此处的没找到是因为有节目预告，但是处于24：00分左右的临界情况
 				/* 如果没有大于当前时间值的节目，说明当日的最后一个节目就是当前播放的节目 */
-				return "正在播出：" + infos.get(infos.size() - 1).getProgram();
+				return infos.get(infos.size() - 1).getProgram();
 			}
 		} else if (listPosition == 1) {
 			/* 如果第一个节目的时间指就大于当前时间，实际是前一天的最后一个节目，在新的一天什么都不显示 */
 			return null;
 		} else {
 			/* 其他正常情况，如果找到一个大于当前时间值的节目，置前一个节目为正在播放节目 */
-			return "正在播出：" + infos.get(listPosition - 2).getProgram();
+			return infos.get(listPosition - 2).getProgram();
 		}
 	}
 	
@@ -217,7 +217,7 @@ public class ProgramLoader {
 						// 该url作为Hash Memory的键值
 						memoryCache.put(programToLoad.url + Utils.getWeekOfDate(), programInfo);
 						String tag = textViews.get(programToLoad.textView);
-						if (tag != null && tag.equals(programToLoad.url)) {
+						if (tag != null && tag.equals(programToLoad.url) && programInfo!= null) {
 							ProgramDisplayer bd = new ProgramDisplayer(getCurrentProgram(programInfo),
 									programToLoad.textView);
 							Activity a = (Activity) programToLoad.textView
