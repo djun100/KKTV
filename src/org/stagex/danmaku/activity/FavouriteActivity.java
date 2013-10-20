@@ -44,7 +44,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TabHost.OnTabChangeListener;
-
 import cn.waps.AppConnect;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
@@ -302,7 +301,7 @@ public class FavouriteActivity extends TabActivity implements
 				// startLiveMedia(info.getUrl(), info.getName());
 //				showAllSource(info.getAllUrl(), info.name, info.program_path,
 //						info.save);
-				startLiveMedia(info.getAllUrl(), info.name, info.save, "收藏频道");
+				startLiveMedia(info.getAllUrl(), info.name, info.save, "收藏频道", info.program_path);
 			}
 		});
 
@@ -376,7 +375,7 @@ public class FavouriteActivity extends TabActivity implements
 	 * @param pos
 	 */
 	private void startLiveMedia(ArrayList<String> liveUrls, String name,
-			Boolean channel_star, String sortName) {
+			Boolean channel_star, String sortName, String mPprograPath) {
 		Intent intent = new Intent(FavouriteActivity.this,
 				PlayerActivity.class);
 		intent.putExtra("selected", 0);
@@ -389,6 +388,7 @@ public class FavouriteActivity extends TabActivity implements
 		intent.putExtra("channelSort", "7");
 		intent.putExtra("source", "线路" + Integer.toString(1) + "："
 				+ SourceName.whichName(liveUrls.get(0)));
+		intent.putExtra("prograPath", mPprograPath);
 
 		startActivity(intent);
 	}

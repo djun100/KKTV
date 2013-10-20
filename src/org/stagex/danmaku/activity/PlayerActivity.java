@@ -764,10 +764,6 @@ public class PlayerActivity extends Activity implements
 		
 		// 2013-10-14 节目预告相关
 		programText = (TextView)findViewById(R.id.program_txt);
-		
-//		mProgramtask = new ProgramTask(programText);
-//        mProgramtask.execute(mprogramPath);
-        
 	}
 
 	/**
@@ -818,6 +814,13 @@ public class PlayerActivity extends Activity implements
 			return;
 		}
 		mSourceNum = mPlayListArray.size();
+		
+		// TODO 2013-10-20 解析出首次进入播放界面频道的节目预告
+		mPrograPath = intent.getStringExtra("prograPath");
+		if (mPrograPath != null) {
+			mProgramtask = new ProgramTask(programText);
+	        mProgramtask.execute(mPrograPath);
+		}
 	}
 
 	/**
