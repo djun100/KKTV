@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.keke.player.R;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,9 +16,13 @@ public class ProgramAdapter extends BaseAdapter {
 	private ArrayList<ProgramInfo> infos;
 	private Context mContext;
 
+	private LayoutInflater mLayoutInflater;
+
 	public ProgramAdapter(Context context, ArrayList<ProgramInfo> infos) {
 		this.infos = infos;
 		this.mContext = context;
+
+		mLayoutInflater = LayoutInflater.from(context);
 	}
 
 	@Override
@@ -42,19 +47,39 @@ public class ProgramAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// Log.d(LOGTAG, infos.get(position));
 		// TODO Auto-generated method stub
-		View view = View.inflate(mContext, R.layout.program_list_item, null);
-		TextView text1 = (TextView) view.findViewById(R.id.time);
-		TextView text2 = (TextView) view.findViewById(R.id.program);
+		ViewHolder viewHolder;
+		if (convertView == null) {
 
-		text1.setText(infos.get(position).getTime());
-		text2.setText(infos.get(position).getProgram());
+			convertView = mLayoutInflater.inflate(R.layout.program_list_item,
+					null);
+			viewHolder = new ViewHolder();
+			viewHolder.text1 = (TextView) convertView.findViewById(R.id.time);
+			viewHolder.text2 = (TextView) convertView
+					.findViewById(R.id.program);
+			convertView.setTag(viewHolder);
+		} else {
+			viewHolder = (ViewHolder) convertView.getTag();
+		}
+		viewHolder.text1.setText(infos.get(position).getTime());
+		viewHolder.text2.setText(infos.get(position).getProgram());
 
 		if (infos.get(position).getCurProgram()) {
-			text1.setTextColor(mContext.getResources().getColor(R.color.green));
-			text2.setTextColor(mContext.getResources().getColor(R.color.green));
+			viewHolder.text1.setTextColor(mContext.getResources().getColor(
+					R.color.green));
+			viewHolder.text2.setTextColor(mContext.getResources().getColor(
+					R.color.green));
+		} else {
+			viewHolder.text1.setTextColor(mContext.getResources().getColor(
+					R.color.kkblack));
+			viewHolder.text2.setTextColor(mContext.getResources().getColor(
+					R.color.kkblack));
 		}
 
-		return view;
+		return convertView;
 	}
 
+	private class ViewHolder {
+		TextView text1;
+		TextView text2;
+	}
 }

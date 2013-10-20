@@ -7,6 +7,7 @@ import org.keke.player.R;
 import com.fedorvlasov.lazylist.ImageLoader;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,11 +21,14 @@ public class ProvinceAdapter extends BaseAdapter {
 
 	// 自定义的img加载类，提升加载性能，防止OOM
 	public ImageLoader imageLoader;
-	
+
+	private LayoutInflater mLayoutInflater;
+
 	public ProvinceAdapter(Context context, List<ProvinceInfo> infos) {
 		this.infos = infos;
 		this.mContext = context;
-		
+
+		mLayoutInflater = LayoutInflater.from(context);
 		imageLoader = new ImageLoader(context);
 	}
 
@@ -50,16 +54,31 @@ public class ProvinceAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// Log.d(LOGTAG, infos.get(position));
 		// TODO Auto-generated method stub
-		View view = View.inflate(mContext, R.layout.province_list_item, null);
-		ImageView imageView = (ImageView) view.findViewById(R.id.province_icon);
-		TextView text2 = (TextView) view.findViewById(R.id.province_name);
+		ViewHolder viewHolder;
+		if (convertView == null) {
 
-		text2.setText(infos.get(position).getProvinceName());
-		
+			convertView = mLayoutInflater.inflate(R.layout.province_list_item,
+					null);
+			viewHolder = new ViewHolder();
+			viewHolder.imageView = (ImageView) convertView
+					.findViewById(R.id.province_icon);
+			viewHolder.text2 = (TextView) convertView
+					.findViewById(R.id.province_name);
+			convertView.setTag(viewHolder);
+		} else {
+			viewHolder = (ViewHolder) convertView.getTag();
+		}
+		viewHolder.text2.setText(infos.get(position).getProvinceName());
+
 		// TODO 新方法，防止OOM
-		imageLoader.DisplayImage(infos.get(position).getIcon(), null, imageView);
+		imageLoader.DisplayImage(infos.get(position).getIcon(), null,
+				viewHolder.imageView);
 
-		return view;
+		return convertView;
 	}
 
+	private class ViewHolder {
+		ImageView imageView;
+		TextView text2;
+	}
 }
