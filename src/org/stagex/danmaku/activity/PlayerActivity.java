@@ -2032,6 +2032,11 @@ public class PlayerActivity extends Activity implements
                 
                 mTitleName = info.getName();
                 reSetUserdefChannelData(info);
+                
+                // 2013-10-15 显示节目预告
+                // 置空节目预告控件
+                programText.setText("");
+                
                 return false;
             }
         });
@@ -2164,8 +2169,12 @@ public class PlayerActivity extends Activity implements
                 	// TODO 可能不是很严谨
                 	mProgramtask.cancel(true);
                 }
-				mProgramtask = new ProgramTask(programText);
-				mProgramtask.execute(info.program_path);
+				if (info.program_path != null) {
+					mProgramtask = new ProgramTask(programText);
+					mProgramtask.execute(info.program_path);
+				} else {
+					programText.setText("");
+				}
 				
 				// 2013-08-31 隐藏源切换和切台的控件
 				// 为防止重复搜索数据库分类，此处暂时不隐藏
