@@ -2523,7 +2523,7 @@ public class PlayerActivity extends Activity implements
  						}
  						
  						// 2013-09-24 提取出自定义的分类名称
- 						String[] pair2 = scName.split("_");
+ 						String[] pair2 = scName.split("\\|");
  						if (pair2.length != 2) {
  							// 如果没有分类名称，则统一为"其他"
  							sortName = "未分类";
