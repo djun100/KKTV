@@ -1,6 +1,12 @@
 package com.fedorvlasov.lazylist2;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +33,7 @@ public class ProgramLoader {
 	private Context mContext;
 
 	MemoryCache memoryCache = new MemoryCache();
-
+	FileCache fileCache;
 	private Map<TextView, String> textViews = Collections
 			.synchronizedMap(new WeakHashMap<TextView, String>());
 
@@ -36,17 +42,19 @@ public class ProgramLoader {
 		// the UI performance
 		programLoaderThread.setPriority(Thread.NORM_PRIORITY - 2);
 		mContext = context;
+		fileCache = new FileCache(context);
 	}
 
 	public void DisplayText(String url, Activity activity, TextView textView) {
 		textViews.put(textView, url);
-//		String program = memoryCache.get(url);
+		// String program = memoryCache.get(url);
 		// TODO 2013-10-18 为了区分每日的节目预告，url末尾加上日期
 		// 该url作为Hash Memory的键值
-		ArrayList<ProgramInfo> programInfo = memoryCache.get(url + Utils.getWeekOfDate());
+		ArrayList<ProgramInfo> programInfo = memoryCache.get(url
+				+ Utils.getWeekOfDate());
 		if (programInfo != null) {
-//			Log.d("===", "find exist============\n");
-			String program =  getCurrentProgram(programInfo);
+			// Log.d("===", "find exist============\n");
+			String program = getCurrentProgram(programInfo);
 			textView.setText(program);
 		} else {
 			queueProgram(url, activity, textView);
@@ -71,6 +79,13 @@ public class ProgramLoader {
 
 	private ArrayList<ProgramInfo> getProgram(String programPath) {
 
+		File f = fileCache.getFile(programPath + Utils.getWeekOfDate());
+
+		// from SD cache
+		ArrayList<ProgramInfo> fileInfos = decodeFile(f);
+		if (fileInfos != null)
+			return fileInfos;
+
 		/* ====================================================== */
 
 		/* TODO 以listView文本方式显示节目预告 */
@@ -88,13 +103,12 @@ public class ProgramLoader {
 				String[] pair = link.text().split(" ");
 				if (pair.length < 2)
 					continue;
-				String time = pair[0].trim();
-				String program = pair[1].trim();
-
-				ProgramInfo info = new ProgramInfo(time, program, false);
-				infos.add(info);
+				infos.add(new ProgramInfo(pair[0].trim(), pair[1].trim(), false));
 			}
-			
+
+			// TODO 2013-10-22 缓存到本地
+			fileCache.saveFile(infos, f);
+
 			return infos;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -104,8 +118,47 @@ public class ProgramLoader {
 		return null;
 	}
 
+	// decodes image and scales it to reduce memory consumption
+	private ArrayList<ProgramInfo> decodeFile(File f) {
+
+		ArrayList<ProgramInfo> infos = new ArrayList<ProgramInfo>();
+
+		try {
+			InputStream is = new FileInputStream(f);
+			InputStreamReader ir = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(ir);
+			try {
+				while (true) {
+					String line = br.readLine();
+					if (line == null) {
+						break;
+					}
+
+					// 如果不符合要求（节目名和节目地址以英文逗号隔开）直接忽略该行
+					String[] pair = line.split(",");
+					if (pair.length < 2)
+						continue;
+					infos.add(new ProgramInfo(pair[0].trim(), pair[1].trim(),
+							false));
+				}
+			} finally {
+				br.close();
+				ir.close();
+				is.close();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			return null;
+		}
+
+		// end
+		return infos;
+	}
+
 	/**
 	 * 从ArrayList<ProgramInfo>中解析出当前时刻的节目
+	 * 
 	 * @return
 	 */
 	private String getCurrentProgram(ArrayList<ProgramInfo> infos) {
@@ -116,8 +169,8 @@ public class ProgramLoader {
 		SimpleDateFormat simple1 = new SimpleDateFormat("kk:mm");
 
 		// 当前时间
-		String timeStr = DateFormat.format("kk:mm",
-				System.currentTimeMillis()).toString();
+		String timeStr = DateFormat.format("kk:mm", System.currentTimeMillis())
+				.toString();
 		try {
 			fromDate = simple1.parse(timeStr);
 		} catch (ParseException e1) {
@@ -127,9 +180,9 @@ public class ProgramLoader {
 		}
 
 		long curTime = fromDate.getTime();
-		
+
 		for (ProgramInfo info : infos) {
-			
+
 			if (!findFlag) {
 				listPosition++;
 				try {
@@ -144,7 +197,7 @@ public class ProgramLoader {
 				}
 			}
 		}
-		
+
 		// 在listView中突出显示当前的播放节目
 		if (!findFlag) {
 			// FIXME bug#0022 有些节目预告有内容，但是不是真正的节目单，此时的失败是因为没有节目单
@@ -163,7 +216,7 @@ public class ProgramLoader {
 			return infos.get(listPosition - 2).getProgram();
 		}
 	}
-	
+
 	// Task for the queue
 	private class ProgramToLoad {
 		public String url;
@@ -212,13 +265,17 @@ public class ProgramLoader {
 							programToLoad = programsQueue.programsToLoad.pop();
 						}
 						ArrayList<ProgramInfo> programInfo = getProgram(programToLoad.url);
-//						memoryCache.put(programToLoad.url, string);
+						// memoryCache.put(programToLoad.url, string);
 						// TODO 2013-10-18 为了区分每日的节目预告，url末尾加上日期
 						// 该url作为Hash Memory的键值
-						memoryCache.put(programToLoad.url + Utils.getWeekOfDate(), programInfo);
+						memoryCache.put(
+								programToLoad.url + Utils.getWeekOfDate(),
+								programInfo);
 						String tag = textViews.get(programToLoad.textView);
-						if (tag != null && tag.equals(programToLoad.url) && programInfo!= null) {
-							ProgramDisplayer bd = new ProgramDisplayer(getCurrentProgram(programInfo),
+						if (tag != null && tag.equals(programToLoad.url)
+								&& programInfo != null) {
+							ProgramDisplayer bd = new ProgramDisplayer(
+									getCurrentProgram(programInfo),
 									programToLoad.textView);
 							Activity a = (Activity) programToLoad.textView
 									.getContext();
