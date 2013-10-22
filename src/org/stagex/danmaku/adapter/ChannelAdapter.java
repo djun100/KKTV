@@ -1,15 +1,13 @@
 package org.stagex.danmaku.adapter;
 
 import java.util.List;
-
 import org.keke.player.R;
 import org.stagex.danmaku.activity.TvProgramActivity;
 import org.stagex.danmaku.adapter.CustomExpandableAdapter.ViewHolder;
-
 import com.fedorvlasov.lazylist.ImageLoader;
 import com.fedorvlasov.lazylist2.ProgramLoader;
 import com.nmbb.oplayer.scanner.POChannelList;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+@SuppressLint("ResourceAsColor")
 public class ChannelAdapter extends BaseAdapter {
 	private List<POChannelList> infos;
 	private Context mContext;
@@ -32,6 +31,8 @@ public class ChannelAdapter extends BaseAdapter {
 	public ImageLoader imageLoader;
 	public ProgramLoader programLoader;
 
+	public int mCurrentIndex = -1;
+	
 	public ChannelAdapter(Context context, List<POChannelList> infos) {
 		this.infos = infos;
 		this.mContext = context;
@@ -137,6 +138,10 @@ public class ChannelAdapter extends BaseAdapter {
 		}
 
 		viewHolder.text.setText(infos.get(position).name);
+		// 标记当前正在播放的频道
+		if (mCurrentIndex == position)
+			viewHolder.text.setTextColor(R.color.yellow);
+		
 		// 判断是否是热门频道，暂时使用HOT字样
 		if (infos.get(position).mode.equalsIgnoreCase("HOT"))
 			viewHolder.hotView.setVisibility(View.VISIBLE);

@@ -6,7 +6,9 @@ import org.keke.player.R;
 
 import com.nmbb.oplayer.scanner.POChannelList;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +17,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+@SuppressLint("ResourceAsColor")
 public class ChannelListAdapter extends BaseAdapter {
 	private List<POChannelList> infos;
 	private Context mContext;
 
 	private LayoutInflater mLayoutInflater;
+	
+	public int mCurrentIndex = -1;
 
 	public ChannelListAdapter(Context context, List<POChannelList> infos) {
 		this.infos = infos;
@@ -71,6 +76,15 @@ public class ChannelListAdapter extends BaseAdapter {
 		viewHolder.textName.setText(infos.get(position).name);
 		viewHolder.textIndex.setText(Integer.toString(position + 1));
 		// Log.d("channelList", "===> list position" + position);
+		// 标记当前正在播放的频道
+		if (mCurrentIndex == position) {
+			// FIXME 2013-10-22 好像只能用Color.YELLOW，否则颜色不对
+			viewHolder.textName.setTextColor(Color.YELLOW);
+			viewHolder.textIndex.setTextColor(Color.YELLOW);
+		} else {
+			viewHolder.textName.setTextColor(Color.WHITE);
+			viewHolder.textIndex.setTextColor(Color.WHITE);
+		}
 
 		// 判断是否是热门频道，暂时使用HOT字样
 		if (infos.get(position).mode.equalsIgnoreCase("HOT"))
