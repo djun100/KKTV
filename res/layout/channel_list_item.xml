@@ -7,8 +7,9 @@
 
     <LinearLayout
         android:id="@+id/p1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="60dp"
+        android:layout_toLeftOf="@+id/p2"
         android:orientation="horizontal" >
 
         <ImageView
@@ -19,36 +20,60 @@
             android:layout_marginLeft="5dp"
             android:gravity="center_vertical" />
 
-        <TextView
-            android:id="@+id/channel_name"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="15dp"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:textColor="#ff4b4949"
-            android:textSize="15sp" />
+        <LinearLayout
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical" >
 
-        <ImageView
-            android:id="@+id/hot_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:src="@drawable/ic_hot"
-            android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal" >
 
-        <ImageView
-            android:id="@+id/new_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:src="@drawable/ic_new"
-            android:visibility="gone" />
+                <org.stagex.danmaku.util.MarqueeTextView
+                    android:id="@+id/channel_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="marquee"
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:textColor="#ff4b4949"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/hot_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:src="@drawable/ic_hot"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/new_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:src="@drawable/ic_new"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <org.stagex.danmaku.util.MarqueeTextView
+                android:id="@+id/program_name"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:textColor="@color/gray"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

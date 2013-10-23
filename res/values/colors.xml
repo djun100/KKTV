@@ -157,6 +157,8 @@
     <color name="navy">#000080</color> <!-- 海军色 -->
     <color name="black">#000000</color> <!-- 黑色 -->
 
+    <color name="kkblack">#ff4b4949</color> <!-- 可可文本字体颜色 -->
+
 
     <!-- LIST BORDER COLOR -->
     <color name="rounded_container_border">#ffb7babb</color>

@@ -112,7 +112,7 @@ public class ProvinceActivity extends Activity {
 //					showAllSource(info.getAllUrl(), info.name,
 //							info.program_path, info.save);
 					// 直接进入播放界面
-					startLiveMedia(info.getAllUrl(), info.name, info.save, "3", "地方频道");
+					startLiveMedia(info.getAllUrl(), info.name, info.save, "3", "地方频道", info.program_path);
 				}
 			});
 
@@ -157,7 +157,7 @@ public class ProvinceActivity extends Activity {
 	 * @param pos
 	 */
 	private void startLiveMedia(ArrayList<String> liveUrls, String name,
-			Boolean channel_star, String sort, String sortName) {
+			Boolean channel_star, String sort, String sortName, String mPprograPath) {
 		Intent intent = new Intent(ProvinceActivity.this,
 				PlayerActivity.class);
 		intent.putExtra("selected", 0);
@@ -168,6 +168,7 @@ public class ProvinceActivity extends Activity {
 		intent.putExtra("sortString", sortName);
 		intent.putExtra("source", "线路" + Integer.toString(1) + "："
 				+ SourceName.whichName(liveUrls.get(0)));
+		intent.putExtra("prograPath", mPprograPath);
 
 		startActivity(intent);
 	}

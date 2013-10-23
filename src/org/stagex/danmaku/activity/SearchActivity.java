@@ -160,7 +160,7 @@ public class SearchActivity extends Activity {
 						sortValue = "6";
 						sortName = "其他频道";
 					}
-					startLiveMedia(info.getAllUrl(), info.name, info.save, sortValue, sortName);
+					startLiveMedia(info.getAllUrl(), info.name, info.save, sortValue, sortName, info.program_path);
 				}
 			});
 
@@ -208,7 +208,7 @@ public class SearchActivity extends Activity {
 	 * @param pos
 	 */
 	private void startLiveMedia(ArrayList<String> liveUrls, String name,
-			Boolean channel_star, String sort, String sortName) {
+			Boolean channel_star, String sort, String sortName, String mPprograPath) {
 		Intent intent = new Intent(SearchActivity.this,
 				PlayerActivity.class);
 		intent.putExtra("selected", 0);
@@ -219,6 +219,7 @@ public class SearchActivity extends Activity {
 		intent.putExtra("sortString", sortName);
 		intent.putExtra("source", "线路" + Integer.toString(1) + "："
 				+ SourceName.whichName(liveUrls.get(0)));
+		intent.putExtra("prograPath", mPprograPath);
 
 		startActivity(intent);
 	}

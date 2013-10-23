@@ -24,6 +24,7 @@ import org.stagex.danmaku.util.ProgramTask;
 import org.stagex.danmaku.util.SourceName;
 import org.stagex.danmaku.util.SystemUtility;
 
+import com.hp.hpl.sparta.xpath.PositionEqualsExpr;
 import com.nmbb.oplayer.scanner.ChannelListBusiness;
 import com.nmbb.oplayer.scanner.DbHelper;
 import com.nmbb.oplayer.scanner.POChannelList;
@@ -764,10 +765,6 @@ public class PlayerActivity extends Activity implements
 		
 		// 2013-10-14 节目预告相关
 		programText = (TextView)findViewById(R.id.program_txt);
-		
-//		mProgramtask = new ProgramTask(programText);
-//        mProgramtask.execute(mprogramPath);
-        
 	}
 
 	/**
@@ -818,6 +815,13 @@ public class PlayerActivity extends Activity implements
 			return;
 		}
 		mSourceNum = mPlayListArray.size();
+		
+		// TODO 2013-10-20 解析出首次进入播放界面频道的节目预告
+		mPrograPath = intent.getStringExtra("prograPath");
+		if (mPrograPath != null) {
+			mProgramtask = new ProgramTask(programText);
+	        mProgramtask.execute(mPrograPath);
+		}
 	}
 
 	/**
@@ -2029,6 +2033,11 @@ public class PlayerActivity extends Activity implements
                 
                 mTitleName = info.getName();
                 reSetUserdefChannelData(info);
+                
+                // 2013-10-15 显示节目预告
+                // 置空节目预告控件
+                programText.setText("");
+                
                 return false;
             }
         });
@@ -2131,7 +2140,7 @@ public class PlayerActivity extends Activity implements
 	 */
 	private void createChannelList() {
 		
-		ChannelListAdapter adapter = new ChannelListAdapter(this, channel_infos);
+		final ChannelListAdapter adapter = new ChannelListAdapter(this, channel_infos);
 		channel_list.setAdapter(adapter);
 		// 突出显示当前频道
 //		channel_list.setSelection(mChannelIndex);
@@ -2156,13 +2165,21 @@ public class PlayerActivity extends Activity implements
 				reSetChannelData(info);
 				Log.i(LOGTAG, "===>>>" + mSourceName);
 
+				// TODO 2013-10-22 标记当前正在播放的频道
+				adapter.mCurrentIndex = arg2;
+				adapter.notifyDataSetChanged();
+				
 				// 2013-10-15 显示节目预告
 				if (mProgramtask != null && mProgramtask.getStatus() != AsyncTask.Status.FINISHED) {
                 	// TODO 可能不是很严谨
                 	mProgramtask.cancel(true);
                 }
-				mProgramtask = new ProgramTask(programText);
-				mProgramtask.execute(info.program_path);
+				if (info.program_path != null) {
+					mProgramtask = new ProgramTask(programText);
+					mProgramtask.execute(info.program_path);
+				} else {
+					programText.setText("");
+				}
 				
 				// 2013-08-31 隐藏源切换和切台的控件
 				// 为防止重复搜索数据库分类，此处暂时不隐藏
@@ -2520,7 +2537,7 @@ public class PlayerActivity extends Activity implements
  						}
  						
  						// 2013-09-24 提取出自定义的分类名称
- 						String[] pair2 = scName.split("_");
+ 						String[] pair2 = scName.split("\\|");
  						if (pair2.length != 2) {
  							// 如果没有分类名称，则统一为"其他"
  							sortName = "未分类";
@@ -2617,6 +2634,9 @@ public class PlayerActivity extends Activity implements
 	// 为了加强地方频道的分类功能，采用数据库暂存所有的自定义
 	// 的数据，每次加载时，重新入数据库？或者查看自定义文件
 	// 是否作出了修改，若修改了，则清除数据库数据，重新装载
+    // #########
+    // TODO 2013-10-16
+    // 修改查找策略，提升地方台的加载速度
 	private void parseDF() {
 		int sortNum = groupArrayDF.size();
 		int index = 0;
