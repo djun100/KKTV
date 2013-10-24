@@ -201,7 +201,9 @@ public class PlayerActivity extends Activity implements
 	private Boolean mFirstLoad = true;
 	private int mSourceNum = 0;
 	private int mSourceIndex = 0;
-	private int mChannelIndex = 0;
+	// TODO 2013-10-23 从列表界面进入播放界面暂时没有标记index，赋值为-1
+	private int mChannelIndex = -1;
+	private int mChannelGroup = -1;
 	
 	private Boolean no_player_help1;
 	private Boolean no_player_help2;
@@ -260,7 +262,10 @@ public class PlayerActivity extends Activity implements
 	// 播放界面的频道分类切换
 	private String[] chSorts= {"1.央视", "2.卫视", "3.地方", "4.体育", "5.港澳台", "6.其他", "7.收藏", "8.自定义", "9.自定义收藏"};
 	private int chSortNum = chSorts.length;
+	// 当前切换到的频道分类
 	private int curChSortIndex = 0;
+	// 当前正在播放的频道分类
+	private int curPlaySortIndex = 0;
 	// 当前播放的分类，与当前切换的分类是不同的
 	private int curPlaySort = 0;		// 主要是区分是否是自定义, 0是自定义，1是官方频道
 	private Boolean isListLoading = false;
@@ -801,6 +806,8 @@ public class PlayerActivity extends Activity implements
 			if (channelSort == null)
 				channelSort = "8";		//主要针对输入的网址行为，跳转到自定义频道
 			curChSortIndex = Integer.parseInt(channelSort) - 1;
+			// 点击列表进来之后，当前切换分类值和当前播放分类值是相等的
+			curPlaySortIndex = curChSortIndex;
 			
 			if (isSelfTV || isSelfFavTV ) {
 				curPlaySort = 0;
@@ -2016,8 +2023,22 @@ public class PlayerActivity extends Activity implements
 		// 实现自定义节目的分类
         
 	    final CustomExpandableAdapter adapter = new CustomExpandableAdapter(this, groupArray, childArray, true);
-	    epdListView.setAdapter(adapter);
         
+		// TODO 2013-10-23 标记当前正在播放的频道
+		if (curChSortIndex == curPlaySortIndex) {
+			adapter.mCurGroup = mChannelGroup;
+			adapter.mCurChild = mChannelIndex;
+			epdListView.setAdapter(adapter);
+			// 突出显示当前分类
+			if (mChannelGroup >= 0)
+//			epdListView.setSelectedChild(mChannelGroup, mChannelIndex, true);
+				epdListView.expandGroup(mChannelGroup);
+		} else {
+			adapter.mCurGroup = -1;
+			adapter.mCurChild = -1;
+			epdListView.setAdapter(adapter);
+		}
+	    
         //设置item点击的监听器
 	    epdListView.setOnChildClickListener(new OnChildClickListener() {
 
@@ -2027,12 +2048,21 @@ public class PlayerActivity extends Activity implements
 
 				curPlaySort = 0;	// 当前播放的是自定义频道
 				
-				mChannelIndex = 0;		// TODO 暂时复位
-            	
+				mChannelIndex = childPosition;
+				mChannelGroup = groupPosition;
+				
+				// 点击播放之后，当前切换的频道分类必然就是当前播放的频道分类
+				curPlaySortIndex = curChSortIndex;
+				
                 ChannelInfo info = (ChannelInfo)adapter.getChild(groupPosition, childPosition);
                 
                 mTitleName = info.getName();
                 reSetUserdefChannelData(info);
+                
+				// TODO 2013-10-23 标记当前正在播放的频道
+				adapter.mCurGroup = groupPosition;
+				adapter.mCurChild = childPosition;
+				adapter.notifyDataSetChanged();
                 
                 // 2013-10-15 显示节目预告
                 // 置空节目预告控件
@@ -2050,11 +2080,18 @@ public class PlayerActivity extends Activity implements
 	private void createUserdefChannelList() {
 		
 		ChannelDefFavAdapter adapter = new ChannelDefFavAdapter(this, userdef_infos, true);
-		channel_list.setAdapter(adapter);
-		// 突出显示当前频道
-//		channel_list.setSelection(mChannelIndex);
-		// TODO 用一个全局的变量来记录当前是哪一个频道
-		
+
+		// TODO 2013-10-23 标记当前正在播放的频道
+		if (curChSortIndex == curPlaySortIndex) {
+			adapter.mCurrentIndex = mChannelIndex;
+			channel_list.setAdapter(adapter);
+			// 突出显示当前频道
+			if (mChannelIndex >= 0)
+				channel_list.setSelection(mChannelIndex);
+		} else {
+			adapter.mCurrentIndex = -1;
+			channel_list.setAdapter(adapter);
+		}
 		
 		channel_list.setOnItemClickListener(new OnItemClickListener() {
 
@@ -2065,6 +2102,9 @@ public class PlayerActivity extends Activity implements
 				curPlaySort = 0;	// 当前播放的是自定义频道
 				
 				mChannelIndex = arg2;
+				
+				// 点击播放之后，当前切换的频道分类必然就是当前播放的频道分类
+				curPlaySortIndex = curChSortIndex;
 				
 				// TODO Auto-generated method stub
 				POUserDefChannel info = (POUserDefChannel) channel_list
@@ -2103,8 +2143,22 @@ public class PlayerActivity extends Activity implements
 	private void createChannelListDF() {
         
 	    final CustomExpandableAdapterDF adapter = new CustomExpandableAdapterDF(this, groupArrayDF, childArrayDF);
-	    epdListView.setAdapter(adapter);
-        
+	    
+		// TODO 2013-10-23 标记当前正在播放的频道
+		if (curChSortIndex == curPlaySortIndex) {
+			adapter.mCurGroup = mChannelGroup;
+			adapter.mCurChild = mChannelIndex;
+			epdListView.setAdapter(adapter);
+			// 突出显示当前分类
+			if (mChannelGroup >= 0)
+//				epdListView.setSelectedChild(mChannelGroup, mChannelIndex, true);
+				epdListView.expandGroup(mChannelGroup);
+		} else {
+			adapter.mCurGroup = -1;
+			adapter.mCurChild = -1;
+			epdListView.setAdapter(adapter);
+		}
+
         //设置item点击的监听器
 	    epdListView.setOnChildClickListener(new OnChildClickListener() {
 
@@ -2114,12 +2168,21 @@ public class PlayerActivity extends Activity implements
 
 				curPlaySort = 1;	// 当前播放的是官方频道
 				
-				mChannelIndex = 0;		// TODO 暂时复位
+				mChannelIndex = childPosition;
+				mChannelGroup = groupPosition;
             	
+				// 点击播放之后，当前切换的频道分类必然就是当前播放的频道分类
+				curPlaySortIndex = curChSortIndex;
+				
 				POChannelList info = (POChannelList)adapter.getChild(groupPosition, childPosition);
                 
                 mTitleName = info.name;
                 reSetChannelData(info);
+                
+				// TODO 2013-10-23 标记当前正在播放的频道
+				adapter.mCurGroup = groupPosition;
+				adapter.mCurChild = childPosition;
+				adapter.notifyDataSetChanged();
                 
                 // 2013-10-15 显示节目预告
                 if (mProgramtask != null && mProgramtask.getStatus() != AsyncTask.Status.FINISHED) {
@@ -2141,11 +2204,18 @@ public class PlayerActivity extends Activity implements
 	private void createChannelList() {
 		
 		final ChannelListAdapter adapter = new ChannelListAdapter(this, channel_infos);
-		channel_list.setAdapter(adapter);
-		// 突出显示当前频道
-//		channel_list.setSelection(mChannelIndex);
-		// TODO 用一个全局的变量来记录当前是哪一个频道
 		
+		// TODO 2013-10-23 标记当前正在播放的频道
+		if (curChSortIndex == curPlaySortIndex) {
+			adapter.mCurrentIndex = mChannelIndex;
+			channel_list.setAdapter(adapter);
+			// 突出显示当前频道
+			if (mChannelIndex >= 0)
+				channel_list.setSelection(mChannelIndex);
+		} else {
+			adapter.mCurrentIndex = -1;
+			channel_list.setAdapter(adapter);
+		}
 		
 		channel_list.setOnItemClickListener(new OnItemClickListener() {
 
@@ -2156,6 +2226,9 @@ public class PlayerActivity extends Activity implements
 				curPlaySort = 1;	// 当前播放的是官方频道
 				
 				mChannelIndex = arg2;
+				
+				// 点击播放之后，当前切换的频道分类必然就是当前播放的频道分类
+				curPlaySortIndex = curChSortIndex;
 				
 				// TODO Auto-generated method stub
 				POChannelList info = (POChannelList) channel_list

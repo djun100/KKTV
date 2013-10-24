@@ -3,7 +3,6 @@ package org.stagex.danmaku.adapter;
 import java.util.List;
 import org.keke.player.R;
 import org.stagex.danmaku.activity.TvProgramActivity;
-import org.stagex.danmaku.adapter.CustomExpandableAdapter.ViewHolder;
 import com.fedorvlasov.lazylist.ImageLoader;
 import com.fedorvlasov.lazylist2.ProgramLoader;
 import com.nmbb.oplayer.scanner.POChannelList;

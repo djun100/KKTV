@@ -7,6 +7,7 @@ import org.keke.player.R;
 import com.nmbb.oplayer.scanner.POUserDefChannel;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ public class ChannelDefFavAdapter extends BaseAdapter {
 	private Boolean isAtPlaylist;
 
 	private LayoutInflater mLayoutInflater;
+	
+	public int mCurrentIndex = -1;
 
 	public ChannelDefFavAdapter(Context context, List<POUserDefChannel> infos,
 			Boolean isAtPlaylist) {
@@ -72,6 +75,17 @@ public class ChannelDefFavAdapter extends BaseAdapter {
 
 			viewHolder2.textIndex.setText(Integer.toString(position + 1));
 			viewHolder2.text.setText(infos.get(position).name);
+			
+			// 标记当前正在播放的频道
+			if (mCurrentIndex == position) {
+				// FIXME 2013-10-22 好像只能用Color.YELLOW，否则颜色不对
+				viewHolder2.text.setTextColor(Color.YELLOW);
+				viewHolder2.textIndex.setTextColor(Color.YELLOW);
+			} else {
+				viewHolder2.text.setTextColor(Color.WHITE);
+				viewHolder2.textIndex.setTextColor(Color.WHITE);
+			}
+			
 			return convertView;
 		} else {
 			ViewHolder viewHolder;

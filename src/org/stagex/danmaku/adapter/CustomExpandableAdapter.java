@@ -1,9 +1,12 @@
 package org.stagex.danmaku.adapter;
 
 import java.util.List;
+
 import org.keke.player.R;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,8 +21,11 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 	private List<String> groupArray;
 	private List<List<ChannelInfo>> childArray;
 	private LayoutInflater mLayoutInflater;
-	Activity activity;
+	private Activity activity;
 	private Boolean fromPlaying;
+	
+	public int mCurGroup = -1;
+	public int mCurChild = -1;
 
 	public CustomExpandableAdapter(Activity activity, List<String> groupArray,
 			List<List<ChannelInfo>> childArray, Boolean fromPlaying) {
@@ -92,6 +98,17 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		viewHolder.name.setText(groupArray.get(groupPosition));
+		
+		if (fromPlaying) {
+			// 标记当前正在播放的频道
+			if (mCurGroup == groupPosition) {
+				// FIXME 2013-10-22 好像只能用Color.YELLOW，否则颜色不对
+				viewHolder.name.setTextColor(Color.YELLOW);
+			} else {
+				viewHolder.name.setTextColor(Color.WHITE);
+			}
+		}
+		
 		return convertView;
 	}
 
@@ -118,13 +135,23 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 		viewHolder.name.setText(childArray.get(groupPosition)
 				.get(childPosition).getName());
 
+		if (fromPlaying) {
+			// 标记当前正在播放的频道
+			if (mCurGroup == groupPosition && mCurChild == childPosition) {
+				// FIXME 2013-10-22 好像只能用Color.YELLOW，否则颜色不对
+				viewHolder.name.setTextColor(Color.YELLOW);
+			} else {
+				viewHolder.name.setTextColor(Color.WHITE);
+			}
+		}
+		
 //		Log.d("test", "===> child name ==>"
 //				+ childArray.get(groupPosition).get(childPosition).getName());
 
 		return convertView;
 	}
 
-	class ViewHolder {
+	private class ViewHolder {
 		TextView name;
 	}
 
