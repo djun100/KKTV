@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,6 +45,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -2726,21 +2729,62 @@ public class PlayerActivity extends Activity implements
     // TODO 2013-10-16
     // 修改查找策略，提升地方台的加载速度
 	private void parseDF() {
-		int sortNum = groupArrayDF.size();
-		int index = 0;
-		String sortName = null;
-		for (index = 0; index < sortNum; index++) {
-			sortName = groupArrayDF.get(index).getProvinceName();
-			List<POChannelList> listChannel = new ArrayList<POChannelList>();
-			
-			listChannel = ChannelListBusiness.getAllSearchChannels(
-					"province_name", sortName);
-			
-			childArrayDF.add(index, listChannel);
-			
+		
+		// ============================================================
+		// 方法一：效率较低
+//		int sortNum = groupArrayDF.size();
+//		int index = 0;
+//		String sortName = null;
+//		for (index = 0; index < sortNum; index++) {
+//			sortName = groupArrayDF.get(index).getProvinceName();
+//			List<POChannelList> listChannel = new ArrayList<POChannelList>();
+//			
+//			listChannel = ChannelListBusiness.getAllSearchChannels(
+//					"province_name", sortName);
+//			
+//			childArrayDF.add(index, listChannel);
+//			
+//		}
+		// ============================================================
+		// 方法二：效率相对高一些
+		List<POChannelList> listChannel = ChannelListBusiness.getAllOfficialChannels();
+		ChannelInfoCache mChannelInfoCache = new ChannelInfoCache();
+		
+		for (ProvinceInfo info : groupArrayDF) {
+			mChannelInfoCache.put(info.getProvinceName(), new ArrayList<POChannelList>());
 		}
+		
+		List<POChannelList> tmpList;
+		
+		for (POChannelList info : listChannel) {
+			tmpList = mChannelInfoCache.get(info.province_name);
+			if (tmpList != null)
+				tmpList.add(info);
+		}
+		
+		for (ProvinceInfo info : groupArrayDF) {
+			childArrayDF.add(mChannelInfoCache.get(info.getProvinceName()));
+		}
+		// ============================================================
+		
 		isDFhasLoad = true;
 	}
  // ===============================
-	
+	public class ChannelInfoCache {
+	    private HashMap<String, List<POChannelList>> cache=new HashMap<String, List<POChannelList>>();
+	    
+	    public List<POChannelList> get(String id){
+	        if(!cache.containsKey(id))
+	            return null;
+	        return cache.get(id);
+	    }
+	    
+	    public void put(String id, List<POChannelList> infos){
+	        cache.put(id, infos);
+	    }
+
+	    public void clear() {
+	        cache.clear();
+	    }
+	}
 }

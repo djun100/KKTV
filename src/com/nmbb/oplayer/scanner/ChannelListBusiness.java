@@ -55,6 +55,21 @@ public final class ChannelListBusiness {
 		}
 		return new ArrayList<POChannelList>();
 	}
+	
+	// 获取所有官方频道
+	public static List<POChannelList> getAllOfficialChannels() {
+		SQLiteHelperOrm db = new SQLiteHelperOrm();
+		try {
+			Dao<POChannelList, Long> dao = db.getDao(POChannelList.class);
+			return dao.queryForAll();
+		} catch (SQLException e) {
+			Logger.e(e);
+		} finally {
+			if (db != null)
+				db.close();
+		}
+		return new ArrayList<POChannelList>();
+	}
 
 	// 建立数据库所有数据
 	public static void buildDatabase(List<ChannelInfo> List) throws Exception {
