@@ -40,6 +40,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 	private SharedPreferences sharedPreferences;
 	private Editor editor;
 	private boolean isHardDec;
+	private boolean isSeekbarShow;
 	private boolean noAd;
 
 	// private TextView pointsTextView;
@@ -339,6 +340,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		// TODO 2013-09-06 暂时去掉秒杀广告的控件
 		// tableView3.addBasicItem(R.drawable.ic_noad, "秒杀广告", "达到积分要求可以去除广告");
 		tableView3.addBasicItem(R.drawable.ic_star, "画面比例", "选择视频播放界面的默认比列");
+		tableView3.addBasicItem(R.drawable.ic_star, "播放进度条", "选择是否显示播放进度条");
 	}
 
 	/**
@@ -515,6 +517,12 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 				showDialog(RATION_DIALOG);
 
 				break;
+			case 2:
+				// 显示对话框
+				currentDialog = SEEKBAR_DIALOG;
+				showDialog(SEEKBAR_DIALOG);
+
+				break;
 			default:
 				Log.d(LOGTAG, "not supported btn id");
 			}
@@ -525,6 +533,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 
 	private final static int RATION_DIALOG = 1;
 	private final static int DECODE_DIALOG = 2;
+	private final static int SEEKBAR_DIALOG = 3;
 	private int currentDialog = 0;
 
 	@Override
@@ -557,6 +566,19 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 
 			dialog = builderDecode.create();
 			break;
+		case SEEKBAR_DIALOG:
+			Builder builderSeekbar = new AlertDialog.Builder(this);
+			// builder.setIcon(R.drawable.basketball);
+			builderSeekbar.setTitle("是否要显示播放进度条");
+			final ChoiceOnClickListener choiceListenerSeekbar = new ChoiceOnClickListener();
+
+			isSeekbarShow = sharedPreferences.getBoolean("isSeekbarShow", false);
+
+			builderSeekbar.setSingleChoiceItems(R.array.seekbar, isSeekbarShow ? 1 : 0,
+					choiceListenerSeekbar);
+
+			dialog = builderSeekbar.create();
+			break;
 		}
 		return dialog;
 	}
@@ -573,6 +595,10 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 				break;
 			case DECODE_DIALOG:
 				editor.putBoolean("isHardDec", (which == 1));
+				editor.commit();
+				break;
+			case SEEKBAR_DIALOG:
+				editor.putBoolean("isSeekbarShow", (which == 1));
 				editor.commit();
 				break;
 		}

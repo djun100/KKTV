@@ -140,6 +140,7 @@ public class PlayerActivity extends Activity implements
 	private LinearLayout player_overlay_header;
 	private LinearLayout interface_overlay;
 	private LinearLayout seekbar_overlay;
+	private LinearLayout program_overlay;
 	// end
 	private ImageButton mImageButtonStar;
 	private ImageButton mImageButtonToggleMessage;
@@ -280,6 +281,9 @@ public class PlayerActivity extends Activity implements
 	private TextView programText;
 	private ProgramTask mProgramtask = null;
 	private String mPrograPath = null;
+	
+	// 是否隐藏播放进度条
+	private boolean bShowSeekbar;
 	//================================================
 	/**
 	 * 初始化自定义的Toast界面
@@ -694,14 +698,16 @@ public class PlayerActivity extends Activity implements
 		mSeekBarProgress.setOnSeekBarChangeListener(this);
 		mTextViewLength = (TextView) findViewById(R.id.player_text_length);
 
-		// 点击阴影部分也不会隐藏
+		// 点击阴影部分也不会隐藏（并不是正在的监听响应，只是注册个监听）
 		player_overlay_header = (LinearLayout) findViewById(R.id.player_overlay_header);
 		player_overlay_header.setOnClickListener(this);
 		interface_overlay = (LinearLayout) findViewById(R.id.interface_overlay);
 		interface_overlay.setOnClickListener(this);
 		seekbar_overlay = (LinearLayout) findViewById(R.id.seekbar_overlay);
 		seekbar_overlay.setOnClickListener(this);
-
+		program_overlay = (LinearLayout) findViewById(R.id.program_overlay);
+		program_overlay.setOnClickListener(this);
+		
 		// 播放控件
 		mImageButtonStar = (ImageButton) findViewById(R.id.player_button_star);
 		mImageButtonStar.setOnClickListener(this);
@@ -1124,6 +1130,11 @@ public class PlayerActivity extends Activity implements
 		// 选择播放器
 		sharedPreferences = getSharedPreferences("keke_player", MODE_PRIVATE);
 		editor = sharedPreferences.edit();
+		
+		// 2013-10-24 是否显示播放进度条
+		bShowSeekbar = sharedPreferences.getBoolean("isSeekbarShow", false);
+		if (bShowSeekbar)
+			seekbar_overlay.setVisibility(View.VISIBLE);
 		
 		// 获取设置的画面默认比例
 		mAspectRatio = sharedPreferences.getInt("viewTaion", 0);
@@ -2030,9 +2041,11 @@ public class PlayerActivity extends Activity implements
 			adapter.mCurChild = mChannelIndex;
 			epdListView.setAdapter(adapter);
 			// 突出显示当前分类
-			if (mChannelGroup >= 0)
+			if (mChannelGroup >= 0) {
 //			epdListView.setSelectedChild(mChannelGroup, mChannelIndex, true);
+				epdListView.setSelection(mChannelGroup);
 				epdListView.expandGroup(mChannelGroup);
+			}
 		} else {
 			adapter.mCurGroup = -1;
 			adapter.mCurChild = -1;
@@ -2150,9 +2163,11 @@ public class PlayerActivity extends Activity implements
 			adapter.mCurChild = mChannelIndex;
 			epdListView.setAdapter(adapter);
 			// 突出显示当前分类
-			if (mChannelGroup >= 0)
+			if (mChannelGroup >= 0) {
 //				epdListView.setSelectedChild(mChannelGroup, mChannelIndex, true);
+				epdListView.setSelection(mChannelGroup);
 				epdListView.expandGroup(mChannelGroup);
+			}
 		} else {
 			adapter.mCurGroup = -1;
 			adapter.mCurChild = -1;
