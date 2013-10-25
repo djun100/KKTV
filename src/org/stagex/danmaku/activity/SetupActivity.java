@@ -213,7 +213,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		CustomClickListener1 listener = new CustomClickListener1();
 		tableView1.setClickListener(listener);
 
-		tableView1.addBasicItem(R.drawable.ic_about, "关于(v1.4.2.1)", "软件信息介绍");
+		tableView1.addBasicItem(R.drawable.ic_about, "关于(v1.4.2.2)", "软件信息介绍");
 		tableView1.addBasicItem(R.drawable.ic_about, "帮助", "软件帮助信息");
 		tableView1
 				.addBasicItem(R.drawable.ic_about, "QQ群", "可可电视交流群：336809417");
