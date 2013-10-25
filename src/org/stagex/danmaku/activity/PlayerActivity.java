@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -284,6 +285,12 @@ public class PlayerActivity extends Activity implements
 	private TextView programText;
 	private ProgramTask mProgramtask = null;
 	private String mPrograPath = null;
+	
+	// TODO 由于点击屏幕会出现当前节目，所以要有两个变量来计算时间间隔
+	private Date mDateLast;
+	private Date mDateCur;
+	private long mTimeLast;							// 刚打开的时候初始化
+	private final long DIFFTIME = 3 * 60;	// 3 分钟
 	
 	// 是否隐藏播放进度条
 	private boolean bShowSeekbar;
@@ -838,6 +845,10 @@ public class PlayerActivity extends Activity implements
 			mProgramtask = new ProgramTask(programText);
 	        mProgramtask.execute(mPrograPath);
 		}
+		
+		// 获取首次的时间
+		mTimeLast = new Date().getTime();
+		
 	}
 
 	/**
@@ -1587,6 +1598,20 @@ public class PlayerActivity extends Activity implements
 //			return true;
 //		}
 
+		// TODO 2013-10-25 计算时间间隔，以便更新节目预告
+		if (mPrograPath != null) {
+			if ((new Date().getTime() - mTimeLast) / 1000 > DIFFTIME) {
+				if (mProgramtask != null && mProgramtask.getStatus() != AsyncTask.Status.FINISHED) {
+                	// TODO 可能不是很严谨
+                	mProgramtask.cancel(true);
+                }
+	                mProgramtask = new ProgramTask(programText);
+					mProgramtask.execute(mPrograPath);
+					// 记录这一次获取节目预告的时间
+					mTimeLast = new Date().getTime();
+			}
+		}
+		
 		// ==================================
 		// 显示播放界面的帮助信息
 			if (no_player_help2 == false) {
@@ -2084,6 +2109,9 @@ public class PlayerActivity extends Activity implements
                 // 置空节目预告控件
                 programText.setText("");
                 
+                mPrograPath = null;
+                mTimeLast = new Date().getTime();
+                
                 return false;
             }
         });
@@ -2135,6 +2163,9 @@ public class PlayerActivity extends Activity implements
 //				mLinearLayoutChannelList.setVisibility(View.GONE);
 				// 2013-10-15 自定义节目没有节目预告
 				programText.setText("");
+				
+				mPrograPath = null;
+				mTimeLast = new Date().getTime();
 			}
 		});
 
@@ -2207,8 +2238,14 @@ public class PlayerActivity extends Activity implements
                 	// TODO 可能不是很严谨
                 	mProgramtask.cancel(true);
                 }
-                mProgramtask = new ProgramTask(programText);
-				mProgramtask.execute(info.program_path);
+                if (info.program_path != null) {
+	                mProgramtask = new ProgramTask(programText);
+					mProgramtask.execute(info.program_path);
+                } else {
+					programText.setText("");
+				}
+				mPrograPath = info.program_path;
+				mTimeLast = new Date().getTime();
                 
                 return false;
             }
@@ -2271,6 +2308,9 @@ public class PlayerActivity extends Activity implements
 				} else {
 					programText.setText("");
 				}
+				
+				mPrograPath = info.program_path;
+				mTimeLast = new Date().getTime();
 				
 				// 2013-08-31 隐藏源切换和切台的控件
 				// 为防止重复搜索数据库分类，此处暂时不隐藏
