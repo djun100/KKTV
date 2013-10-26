@@ -1,16 +1,20 @@
 package org.stagex.danmaku.adapter;
 
 import java.util.List;
+
 import org.keke.player.R;
 import org.stagex.danmaku.activity.TvProgramActivity;
+
 import com.fedorvlasov.lazylist.ImageLoader;
 import com.fedorvlasov.lazylist2.ProgramLoader;
 import com.nmbb.oplayer.scanner.POChannelList;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,91 +94,97 @@ public class ChannelAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.programView.setTag(position);
-		viewHolder.programView
-				.setOnClickListener(new ImageView.OnClickListener() {
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						// Toast.makeText(
-						// mContext,
-						// "您单击了[" + infos.get((Integer) v.getTag()).getName()
-						// + "]", Toast.LENGTH_SHORT).show();
-						Intent intent = new Intent(mContext,
-								TvProgramActivity.class);
-						String channel_name = infos.get((Integer) v.getTag()).name;
-						String program_path = infos.get((Integer) v.getTag()).program_path;
-						if (program_path == null) {
-							new AlertDialog.Builder(mContext)
-									.setIcon(R.drawable.ic_dialog_alert)
-									.setTitle("抱歉")
-									.setMessage("暂时没有该电视台的节目预告！")
-									.setPositiveButton(
-											"知道了",
-											new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(
-														DialogInterface dialog,
-														int which) {
-													// do nothing - it will
-													// close on
-													// its own
-												}
-											}).show();
-						} else {
-							intent.putExtra("ProgramPath", program_path);
-							intent.putExtra("ChannelName", channel_name);
-							mContext.startActivity(intent);
-						}
-					}
-				});
-
-		// 是否显示已收藏图标
-		if (infos.get(position).save) {
-			viewHolder.favView.setVisibility(View.VISIBLE);
-		} else {
-			// FIXME 2013-10-20 采用了ViewHolder之后，必须强制设置下默认值
-			viewHolder.favView.setVisibility(View.GONE);
-		}
-
-		viewHolder.text.setText(infos.get(position).name);
-		// 标记当前正在播放的频道
-		if (mCurrentIndex == position)
-			viewHolder.text.setTextColor(R.color.yellow);
 		
-		// 判断是否是热门频道，暂时使用HOT字样
-		if (infos.get(position).mode.equalsIgnoreCase("HOT"))
-			viewHolder.hotView.setVisibility(View.VISIBLE);
-		else 
-			viewHolder.hotView.setVisibility(View.GONE);
-		// 判断是否是新频道，暂时用NEW字样
-		if (infos.get(position).mode.equalsIgnoreCase("NEW"))
-			viewHolder.newView.setVisibility(View.VISIBLE);
-		else
-			viewHolder.newView.setVisibility(View.GONE);
-
-		// FIXME 添加对togic的部分图标的url无hostname的支持
-		String iconUrl = infos.get(position).icon_url;
-		if (iconUrl.startsWith("/upload")) {
-			// add "http://tv.togic.com"
-			StringBuffer urlBuf = new StringBuffer();
-			urlBuf.append("http://tv.togic.com");
-			urlBuf.append(iconUrl);
-			// TODO 新方法，防止OOM
-			imageLoader.DisplayImage(urlBuf.toString(), null,
-					viewHolder.imageView);
+		// FIXME 2013-10-26 由于infos的内存会被清除，所以这里加以保护
+		if (position < infos.size()) {
+			viewHolder.programView.setTag(position);
+			viewHolder.programView
+					.setOnClickListener(new ImageView.OnClickListener() {
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							// Toast.makeText(
+							// mContext,
+							// "您单击了[" + infos.get((Integer) v.getTag()).getName()
+							// + "]", Toast.LENGTH_SHORT).show();
+							Intent intent = new Intent(mContext,
+									TvProgramActivity.class);
+							String channel_name = infos.get((Integer) v.getTag()).name;
+							String program_path = infos.get((Integer) v.getTag()).program_path;
+							if (program_path == null) {
+								new AlertDialog.Builder(mContext)
+										.setIcon(R.drawable.ic_dialog_alert)
+										.setTitle("抱歉")
+										.setMessage("暂时没有该电视台的节目预告！")
+										.setPositiveButton(
+												"知道了",
+												new DialogInterface.OnClickListener() {
+													@Override
+													public void onClick(
+															DialogInterface dialog,
+															int which) {
+														// do nothing - it will
+														// close on
+														// its own
+													}
+												}).show();
+							} else {
+								intent.putExtra("ProgramPath", program_path);
+								intent.putExtra("ChannelName", channel_name);
+								mContext.startActivity(intent);
+							}
+						}
+					});
+	
+			// 是否显示已收藏图标
+			if (infos.get(position).save) {
+				viewHolder.favView.setVisibility(View.VISIBLE);
+			} else {
+				// FIXME 2013-10-20 采用了ViewHolder之后，必须强制设置下默认值
+				viewHolder.favView.setVisibility(View.GONE);
+			}
+	
+			viewHolder.text.setText(infos.get(position).name);
+			// 标记当前正在播放的频道
+			if (mCurrentIndex == position)
+				viewHolder.text.setTextColor(R.color.yellow);
+			
+			// 判断是否是热门频道，暂时使用HOT字样
+			if (infos.get(position).mode.equalsIgnoreCase("HOT"))
+				viewHolder.hotView.setVisibility(View.VISIBLE);
+			else 
+				viewHolder.hotView.setVisibility(View.GONE);
+			// 判断是否是新频道，暂时用NEW字样
+			if (infos.get(position).mode.equalsIgnoreCase("NEW"))
+				viewHolder.newView.setVisibility(View.VISIBLE);
+			else
+				viewHolder.newView.setVisibility(View.GONE);
+	
+			// FIXME 添加对togic的部分图标的url无hostname的支持
+			String iconUrl = infos.get(position).icon_url;
+			if (iconUrl.startsWith("/upload")) {
+				// add "http://tv.togic.com"
+				StringBuffer urlBuf = new StringBuffer();
+				urlBuf.append("http://tv.togic.com");
+				urlBuf.append(iconUrl);
+				// TODO 新方法，防止OOM
+				imageLoader.DisplayImage(urlBuf.toString(), null,
+						viewHolder.imageView);
+			} else {
+				// TODO 新方法，防止OOM
+				imageLoader.DisplayImage(iconUrl, null, viewHolder.imageView);
+			}
+	
+			// TODO 2013-10-17 实现节目预告功能
+			if (infos.get(position).program_path != null) {
+				programLoader.DisplayText(infos.get(position).program_path, null,
+						viewHolder.pgmtext);
+			} else {
+				viewHolder.pgmtext.setText("");
+			}
 		} else {
-			// TODO 新方法，防止OOM
-			imageLoader.DisplayImage(iconUrl, null, viewHolder.imageView);
+//			Log.w("arrayOut", "===========arrayOUT===========");
 		}
-
-		// TODO 2013-10-17 实现节目预告功能
-		if (infos.get(position).program_path != null) {
-			programLoader.DisplayText(infos.get(position).program_path, null,
-					viewHolder.pgmtext);
-		} else {
-			viewHolder.pgmtext.setText("");
-		}
-
+		
 		return convertView;
 	}
 
