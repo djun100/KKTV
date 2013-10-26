@@ -357,18 +357,18 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									
-									// FIXME 2013-10-24 暂时在推出应用的时候，删除缓存的节目预告文件
-									File file = new File(Environment.getExternalStorageDirectory().getPath()
-											+ "/kekePlayer/LiveTV_guide");
-									if (file != null && file.exists()
-											&& file.isDirectory()) {
-										Log.d("===", "==============>" + file.listFiles().length);
-										for (File item : file.listFiles()) {
-											item.delete();
-										}
-										file.delete();
-									}
-									// ======================================
+//									// FIXME 2013-10-24 暂时在推出应用的时候，删除缓存的节目预告文件
+//									File file = new File(Environment.getExternalStorageDirectory().getPath()
+//											+ "/kekePlayer/LiveTV_guide");
+//									if (file != null && file.exists()
+//											&& file.isDirectory()) {
+//										Log.d("===", "==============>" + file.listFiles().length);
+//										for (File item : file.listFiles()) {
+//											item.delete();
+//										}
+//										file.delete();
+//									}
+//									// ======================================
 									
 									finish();
 								}

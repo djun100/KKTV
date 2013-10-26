@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
@@ -77,15 +78,48 @@ public class ProgramLoader {
 			programLoaderThread.start();
 	}
 
+    /** 
+     * 读取修改时间的方法2 
+     */  
+    public static String getModifiedTime(File f){  
+        Calendar cal = Calendar.getInstance();  
+        long time = f.lastModified();  
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");         
+        cal.setTimeInMillis(time);    
+        
+        return formatter.format(cal.getTime());     
+        //输出：修改时间[2]    2009-08-17 10:32:38  
+    }  
+	
+	
 	private ArrayList<ProgramInfo> getProgram(String programPath) {
 
-		File f = fileCache.getFile(programPath + Utils.getWeekOfDate());
+		// ================================================
+		// TODO 2013-10-26 为了便于“删除”过旧的节目预告，更换策略，
+		// URL+DATE缓存的内存，URL作为文件名保存文件。
+		// 当请求一个节目预告时，首先根据URL+DATE判断内存中有没有，
+		// 如果有，直接解析；如果没有，首先尝试在本地缓存的文件寻找，
+		// 如果没有，则直接根据URL从网络获取；如果有的话，则比较当前
+		// 日期与已有文件的修改日期是否一致，一致的话则解析文件，不一
+		// 致的话，也会请求URL获取节目预告，并覆盖已有的文件
+		// ================================================
+		
+//		File f = fileCache.getFile(programPath + Utils.getWeekOfDate());
+		File f = fileCache.getFile(programPath);
 
-		// from SD cache
-		ArrayList<ProgramInfo> fileInfos = decodeFile(f);
-		if (fileInfos != null)
-			return fileInfos;
-
+		// 如果文件存在的话
+		if (f.exists()) {
+			// 判断文件的修改时间，如果与当前日期一致，说明已缓存
+			// 不相等的话，就覆盖（FIXME 注意，今日最后一个节目到次日
+			// 凌晨的第一个节目之间的bug，会后续修复）
+			if (getModifiedTime(f).contains(DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()))) {
+//				Log.d("", "============find=============");
+				// from SD cache
+				ArrayList<ProgramInfo> fileInfos = decodeFile(f);
+				if (fileInfos != null)
+					return fileInfos;
+			}
+		}
 		/* ====================================================== */
 
 		/* TODO 以listView文本方式显示节目预告 */
