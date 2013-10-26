@@ -43,7 +43,7 @@ public class UserDefActivity extends Activity {
 
 	/* 频道收藏的数据库 */
 	private DbHelper<POUserDefChannel> mDbHelper;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,7 +60,7 @@ public class UserDefActivity extends Activity {
 
 		/* 频道收藏的数据库 */
 		mDbHelper = new DbHelper<POUserDefChannel>();
-		
+
 		/* 设置监听 */
 		setListensers();
 	}
@@ -99,9 +99,12 @@ public class UserDefActivity extends Activity {
 		return matcher.matches();
 	}
 
+	// 串流地址
+	private String uri;
+
 	// 打开网络媒体
 	private void startMedia() {
-		String uri = mTextUri.getText().toString();
+		uri = mTextUri.getText().toString();
 		if (uri.length() > 0) {
 			// 判断url的合法性
 			if (isURL(uri)) {
@@ -120,7 +123,26 @@ public class UserDefActivity extends Activity {
 						.setIcon(R.drawable.ic_dialog_alert)
 						.setTitle("警告")
 						.setMessage("请检查URL的合法性：\n" + uri)
-						.setNegativeButton("知道了",
+						.setPositiveButton("继续",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// do nothing - it will close on its own
+										Intent intent = new Intent(
+												UserDefActivity.this,
+												PlayerActivity.class);
+										ArrayList<String> playlist = new ArrayList<String>();
+										playlist.add(uri);
+										intent.putExtra("selected", 0);
+										intent.putExtra("playlist", playlist);
+										intent.putExtra("title", uri);
+										// 加上自定义标识
+										intent.putExtra("isSelfTV", true);
+										startActivity(intent);
+									}
+								})
+						.setNegativeButton("取消",
 								new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog,
@@ -145,28 +167,35 @@ public class UserDefActivity extends Activity {
 				break;
 			case R.id.save_play:
 				// 将该地址加入自定义收藏频道
-				if ((mTextName.getText().toString().length() > 0) &&  (mTextUri.getText().toString().length() > 0)) {
-					
-					ChannelInfo info = new ChannelInfo(0, mTextName.getText().toString(), null, null, null, mTextUri.getText().toString(), null, null, null);
+				if ((mTextName.getText().toString().length() > 0)
+						&& (mTextUri.getText().toString().length() > 0)) {
+
+					ChannelInfo info = new ChannelInfo(0, mTextName.getText()
+							.toString(), null, null, null, mTextUri.getText()
+							.toString(), null, null, null);
 					POUserDefChannel POinfo = new POUserDefChannel(info, true);
 					// TODO 增加加入数据库操作
 					POinfo.date = DateFormat.format("MM月dd日",
 							System.currentTimeMillis()).toString();
 					mDbHelper.create(POinfo);
-					
+
 					// toast
-					Toast.makeText(UserDefActivity.this, "已添加到自定义收藏频道", Toast.LENGTH_LONG).show();
+					Toast.makeText(UserDefActivity.this, "已添加到自定义收藏频道",
+							Toast.LENGTH_LONG).show();
 				} else {
 					new AlertDialog.Builder(UserDefActivity.this)
-					.setIcon(R.drawable.ic_dialog_alert)
-					.setTitle("温馨提示")
-					.setMessage("先为该频道起个名字吧？")
-					.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// nothing
-						}
-					}).show();
+							.setIcon(R.drawable.ic_dialog_alert)
+							.setTitle("温馨提示")
+							.setMessage("先为该频道起个名字吧？")
+							.setPositiveButton("确定",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											// nothing
+										}
+									}).show();
 				}
 				break;
 			case R.id.clear_play:
@@ -185,7 +214,7 @@ public class UserDefActivity extends Activity {
 	private static final int SUPPORT_ID = Menu.FIRST + 1;
 	private static final int SETUP_ID = Menu.FIRST + 2;
 	private static final int APP_ID = Menu.FIRST + 3;
-	
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/*
 		 * 第一个参数是groupId，如果不需要可以设置为Menu.NONE
@@ -207,11 +236,12 @@ public class UserDefActivity extends Activity {
 			startActivity(intent1);
 			break;
 		case SETUP_ID:
-			Intent intent2 = new Intent(UserDefActivity.this, SetupActivity.class);
+			Intent intent2 = new Intent(UserDefActivity.this,
+					SetupActivity.class);
 			startActivity(intent2);
 			break;
-		case APP_ID:	
-			//获取全部自定义广告数据
+		case APP_ID:
+			// 获取全部自定义广告数据
 			Intent appWallIntent = new Intent(this, AppWall.class);
 			this.startActivity(appWallIntent);
 		default:

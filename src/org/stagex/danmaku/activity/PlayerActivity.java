@@ -541,7 +541,7 @@ public class PlayerActivity extends Activity implements
 //								.setTitle("播放失败")
 								.setTitle(mTitleName)
 								.setMessage(
-										"当前链接已失效\n请切换该频道【其他地址源】\n或观看【其他频道】")
+										"当前链接已失效\n请切换该频道【其他线路】\n或观看【其他频道】")
 								.setPositiveButton("继续",
 										new DialogInterface.OnClickListener() {
 											@Override

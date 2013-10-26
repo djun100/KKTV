@@ -122,7 +122,7 @@ public class ChannelSourceAdapter extends BaseAdapter {
 		}
 		// Log.d(LOGTAG, "hostname ===>" + url);
 
-		String urlName = "未知源";
+		String urlName = "未知线路";
 		mHd = false;
 		mHot = false;
 
