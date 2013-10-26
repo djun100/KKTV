@@ -9,6 +9,7 @@ import com.nmbb.oplayer.scanner.POChannelList;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,8 +74,14 @@ public class ChannelListAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 
-		viewHolder.textName.setText(infos.get(position).name);
-		viewHolder.textIndex.setText(Integer.toString(position + 1));
+		// FIXME 2013-10-26 由于会清除infos的内存，故要加以保护
+		if (position < infos.size()) {
+			viewHolder.textName.setText(infos.get(position).name);
+			viewHolder.textIndex.setText(Integer.toString(position + 1));
+		} else {
+//			Log.w("arrayOut", "=========arraryOut============");
+		}
+		
 		// Log.d("channelList", "===> list position" + position);
 		// 标记当前正在播放的频道
 		if (mCurrentIndex == position) {
@@ -86,17 +93,22 @@ public class ChannelListAdapter extends BaseAdapter {
 			viewHolder.textIndex.setTextColor(Color.WHITE);
 		}
 
-		// 判断是否是热门频道，暂时使用HOT字样
-		if (infos.get(position).mode.equalsIgnoreCase("HOT"))
-			viewHolder.hotView.setVisibility(View.VISIBLE);
-		else
-			viewHolder.hotView.setVisibility(View.GONE);
-		// 判断是否是新频道，暂时用NEW字样
-		if (infos.get(position).mode.equalsIgnoreCase("NEW"))
-			viewHolder.newView.setVisibility(View.VISIBLE);
-		else
-			viewHolder.newView.setVisibility(View.GONE);
-
+		// FIXME 2013-10-26 由于会清除infos的内存，故要加以保护
+		if (position < infos.size()) {
+			// 判断是否是热门频道，暂时使用HOT字样
+			if (infos.get(position).mode.equalsIgnoreCase("HOT"))
+				viewHolder.hotView.setVisibility(View.VISIBLE);
+			else
+				viewHolder.hotView.setVisibility(View.GONE);
+			// 判断是否是新频道，暂时用NEW字样
+			if (infos.get(position).mode.equalsIgnoreCase("NEW"))
+				viewHolder.newView.setVisibility(View.VISIBLE);
+			else
+				viewHolder.newView.setVisibility(View.GONE);
+		} else {
+//			Log.w("arrayOut", "=========arraryOut============");
+		}
+		
 		return convertView;
 	}
 

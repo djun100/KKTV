@@ -97,7 +97,13 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.name.setText(groupArray.get(groupPosition));
+		
+		// FIXME 2013-10-26 由于会清除childArray和groupArray的内存，故要加以保护
+		if (groupPosition < groupArray.size()) {
+			viewHolder.name.setText(groupArray.get(groupPosition));
+		} else {
+//			Log.w("arrayOut", "=========arraryOut============");
+		}
 		
 		if (fromPlaying) {
 			// 标记当前正在播放的频道
@@ -132,9 +138,15 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.name.setText(childArray.get(groupPosition)
-				.get(childPosition).getName());
-
+		
+		// 由于会清除childArray和groupArray的内存，故要加以保护
+		if (childPosition < childArray.size() && groupPosition < groupArray.size()) {
+			viewHolder.name.setText(childArray.get(groupPosition)
+					.get(childPosition).getName());
+		} else {
+//			Log.w("arrayOut", "=========arraryOut============");
+		}
+		
 		if (fromPlaying) {
 			// 标记当前正在播放的频道
 			if (mCurGroup == groupPosition && mCurChild == childPosition) {

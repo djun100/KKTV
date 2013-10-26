@@ -8,6 +8,7 @@ import com.nmbb.oplayer.scanner.POUserDefChannel;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,8 +74,13 @@ public class ChannelDefFavAdapter extends BaseAdapter {
 				viewHolder2 = (ViewHolder2) convertView.getTag();
 			}
 
-			viewHolder2.textIndex.setText(Integer.toString(position + 1));
-			viewHolder2.text.setText(infos.get(position).name);
+			// FIXME 2013-10-26 由于会清除infos的内存，故要加以保护
+			if (position < infos.size()) {
+				viewHolder2.textIndex.setText(Integer.toString(position + 1));
+				viewHolder2.text.setText(infos.get(position).name);
+			} else {
+//				Log.w("arrayOut", "=========arraryOut============");
+			}
 			
 			// 标记当前正在播放的频道
 			if (mCurrentIndex == position) {
