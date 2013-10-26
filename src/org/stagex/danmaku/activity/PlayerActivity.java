@@ -472,6 +472,11 @@ public class PlayerActivity extends Activity implements
 							reConnectSource(mPlayListArray.get(mSourceIndex));
 							mSourceName = "线路" + Integer.toString(mSourceIndex + 1) + "：" + SourceName.whichName(mPlayListArray.get(mSourceIndex));
 							Toast.makeText(PlayerActivity.this, "线路" + mSourceIndex + "已失效，尝试线路" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
+							
+							// TODO 2013-10-26 标记当前正在播放的线路
+							mSourceAdapter.mCurrentIndex = mSourceIndex;
+							mSourceAdapter.notifyDataSetChanged();
+							
 						} else
 						
 						/* TODO 用在硬解解码模式，判断不支持的源 */
@@ -533,6 +538,10 @@ public class PlayerActivity extends Activity implements
 							reConnectSource(mPlayListArray.get(mSourceIndex));
 							mSourceName = "线路" + Integer.toString(mSourceIndex + 1) + "：" + SourceName.whichName(mPlayListArray.get(mSourceIndex));
 							Toast.makeText(PlayerActivity.this, "线路" + mSourceIndex + "已失效，尝试线路" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
+							
+							// TODO 2013-10-26 标记当前正在播放的线路
+							mSourceAdapter.mCurrentIndex = mSourceIndex;
+							mSourceAdapter.notifyDataSetChanged();
 						} else
 						
 						// 弹出播放失败的窗口@{
@@ -1968,16 +1977,21 @@ public class PlayerActivity extends Activity implements
 
 	// =========================================================
 
+	private ChannelSourceAdapter mSourceAdapter;
 	/**
 	 * 2013-08-31 增加播放界面切源功能
 	 */
 	private void createList(ArrayList<String> infos) {
-
-		ChannelSourceAdapter adapter = new ChannelSourceAdapter(this, mPlayListArray);
-		source_list.setAdapter(adapter);
-		// 突出显示当前候选地址
-		source_list.setSelection(mSourceIndex);
-		// TODO 用一个全局的变量来记录当前是哪一个源
+		// FIXME 2013-10-26 为标记当前线路，将起改为全局的
+//		ChannelSourceAdapter adapter = new ChannelSourceAdapter(this, mPlayListArray);
+		mSourceAdapter = new ChannelSourceAdapter(this, mPlayListArray);
+		
+		// TODO 2013-10-26 标记当前正在播放的线路
+		mSourceAdapter.mCurrentIndex = mSourceIndex;
+		source_list.setAdapter(mSourceAdapter);
+		// 突出显示当前频道
+		if (mChannelIndex >= 0)
+			source_list.setSelection(mSourceIndex);
 		
 		source_list.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1992,7 +2006,11 @@ public class PlayerActivity extends Activity implements
 						.getItemAtPosition(arg2);
 				mSourceName = "线路" + Integer.toString(arg2 + 1) + "：" + SourceName.whichName(url);
 				reSetSourceData(url, mSourceName);
-				Log.i(LOGTAG, "===>>>" + mSourceName);
+//				Log.i(LOGTAG, "===>>>" + mSourceName);
+				
+				// TODO 2013-10-26 标记当前正在播放的线路
+				mSourceAdapter.mCurrentIndex = arg2;
+				mSourceAdapter.notifyDataSetChanged();
 				
 				// 2013-08-31 隐藏源切换和切台的控件
 				// 2013-10-10 不再隐藏
@@ -2123,7 +2141,7 @@ public class PlayerActivity extends Activity implements
 	 */
 	private void createUserdefChannelList() {
 		
-		ChannelDefFavAdapter adapter = new ChannelDefFavAdapter(this, userdef_infos, true);
+		final ChannelDefFavAdapter adapter = new ChannelDefFavAdapter(this, userdef_infos, true);
 
 		// TODO 2013-10-23 标记当前正在播放的频道
 		if (curChSortIndex == curPlaySortIndex) {
@@ -2158,6 +2176,10 @@ public class PlayerActivity extends Activity implements
 				reSetUserdefFavChannelData(info);
 //				Log.i(LOGTAG, "===>>>" + mSourceName);
 
+				// TODO 2013-10-26 标记当前正在播放的频道
+				adapter.mCurrentIndex = arg2;
+				adapter.notifyDataSetChanged();
+				
 				// 2013-08-31 隐藏源切换和切台的控件
 				// 为防止重复搜索数据库分类，此处暂时不隐藏
 //				mLinearLayoutChannelList.setVisibility(View.GONE);
