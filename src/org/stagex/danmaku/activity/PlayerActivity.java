@@ -474,8 +474,10 @@ public class PlayerActivity extends Activity implements
 							Toast.makeText(PlayerActivity.this, "线路" + mSourceIndex + "已失效，尝试线路" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
 							
 							// TODO 2013-10-26 标记当前正在播放的线路
-							mSourceAdapter.mCurrentIndex = mSourceIndex;
-							mSourceAdapter.notifyDataSetChanged();
+							if (mSourceAdapter != null) {
+								mSourceAdapter.mCurrentIndex = mSourceIndex;
+								mSourceAdapter.notifyDataSetChanged();
+							}
 							
 						} else
 						
@@ -540,8 +542,10 @@ public class PlayerActivity extends Activity implements
 							Toast.makeText(PlayerActivity.this, "线路" + mSourceIndex + "已失效，尝试线路" + (mSourceIndex + 1), Toast.LENGTH_LONG).show();
 							
 							// TODO 2013-10-26 标记当前正在播放的线路
-							mSourceAdapter.mCurrentIndex = mSourceIndex;
-							mSourceAdapter.notifyDataSetChanged();
+							if (mSourceAdapter != null) {
+								mSourceAdapter.mCurrentIndex = mSourceIndex;
+								mSourceAdapter.notifyDataSetChanged();
+							}
 						} else
 						
 						// 弹出播放失败的窗口@{
@@ -1977,7 +1981,7 @@ public class PlayerActivity extends Activity implements
 
 	// =========================================================
 
-	private ChannelSourceAdapter mSourceAdapter;
+	private ChannelSourceAdapter mSourceAdapter = null;
 	/**
 	 * 2013-08-31 增加播放界面切源功能
 	 */
