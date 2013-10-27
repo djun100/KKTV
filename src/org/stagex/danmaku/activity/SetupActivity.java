@@ -213,10 +213,10 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 		CustomClickListener1 listener = new CustomClickListener1();
 		tableView1.setClickListener(listener);
 
-		tableView1.addBasicItem(R.drawable.ic_about, "关于(v1.4.2.2)", "软件信息介绍");
+		tableView1.addBasicItem(R.drawable.ic_about, "关于(v1.4.2.3)", "软件信息介绍");
 		tableView1.addBasicItem(R.drawable.ic_about, "帮助", "软件帮助信息");
 		tableView1
-				.addBasicItem(R.drawable.ic_about, "QQ群", "可可电视交流群：336809417");
+				.addBasicItem(R.drawable.ic_star, "QQ群", "可可电视交流群火爆招募中");
 		tableView1.addBasicItem(R.drawable.ic_feedback, "信息反馈", "反馈您的建议和意见");
 		tableView1.addBasicItem(R.drawable.ic_check_update, "检查更新", "检查软件最新版本");
 	}
@@ -244,7 +244,7 @@ public class SetupActivity extends Activity implements UpdatePointsNotifier {
 						.setIcon(R.drawable.ic_about)
 						.setTitle("可可电视交流群")
 						.setMessage(
-								"QQ群号：336809417\n欢迎加入交流群，可以分享更多的自定义地址，反馈您的建议和意见")
+								"1群：336809417（500即将爆满）\n2群：278046078（新开）\n3群：115735045（新开）\n\n欢迎加入交流群，可以分享更多的自定义地址，反馈您的建议和意见\n\n可可电视官网论坛：\nhttp://www.kklive8.com\n欢迎您的光临")
 						.setNegativeButton("关闭",
 								new DialogInterface.OnClickListener() {
 									@Override

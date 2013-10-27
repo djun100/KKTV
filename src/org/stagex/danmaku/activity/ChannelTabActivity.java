@@ -887,7 +887,7 @@ public class ChannelTabActivity extends TabActivity implements
 										int which) {
 								}
 							})
-					.setPositiveButton(R.string.confirm,
+					.setPositiveButton("需要",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
@@ -1168,7 +1168,7 @@ public class ChannelTabActivity extends TabActivity implements
 			new AlertDialog.Builder(ChannelTabActivity.this)
 					.setIcon(R.drawable.ic_about)
 					.setTitle("更新成功")
-					.setMessage("服务器地址更新成功！\n数据库构建成功！")
+					.setMessage("服务器地址更新成功！\n数据库构建成功！\n\n如果出现列表空白，请点击右上角圈圈强制更新")
 					.setNegativeButton("知道了",
 							new DialogInterface.OnClickListener() {
 								@Override
@@ -1187,7 +1187,7 @@ public class ChannelTabActivity extends TabActivity implements
 			new AlertDialog.Builder(ChannelTabActivity.this)
 					.setIcon(R.drawable.ic_dialog_alert)
 					.setTitle("更新失败")
-					.setMessage("抱歉！服务器地址更新失败\n默认构建本地数据库！")
+					.setMessage("抱歉！服务器地址更新失败\n默认构建本地数据库！\n\n出现更新失败，可以尝试点击右上角圈圈强制更新")
 					.setNegativeButton("知道了",
 							new DialogInterface.OnClickListener() {
 								@Override

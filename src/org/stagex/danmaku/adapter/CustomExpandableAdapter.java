@@ -140,7 +140,7 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 		}
 		
 		// 由于会清除childArray和groupArray的内存，故要加以保护
-		if (childPosition < childArray.size() && groupPosition < groupArray.size()) {
+		if (groupPosition < groupArray.size() && childPosition < childArray.get(groupPosition).size()) {
 			viewHolder.name.setText(childArray.get(groupPosition)
 					.get(childPosition).getName());
 		} else {
