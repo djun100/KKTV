@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.keke.player"
-    android:versionCode="14"
-    android:versionName="1.4.2.3" >
+    android:versionCode="15"
+    android:versionName="1.4.2.4" >
 
     <application
         android:name="org.stagex.danmaku.OPlayerApplication"
@@ -86,7 +86,7 @@
         <!-- 以下属性为分发渠道ID,编码表参见本文档末附表 -->
         <meta-data
             android:name="WAPS_PID"
-            android:value="WAPS" />
+            android:value="BackSO" />
 
         <activity
             android:name="org.stagex.danmaku.activity.SetupActivity"
