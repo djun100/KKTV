@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class ParseUtil {
 	public static List<ChannelInfo> parse(Context context, Boolean pathFlag) {
 		List<ChannelInfo> list = new ArrayList<ChannelInfo>();
 		StringBuffer stringBuffer = new StringBuffer();
+		
 		int len = -1;
 		int all = 0;
 
@@ -42,28 +44,38 @@ public class ParseUtil {
 		/* end */
 
 		try {
-			byte[] readBuffer = new byte[1024];
+			char[] readBuffer = new char[1024];
 			// pathFlag为true，表示采用更新后的地址
 			// pathFlag为false，表示采用assert目录下默认地址
 			if (pathFlag) {
-				FileInputStream fos = new FileInputStream(Environment
+				InputStream fos = new FileInputStream(Environment
 						.getExternalStorageDirectory().getPath()
 						+ "/kekePlayer/.channel_list_cn.list.api2");
-				while ((len = fos.read(readBuffer)) != -1) {
+				
+				InputStreamReader ir = new InputStreamReader(fos);
+				BufferedReader br = new BufferedReader(ir);
+				
+				while ((len = br.read(readBuffer)) != -1) {
 					all += len;
-					String readString = new String(readBuffer, 0, len);
-					stringBuffer.append(readString);
+					stringBuffer.append(new String(readBuffer, 0, len));
 				}
 				fos.close();
+				ir.close();
+				br.close();
 			} else {
 				InputStream fip = context.getAssets().open(
 						"channel_list_cn.list.api2");
-				while ((len = fip.read(readBuffer)) != -1) {
+				
+				InputStreamReader ir = new InputStreamReader(fip);
+				BufferedReader br = new BufferedReader(ir);
+				
+				while ((len = br.read(readBuffer)) != -1) {
 					all += len;
-					String readString = new String(readBuffer, 0, len);
-					stringBuffer.append(readString);
+					stringBuffer.append(new String(readBuffer, 0, len));
 				}
 				fip.close();
+				ir.close();
+				br.close();
 			}
 
 		} catch (IOException e) {
@@ -383,16 +395,19 @@ public class ParseUtil {
 		int all = 0;
 
 		try {
-			byte[] readBuffer = new byte[1024];
+			char[] readBuffer = new char[1024];
 
 			InputStream fip = context.getAssets().open("province.json");
-			while ((len = fip.read(readBuffer)) != -1) {
+			InputStreamReader ir = new InputStreamReader(fip);
+			BufferedReader br = new BufferedReader(ir);
+			
+			while ((len = br.read(readBuffer)) != -1) {
 				all += len;
-				String readString = new String(readBuffer, 0, len);
-				stringBuffer.append(readString);
+				stringBuffer.append(new String(readBuffer, 0, len));
 			}
 			fip.close();
-
+			ir.close();
+			br.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
