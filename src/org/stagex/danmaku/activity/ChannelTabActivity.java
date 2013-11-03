@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.keke.player.R;
@@ -20,9 +19,7 @@ import org.stagex.danmaku.util.GlobalValue;
 import org.stagex.danmaku.util.ParseUtil;
 import org.stagex.danmaku.util.SourceName;
 import org.stagex.danmaku.util.saveFavName;
-
 import cn.waps.AppConnect;
-
 import com.nmbb.oplayer.scanner.ChannelListBusiness;
 import com.nmbb.oplayer.scanner.DbHelper;
 import com.nmbb.oplayer.scanner.POChannelList;
@@ -34,7 +31,7 @@ import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.sso.QZoneSsoHandler;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.TencentWBSsoHandler;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.DialogInterface;
@@ -69,6 +66,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@SuppressLint("NewApi")
 @SuppressWarnings("deprecation")
 public class ChannelTabActivity extends TabActivity implements
 		OnTabChangeListener {
@@ -860,48 +858,7 @@ public class ChannelTabActivity extends TabActivity implements
 				break;
 			case R.id.refresh_btn:
 				// 更新服务器地址
-				// 判断是否正在刷新
-				if (isRefreshing == true) {
-					// 发出警告toast
-					Toast.makeText(ChannelTabActivity.this.getApplicationContext(), "正在刷新中", Toast.LENGTH_LONG).show();
-				} else if (tvlistNew()){
-					// 正在刷新
-					isRefreshing = true;
-					
-					editor.putString("tvlistDate", serverValue);
-					editor.commit();
-					
-					// 刷新节目列表
-					startRefreshList();
-				} else {
-					// 地址已经是最新，再提供一个强制更新的按钮
-//					Toast.makeText(ChannelTabActivity.this.getApplicationContext(), "节目源已经是最新", Toast.LENGTH_LONG).show();
-					new AlertDialog.Builder(ChannelTabActivity.this)
-					.setIcon(R.drawable.ic_dialog_alert)
-					.setTitle("温馨提示")
-					.setMessage("已经是最新地址！\n需要强制刷新吗？")
-					.setNegativeButton(R.string.cancel,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-								}
-							})
-					.setPositiveButton("需要",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									// 正在刷新
-									isRefreshing = true;
-									
-//									editor.putString("tvlistDate", serverValue);
-//									editor.commit();
-									
-									// 刷新节目列表
-									startRefreshList();
-								}
-							}).show();
-				}
+				doRefreshList();
 				break;
 			default:
 				Log.d(LOGTAG, "not supported btn id");
@@ -909,6 +866,79 @@ public class ChannelTabActivity extends TabActivity implements
 		}
 	};
 
+	// =============================================
+	/**
+	 * 手动更新地址
+	 */
+	private void doRefreshList() {
+		// 判断是否正在刷新
+		if (isRefreshing == true) {
+			// 发出警告toast
+			Toast.makeText(ChannelTabActivity.this.getApplicationContext(), "正在刷新中", Toast.LENGTH_LONG).show();
+		} else if (tvlistNew()){
+			// 正在刷新
+			isRefreshing = true;
+			
+			editor.putString("tvlistDate", serverValue);
+			editor.commit();
+			
+			// 刷新节目列表
+			startRefreshList();
+		} else {
+			// 地址已经是最新，再提供一个强制更新的按钮
+//			Toast.makeText(ChannelTabActivity.this.getApplicationContext(), "节目源已经是最新", Toast.LENGTH_LONG).show();
+			new AlertDialog.Builder(ChannelTabActivity.this)
+			.setIcon(R.drawable.ic_dialog_alert)
+			.setTitle("温馨提示")
+			.setMessage("当前直播地址日期：" + sharedPreferences.getString("tvlistDate", GlobalValue.tvlistVersion) +"\n\n需要尝试获取最新地址吗？")
+			.setNegativeButton(R.string.cancel,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+						}
+					})
+			.setPositiveButton("需要",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							// 正在刷新
+							isRefreshing = true;
+							
+//							editor.putString("tvlistDate", serverValue);
+//							editor.commit();
+							
+							// 刷新节目列表
+							startRefreshList();
+						}
+					}).show();
+		}
+	}
+	
+	/**
+	 * 手动更新地址（不需要确认）
+	 */
+	private void doRefreshListSimple() {
+		// 判断是否正在刷新
+		if (isRefreshing == true) {
+			// 发出警告toast
+			Toast.makeText(ChannelTabActivity.this.getApplicationContext(), "正在刷新中", Toast.LENGTH_LONG).show();
+		} else if (tvlistNew()){
+			// 正在刷新
+			isRefreshing = true;
+			
+			editor.putString("tvlistDate", serverValue);
+			editor.commit();
+			
+			// 刷新节目列表
+			startRefreshList();
+		} else {
+			// 刷新节目列表
+			startRefreshList();
+		}
+	}
+	// =============================================
+	
 	/**
 	 * 提示是否收藏
 	 */
@@ -1170,8 +1200,17 @@ public class ChannelTabActivity extends TabActivity implements
 			new AlertDialog.Builder(ChannelTabActivity.this)
 					.setIcon(R.drawable.ic_about)
 					.setTitle("更新成功")
-					.setMessage("服务器地址更新成功！\n数据库构建成功！\n\n如果出现列表空白，请点击右上角圈圈强制更新")
-					.setNegativeButton("知道了",
+					.setMessage("直播地址更新成功！\n\n如果出现列表空白，可以重试")
+					.setPositiveButton("重试", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+							// do nothing - it will close on its
+							// own
+							// 2013-11-03 更新地址
+							doRefreshListSimple();
+						}})
+					.setNegativeButton("返回",
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
@@ -1189,8 +1228,17 @@ public class ChannelTabActivity extends TabActivity implements
 			new AlertDialog.Builder(ChannelTabActivity.this)
 					.setIcon(R.drawable.ic_dialog_alert)
 					.setTitle("更新失败")
-					.setMessage("抱歉！服务器地址更新失败\n默认构建本地数据库！\n\n出现更新失败，可以尝试点击右上角圈圈强制更新")
-					.setNegativeButton("知道了",
+					.setMessage("抱歉！直播地址更新失败\n\n是否重试？")
+					.setPositiveButton("重试", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+							// do nothing - it will close on its
+							// own
+							// 2013-11-03 更新地址
+							doRefreshListSimple();
+						}})
+					.setNegativeButton("返回",
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
@@ -1255,6 +1303,7 @@ public class ChannelTabActivity extends TabActivity implements
 	private static final int SETUP_ID = Menu.FIRST + 2;
 	private static final int APP_ID = Menu.FIRST + 3;
 	private static final int SHARE_ID = Menu.FIRST + 4;
+	private static final int REFRESH_ID = Menu.FIRST + 5;
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/*
@@ -1263,10 +1312,11 @@ public class ChannelTabActivity extends TabActivity implements
 		 * 第三个参数是item的顺序，一般可采用Menu.NONE，具体看本文最后MenuInflater的部分
 		 * 第四个参数是显示的内容，可以是String，或者是引用Strings.xml的ID
 		 */
-		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可");
-		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
-		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用");
-		menu.add(Menu.NONE, SHARE_ID, Menu.NONE, "一键分享");
+		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "更新直播地址").setIcon(R.drawable.ic_star);
+		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可").setIcon(R.drawable.ic_tuangou_pressed);
+		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置").setIcon(R.drawable.ic_setup2);
+		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用").setIcon(R.drawable.ic_hot);
+		menu.add(Menu.NONE, SHARE_ID, Menu.NONE, "一键分享").setIcon(R.drawable.ic_share);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -1289,6 +1339,10 @@ public class ChannelTabActivity extends TabActivity implements
 		case SHARE_ID:	
 			// 打开平台选择面板，参数2为打开分享面板时是否强制登录,false为不强制登录
 	        mController.openShare(ChannelTabActivity.this, false);
+			break;
+		case REFRESH_ID:	
+			// 2013-11-03 更新地址
+			doRefreshList();
 			break;
 		default:
 		}

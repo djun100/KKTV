@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -61,6 +62,7 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 	private static final int SUPPORT_ID = Menu.FIRST + 1;
 	private static final int SETUP_ID = Menu.FIRST + 2;
 	private static final int APP_ID = Menu.FIRST + 3;
+	private static final int COME_ID = Menu.FIRST + 4;
 	
 	private UMSocialService mController;
 	
@@ -438,10 +440,10 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 		 * 第三个参数是item的顺序，一般可采用Menu.NONE，具体看本文最后MenuInflater的部分
 		 * 第四个参数是显示的内容，可以是String，或者是引用Strings.xml的ID
 		 */
-		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可");
-//		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
-		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "一键分享");
-		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用");
+		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可").setIcon(R.drawable.ic_tuangou_pressed);
+		menu.add(Menu.NONE, COME_ID, Menu.NONE, "给个好评").setIcon(R.drawable.ic_star);
+		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "一键分享").setIcon(R.drawable.ic_share);
+		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用").setIcon(R.drawable.ic_hot);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -462,6 +464,13 @@ public class HomeActivity extends Activity implements UpdatePointsNotifier {
 			//获取全部自定义广告数据
 			Intent appWallIntent = new Intent(this, AppWall.class);
 			this.startActivity(appWallIntent);
+			break;
+		case COME_ID:	
+			//好评鼓励
+			String str = "market://details?id=org.keke.player";
+		    Intent localIntent = new Intent("android.intent.action.VIEW");
+		    localIntent.setData(Uri.parse(str));
+		    startActivity(localIntent);
 			break;
 		default:
 		}

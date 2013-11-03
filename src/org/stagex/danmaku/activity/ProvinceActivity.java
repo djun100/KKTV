@@ -276,9 +276,9 @@ public class ProvinceActivity extends Activity {
 		 * 第三个参数是item的顺序，一般可采用Menu.NONE，具体看本文最后MenuInflater的部分
 		 * 第四个参数是显示的内容，可以是String，或者是引用Strings.xml的ID
 		 */
-		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可");
-		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置");
-		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用");
+		menu.add(Menu.NONE, SUPPORT_ID, Menu.NONE, "帮助可可").setIcon(R.drawable.ic_tuangou_pressed);
+		menu.add(Menu.NONE, SETUP_ID, Menu.NONE, "设置").setIcon(R.drawable.ic_setup2);
+		menu.add(Menu.NONE, APP_ID, Menu.NONE, "热门应用").setIcon(R.drawable.ic_star);
 
 		return super.onCreateOptionsMenu(menu);
 	}
