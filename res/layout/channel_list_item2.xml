@@ -1,56 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/sel_list_item2"
-    android:gravity="center_horizontal"
-    android:orientation="horizontal" >
+    android:layout_height="wrap_content"
+    android:background="@drawable/sel_list_item2" >
 
     <TextView
         android:id="@+id/channel_index"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="5dp"
-        android:gravity="center_vertical|center_horizontal"
+        android:layout_width="30.0dip"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="3.0dip"
+        android:gravity="right"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/channel_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8.0dip"
+        android:layout_marginTop="3.0dip"
+        android:layout_toRightOf="@id/channel_index"
         android:singleLine="true"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        android:textSize="16sp" />
 
-    <LinearLayout
-        android:layout_width="160dp"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical" >
+    <org.stagex.danmaku.util.MarqueeTextView
+        android:id="@id/program_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/channel_name"
+        android:layout_below="@id/channel_name"
+        android:layout_marginBottom="3.0dip"
+        android:layout_marginTop="3.0dip"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/channel_name"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:singleLine="true"
-            android:textSize="15sp" />
-
-        <ImageView
-            android:id="@+id/hot_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:src="@drawable/ic_hot"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/new_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:src="@drawable/ic_new"
-            android:visibility="gone" />
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
