@@ -1077,11 +1077,13 @@ public class ChannelTabActivity extends TabActivity implements
 			ftpClient.login("ftp92147", "950288@kk");
 
 			// 此处不需要Data前面的"/"
-			String remoteFileName = "/ftp92147/Data/channel_list_cn.list.api2";
+//			String remoteFileName = "/ftp92147/Data/channel_list_cn.list.api2";
+			String remoteFileName = "/ftp92147/Data/channel_list.zip";
 			// 此处要注意必须加上channel_list_cn.list.api2前面的"/"
 			fos = new FileOutputStream(Environment
 					.getExternalStorageDirectory().getPath()
-					+ "/kekePlayer/.channel_list_cn.list.api2");
+//					+ "/kekePlayer/.channel_list_cn.list.api2");
+					+ "/kekePlayer/.channel_list.zip");
 
 			ftpClient.setBufferSize(1024);
 			// 设置文件类型（二进制）
