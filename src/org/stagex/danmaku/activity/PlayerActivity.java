@@ -487,7 +487,7 @@ public class PlayerActivity extends Activity implements
 //								.setTitle("播放失败【硬解码】")
 								.setTitle(mTitleName)
 								.setMessage(
-										"很遗憾，该视频无法播放\n请尝试该节目【其他源】\n或切换至【软解码】模式再次尝试\n现在切换解码模式吗？")
+										"抱歉，当前频道线路异常，暂停直播！\n\n您可切换至【软解码】模式再次尝试，或稍后重试！\n\n现在切换解码模式吗？")
 								.setPositiveButton("切换",
 										new DialogInterface.OnClickListener() {
 											@Override
@@ -554,7 +554,7 @@ public class PlayerActivity extends Activity implements
 //								.setTitle("播放失败")
 								.setTitle(mTitleName)
 								.setMessage(
-										"当前链接已失效\n请切换该频道【其他线路】\n或观看【其他频道】")
+										"抱歉，当前频道线路异常，暂停直播！\n\n请稍后重试！")
 								.setPositiveButton("继续",
 										new DialogInterface.OnClickListener() {
 											@Override

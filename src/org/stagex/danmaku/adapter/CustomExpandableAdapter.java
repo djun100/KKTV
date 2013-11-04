@@ -3,6 +3,7 @@ package org.stagex.danmaku.adapter;
 import java.util.List;
 
 import org.keke.player.R;
+import org.stagex.danmaku.util.DensityUtil;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -90,7 +91,7 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 			viewHolder.name = (TextView) convertView
 					.findViewById(R.id.expand_name);
 			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-			viewHolder.name.setPadding(60, 0, 0, 0);
+			viewHolder.name.setPadding(DensityUtil.dip2px(activity, 40), 0, 0, 0);
 			if (fromPlaying == false)
 				viewHolder.name.getPaint().setFakeBoldText(true);
 			convertView.setTag(viewHolder);
@@ -121,28 +122,31 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getChildView(int groupPosition, int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
-		ViewHolder viewHolder;
+		ViewHolder2 viewHolder;
 		if (convertView == null) {
 			if (fromPlaying)
-				convertView = mLayoutInflater.inflate(R.layout.custom_expanditem2,
+				convertView = mLayoutInflater.inflate(R.layout.channel_list_item5,
 						null);
 			else
-				convertView = mLayoutInflater.inflate(R.layout.custom_expanditem,
+				convertView = mLayoutInflater.inflate(R.layout.channel_list_item4,
 						null);
-			viewHolder = new ViewHolder();
-			viewHolder.name = (TextView) convertView
-					.findViewById(R.id.expand_name);
-			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-			viewHolder.name.setPadding(60, 0, 0, 0);
+			viewHolder = new ViewHolder2();
+			viewHolder.textName = (TextView) convertView
+					.findViewById(R.id.channel_name);
+			viewHolder.textIndex = (TextView) convertView
+					.findViewById(R.id.channel_index);
+//			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+//			viewHolder.name.setPadding(DensityUtil.dip2px(activity, 40), 0, 0, 0);
 			convertView.setTag(viewHolder);
 		} else {
-			viewHolder = (ViewHolder) convertView.getTag();
+			viewHolder = (ViewHolder2) convertView.getTag();
 		}
 		
 		// 由于会清除childArray和groupArray的内存，故要加以保护
 		if (groupPosition < groupArray.size() && childPosition < childArray.get(groupPosition).size()) {
-			viewHolder.name.setText(childArray.get(groupPosition)
+			viewHolder.textName.setText(childArray.get(groupPosition)
 					.get(childPosition).getName());
+			viewHolder.textIndex.setText(Integer.toString(childPosition + 1) + ".");
 		} else {
 //			Log.w("arrayOut", "=========arraryOut============");
 		}
@@ -151,9 +155,11 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 			// 标记当前正在播放的频道
 			if (mCurGroup == groupPosition && mCurChild == childPosition) {
 				// FIXME 2013-10-22 好像只能用Color.YELLOW，否则颜色不对
-				viewHolder.name.setTextColor(Color.YELLOW);
+				viewHolder.textIndex.setTextColor(Color.YELLOW);
+				viewHolder.textName.setTextColor(Color.YELLOW);
 			} else {
-				viewHolder.name.setTextColor(Color.WHITE);
+				viewHolder.textIndex.setTextColor(Color.WHITE);
+				viewHolder.textName.setTextColor(Color.WHITE);
 			}
 		}
 		
@@ -167,6 +173,11 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 		TextView name;
 	}
 
+	private class ViewHolder2 {
+		TextView textName;
+		TextView textIndex;
+	}
+	
 	@Override
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
 		return true;

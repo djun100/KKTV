@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.keke.player.R;
 
+import com.fedorvlasov.lazylist2.ProgramLoader;
 import com.nmbb.oplayer.scanner.POChannelList;
 
 import android.annotation.SuppressLint;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import org.stagex.danmaku.util.DensityUtil;;
 
 @SuppressLint("ResourceAsColor")
 public class CustomExpandableAdapterDF extends BaseExpandableListAdapter {
@@ -28,12 +30,15 @@ public class CustomExpandableAdapterDF extends BaseExpandableListAdapter {
 	public int mCurGroup = -1;
 	public int mCurChild = -1;
 
+	public ProgramLoader programLoader;
+	
 	public CustomExpandableAdapterDF(Activity activity, List<ProvinceInfo> groupArray,
 			List<List<POChannelList>> childArray) {
 		this.activity = activity;
 		this.groupArray = groupArray;
 		this.childArray = childArray;
 		mLayoutInflater = LayoutInflater.from(activity);
+		programLoader = new ProgramLoader(activity);
 	}
 
 	@Override
@@ -86,7 +91,7 @@ public class CustomExpandableAdapterDF extends BaseExpandableListAdapter {
 			viewHolder.name = (TextView) convertView
 					.findViewById(R.id.expand_name);
 			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-			viewHolder.name.setPadding(60, 0, 0, 0);
+			viewHolder.name.setPadding(DensityUtil.dip2px(activity, 40), 0, 0, 0);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolderDF) convertView.getTag();
@@ -107,28 +112,49 @@ public class CustomExpandableAdapterDF extends BaseExpandableListAdapter {
 	@Override
 	public View getChildView(int groupPosition, int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
-		ViewHolderDF viewHolder;
+		ViewHolderDF2 viewHolder;
 		if (convertView == null) {
-			convertView = mLayoutInflater.inflate(R.layout.custom_expanditem2,
+			convertView = mLayoutInflater.inflate(R.layout.channel_list_item3,
 					null);
-			viewHolder = new ViewHolderDF();
-			viewHolder.name = (TextView) convertView
-					.findViewById(R.id.expand_name);
-			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-			viewHolder.name.setPadding(60, 0, 0, 0);
+			viewHolder = new ViewHolderDF2();
+			viewHolder.textName = (TextView) convertView
+					.findViewById(R.id.channel_name);
+			viewHolder.textIndex = (TextView) convertView
+					.findViewById(R.id.channel_index);
+			viewHolder.pgmtext = (TextView) convertView
+					.findViewById(R.id.program_name);
+//			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+//			viewHolder.textIndex.setPadding(DensityUtil.dip2px(activity, 40), 0, 0, 0);
 			convertView.setTag(viewHolder);
 		} else {
-			viewHolder = (ViewHolderDF) convertView.getTag();
+			viewHolder = (ViewHolderDF2) convertView.getTag();
 		}
-		viewHolder.name.setText(childArray.get(groupPosition)
+		
+		viewHolder.textName.setText(childArray.get(groupPosition)
 				.get(childPosition).name);
+		viewHolder.textIndex.setText(Integer.toString(childPosition + 1) + ".");
 
 		// 标记当前正在播放的频道
 		if (mCurGroup == groupPosition && mCurChild == childPosition) {
 			// FIXME 2013-10-22 好像只能用Color.YELLOW，否则颜色不对
-			viewHolder.name.setTextColor(Color.YELLOW);
+			viewHolder.textName.setTextColor(Color.YELLOW);
+			viewHolder.textIndex.setTextColor(Color.YELLOW);
+			viewHolder.pgmtext.setTextColor(Color.YELLOW);
 		} else {
-			viewHolder.name.setTextColor(Color.WHITE);
+			viewHolder.textName.setTextColor(Color.WHITE);
+			viewHolder.textIndex.setTextColor(Color.WHITE);
+			viewHolder.pgmtext.setTextColor(Color.GRAY);
+		}
+		
+		// TODO 2013-10-17 实现节目预告功能
+		if (childArray.get(groupPosition)
+				.get(childPosition).program_path != null) {
+			programLoader.DisplayText(childArray.get(groupPosition)
+					.get(childPosition).program_path, null,
+					viewHolder.pgmtext);
+//						Log.w("arrayOut", "=====================");
+		} else {
+			viewHolder.pgmtext.setText("");
 		}
 		
 //		Log.d("test", "===> child name ==>"
@@ -139,6 +165,12 @@ public class CustomExpandableAdapterDF extends BaseExpandableListAdapter {
 
 	private class ViewHolderDF {
 		TextView name;
+	}
+	
+	private class ViewHolderDF2 {
+		TextView textName;
+		TextView textIndex;
+		TextView pgmtext;
 	}
 
 	@Override
