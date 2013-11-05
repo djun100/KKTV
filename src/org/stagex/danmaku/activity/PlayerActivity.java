@@ -2137,6 +2137,26 @@ public class PlayerActivity extends Activity implements
                 return false;
             }
         });
+	    
+		// 2013-11-05 长按收藏自定义频道
+	    epdListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View view,
+					int pos, long id) {
+				int groupPos = (Integer)view.getTag(R.id.channel_name); //参数值是在setTag时使用的对应资源id号
+				int childPos = (Integer)view.getTag(R.id.channel_index);
+				if(childPos == -1){//长按的是父项
+				    //根据groupPos判断你长按的是哪个父项，做相应处理（弹框等）
+				} else {
+				    //根据groupPos及childPos判断你长按的是哪个父项下的哪个子项，然后做相应处理。	
+					ChannelInfo info = (ChannelInfo)adapter.getChild(groupPos, childPos);
+					// 转换为数据库数据结构
+					POUserDefChannel POinfo = new POUserDefChannel(info, true);
+					showFavMsg(arg0, POinfo);
+				}
+				return false;
+			}
+        });
 	}
 	
 	/**

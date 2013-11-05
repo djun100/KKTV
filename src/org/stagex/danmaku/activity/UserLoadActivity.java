@@ -38,7 +38,9 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ExpandableListView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -196,6 +198,26 @@ public class UserLoadActivity extends Activity {
 							"自定义频道");
 	                return false;
 	            }
+	        });
+	        
+			// 长按收藏自定义频道
+	        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+				@Override
+				public boolean onItemLongClick(AdapterView<?> arg0, View view,
+						int pos, long id) {
+					int groupPos = (Integer)view.getTag(R.id.channel_name); //参数值是在setTag时使用的对应资源id号
+					int childPos = (Integer)view.getTag(R.id.channel_index);
+					if(childPos == -1){//长按的是父项
+					    //根据groupPos判断你长按的是哪个父项，做相应处理（弹框等）
+					} else {
+					    //根据groupPos及childPos判断你长按的是哪个父项下的哪个子项，然后做相应处理。	
+						ChannelInfo info = (ChannelInfo)adapter.getChild(groupPos, childPos);
+						// 转换为数据库数据结构
+						POUserDefChannel POinfo = new POUserDefChannel(info, true);
+						showFavMsg(arg0, POinfo);
+					}
+					return false;
+				}
 	        });
 			
 		} else {

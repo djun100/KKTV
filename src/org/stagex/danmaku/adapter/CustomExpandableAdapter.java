@@ -95,6 +95,10 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 			if (fromPlaying == false)
 				viewHolder.name.getPaint().setFakeBoldText(true);
 			convertView.setTag(viewHolder);
+			
+			// 2013-11-05 为自定义收藏设置tag
+			convertView.setTag(R.id.channel_name, groupPosition);
+			convertView.setTag(R.id.channel_index, -1);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
@@ -138,6 +142,10 @@ public class CustomExpandableAdapter extends BaseExpandableListAdapter {
 //			viewHolder.name.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 //			viewHolder.name.setPadding(DensityUtil.dip2px(activity, 40), 0, 0, 0);
 			convertView.setTag(viewHolder);
+			
+			// 2013-11-05 为自定义收藏设置tag
+			convertView.setTag(R.id.channel_name, groupPosition);
+			convertView.setTag(R.id.channel_index, childPosition);
 		} else {
 			viewHolder = (ViewHolder2) convertView.getTag();
 		}
